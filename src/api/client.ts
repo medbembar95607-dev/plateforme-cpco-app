@@ -1,4 +1,6 @@
-const BASE_URL = 'http://localhost:8000/api'
+// VITE_API_URL permet de pointer vers l'API déployée (Render) en production ; par défaut,
+// l'API locale de dev. Voir .env.production et README (section déploiement).
+const BASE_URL = `${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/api`
 
 // Pas de vraie authentification pour l'instant (voir README) : l'utilisateur actif est choisi
 // dans un sélecteur de démonstration (Sidebar) et transmis via cet en-tête, pour que le journal
