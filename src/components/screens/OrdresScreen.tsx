@@ -1,30 +1,40 @@
-import { useState } from 'react'
-import { ordres } from '../../data/mockData'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
 import { classificationLabel } from '../../types'
-import type { Ordre, StatutOrdre } from '../../types'
+import type { Classification } from '../../types'
 
-const statutStyle: Record<StatutOrdre, { label: string; badge: string }> = {
+type OrdreRow = Awaited<ReturnType<typeof api.orders>>[number]
+
+const statutStyle: Record<string, { label: string; badge: string }> = {
   brouillon: { label: 'Brouillon', badge: 'bg-gray-100 text-gray-700' },
   signe: { label: 'Signé', badge: 'bg-blue-50 text-blue-700' },
   diffuse: { label: 'Diffusé', badge: 'bg-emerald-50 text-emerald-700' },
   annule: { label: 'Annulé', badge: 'bg-red-50 text-red-700' },
 }
 
-const destinataireStyle = {
-  envoye: 'Envoyé',
-  recu: 'Reçu',
-  accuse: 'Accusé',
-  execute: 'Exécuté',
-}
-
-function prochaineAction(ordre: Ordre): string | null {
-  if (ordre.statut === 'brouillon') return 'Valider'
-  if (ordre.statut === 'signe') return 'Diffuser'
-  return null
-}
+const destinataireStyle: Record<string, string> = { envoye: 'Envoyé', recu: 'Reçu', accuse: 'Accusé', execute: 'Exécuté' }
+const prochaineActionLabel: Record<string, string> = { brouillon: 'Valider', signe: 'Diffuser' }
 
 export function OrdresScreen() {
-  const [selectionneId, setSelectionneId] = useState(ordres[0]?.id ?? null)
+  const [ordres, setOrdres] = useState<OrdreRow[]>([])
+  const [selectionneId, setSelectionneId] = useState<string | null>(null)
+
+  function charger() {
+    api.orders().then((data) => {
+      setOrdres(data)
+      setSelectionneId((courant) => courant ?? data[0]?.id ?? null)
+    })
+  }
+
+  useEffect(() => {
+    charger()
+  }, [])
+
+  async function avancer(id: string) {
+    await api.advanceOrder(id)
+    charger()
+  }
+
   const selectionne = ordres.find((o) => o.id === selectionneId) ?? null
 
   return (
@@ -65,7 +75,7 @@ export function OrdresScreen() {
               </div>
               <span className="text-sm text-[#17201b]">{ordre.objet}</span>
               <span className="text-xs text-[#65706a]">
-                {classificationLabel[ordre.classification]} · {ordre.emetteur}
+                {classificationLabel[ordre.classification as Classification]} · {ordre.emetteur}
               </span>
             </button>
           ))}
@@ -76,7 +86,7 @@ export function OrdresScreen() {
             <>
               <div>
                 <span className="inline-flex rounded-md bg-[#fff0cf] px-1.5 py-1 text-xs font-bold text-[#7c5108]">
-                  {classificationLabel[selectionne.classification]}
+                  {classificationLabel[selectionne.classification as Classification]}
                 </span>
                 <h3 className="mt-2 text-lg text-[#17201b]">{selectionne.numero}</h3>
                 <p className="text-sm text-[#65706a]">{selectionne.objet}</p>
@@ -94,9 +104,12 @@ export function OrdresScreen() {
                   ))}
                 </div>
               </div>
-              {prochaineAction(selectionne) && (
-                <button className="h-10 rounded-lg border border-[#17201b] bg-[#17201b] px-3.5 text-white">
-                  {prochaineAction(selectionne)}
+              {prochaineActionLabel[selectionne.statut] && (
+                <button
+                  onClick={() => avancer(selectionne.id)}
+                  className="h-10 rounded-lg border border-[#17201b] bg-[#17201b] px-3.5 text-white"
+                >
+                  {prochaineActionLabel[selectionne.statut]}
                 </button>
               )}
             </>

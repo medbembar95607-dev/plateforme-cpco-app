@@ -3,16 +3,17 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import ms from 'milsymbol'
 import { Crosshair } from 'lucide-react'
-import type { Checkpoint, ElementSelectionne, Menace, PosteLogistique, Unite } from '../../types'
+import type { Feature, LineString, Polygon } from 'geojson'
+import type { SituationDTO } from '../../api/client'
+import type { CheckpointSituation, ElementSelectionne, MenaceSituation, TypeUnite, UniteSituation } from '../../types'
 import { couleurAmie, typeUniteSidc } from '../../uniteStyle'
-import { axeProgression, checkpoints, menaces, postesLogistiques, unites, zoneMenaceA3, zoneOpsSable } from '../../data/mockData'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const CENTRE_INITIAL: [number, number] = [-15.978, 18.185]
 const ZOOM_INITIAL = 10.6
 
-function symboleUniteSvg(unite: Pick<Unite, 'typeUnite'>, taille: number) {
-  return new ms.Symbol(typeUniteSidc[unite.typeUnite], { size: taille, fillColor: couleurAmie }).asSVG()
+function symboleUniteSvg(typeUnite: TypeUnite, taille: number) {
+  return new ms.Symbol(typeUniteSidc[typeUnite], { size: taille, fillColor: couleurAmie }).asSVG()
 }
 
 function marqueurRond(lettre: string, couleur: string) {
@@ -23,12 +24,20 @@ function marqueurRond(lettre: string, couleur: string) {
   return el
 }
 
+function versLigneMaplibre(coordinates: [number, number][]): Feature<LineString> {
+  return { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } }
+}
+
+function versPolygoneMaplibre(coordinates: [number, number][]): Feature<Polygon> {
+  return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [coordinates] } }
+}
+
 interface OperationalMapProps {
-  selection: ElementSelectionne | null
+  situation: SituationDTO
   onSelect: (element: ElementSelectionne) => void
 }
 
-export function OperationalMap({ onSelect }: OperationalMapProps) {
+export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
   const conteneurRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const onSelectRef = useRef(onSelect)
@@ -52,47 +61,32 @@ export function OperationalMap({ onSelect }: OperationalMapProps) {
     observateurTaille.observe(conteneurRef.current)
 
     map.on('load', () => {
-      map.addSource('zone-menace-a3', { type: 'geojson', data: zoneMenaceA3 })
-      map.addLayer({
-        id: 'zone-menace-a3-fill',
-        type: 'fill',
-        source: 'zone-menace-a3',
-        paint: { 'fill-color': '#b9332c', 'fill-opacity': 0.1 },
-      })
-      map.addLayer({
-        id: 'zone-menace-a3-line',
-        type: 'line',
-        source: 'zone-menace-a3',
-        paint: { 'line-color': '#b9332c', 'line-width': 2 },
+      situation.zones.forEach((zone) => {
+        const estMenace = zone.typeZone === 'zone_menace'
+        const couleur = estMenace ? '#b9332c' : '#6554a3'
+        const sourceId = `zone-${zone.id}`
+        map.addSource(sourceId, { type: 'geojson', data: versPolygoneMaplibre(zone.coordinates) })
+        map.addLayer({ id: `${sourceId}-fill`, type: 'fill', source: sourceId, paint: { 'fill-color': couleur, 'fill-opacity': 0.1 } })
+        map.addLayer({ id: `${sourceId}-line`, type: 'line', source: sourceId, paint: { 'line-color': couleur, 'line-width': 2 } })
       })
 
-      map.addSource('zone-ops-sable', { type: 'geojson', data: zoneOpsSable })
-      map.addLayer({
-        id: 'zone-ops-sable-fill',
-        type: 'fill',
-        source: 'zone-ops-sable',
-        paint: { 'fill-color': '#6554a3', 'fill-opacity': 0.1 },
-      })
-      map.addLayer({
-        id: 'zone-ops-sable-line',
-        type: 'line',
-        source: 'zone-ops-sable',
-        paint: { 'line-color': '#6554a3', 'line-width': 2 },
+      situation.axes.forEach((axe) => {
+        const sourceId = `axe-${axe.id}`
+        map.addSource(sourceId, { type: 'geojson', data: versLigneMaplibre(axe.coordinates) })
+        map.addLayer({
+          id: `${sourceId}-line`,
+          type: 'line',
+          source: sourceId,
+          paint: { 'line-color': '#ba7a0b', 'line-width': 3, 'line-dasharray': [2, 2] },
+        })
       })
 
-      map.addSource('axe-progression', { type: 'geojson', data: axeProgression })
-      map.addLayer({
-        id: 'axe-progression-line',
-        type: 'line',
-        source: 'axe-progression',
-        paint: { 'line-color': '#ba7a0b', 'line-width': 3, 'line-dasharray': [2, 2] },
-      })
-
-      unites.forEach((unite) => {
+      situation.unites.forEach((unite: UniteSituation) => {
+        if (unite.lon == null || unite.lat == null) return
         const el = document.createElement('button')
         el.className = 'flex flex-col items-center'
         el.innerHTML = `
-          <span class="drop-shadow-md">${symboleUniteSvg(unite, 26)}</span>
+          <span class="drop-shadow-md">${symboleUniteSvg(unite.typeUnite as TypeUnite, 26)}</span>
           <span class="mt-1 whitespace-nowrap rounded border border-[#d8ded9] bg-white/95 px-1.5 py-0.5 text-[11px] text-[#17201b] shadow-sm">${unite.nom}</span>
         `
         el.addEventListener('click', (e) => {
@@ -102,7 +96,7 @@ export function OperationalMap({ onSelect }: OperationalMapProps) {
         new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat([unite.lon, unite.lat]).addTo(map)
       })
 
-      menaces.forEach((menace: Menace) => {
+      situation.menaces.forEach((menace: MenaceSituation) => {
         const el = marqueurRond('!', '#b9332c')
         el.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -111,16 +105,7 @@ export function OperationalMap({ onSelect }: OperationalMapProps) {
         new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([menace.lon, menace.lat]).addTo(map)
       })
 
-      postesLogistiques.forEach((poste: PosteLogistique) => {
-        const el = marqueurRond('L', '#21835d')
-        el.addEventListener('click', (e) => {
-          e.stopPropagation()
-          onSelectRef.current({ kind: 'logistique', data: poste })
-        })
-        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([poste.lon, poste.lat]).addTo(map)
-      })
-
-      checkpoints.forEach((checkpoint: Checkpoint) => {
+      situation.checkpoints.forEach((checkpoint: CheckpointSituation) => {
         const el = marqueurRond('C', '#6554a3')
         el.addEventListener('click', (e) => {
           e.stopPropagation()
@@ -136,7 +121,7 @@ export function OperationalMap({ onSelect }: OperationalMapProps) {
       mapRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [situation])
 
   function recentrer() {
     mapRef.current?.flyTo({ center: CENTRE_INITIAL, zoom: ZOOM_INITIAL })

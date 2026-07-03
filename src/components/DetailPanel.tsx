@@ -5,15 +5,17 @@ function construireDetail(selection: ElementSelectionne) {
   switch (selection.kind) {
     case 'unite': {
       const u = selection.data
+      const logistique =
+        u.carburantPct != null && u.munitionsPct != null ? `Carburant ${u.carburantPct}%, munitions ${u.munitionsPct}%` : 'Non suivi'
       return {
         classification: 'Confidentiel Défense',
         titre: u.nom,
-        sousTitre: `Unité amie - ${statutUniteStyle[u.statut].label}.`,
+        sousTitre: `Unité amie - ${statutUniteStyle[u.statut as keyof typeof statutUniteStyle]?.label ?? u.statut}.`,
         kv: [
           { label: 'Type', valeur: 'Unité amie' },
-          { label: 'Statut', valeur: statutUniteStyle[u.statut].label },
+          { label: 'Statut', valeur: statutUniteStyle[u.statut as keyof typeof statutUniteStyle]?.label ?? u.statut },
           { label: 'Position', valeur: `${u.effectif} pers. déployés` },
-          { label: 'Logistique', valeur: `Carburant ${u.carburantPct}%, munitions ${u.munitionsPct}%` },
+          { label: 'Logistique', valeur: logistique },
         ],
       }
     }
@@ -31,20 +33,6 @@ function construireDetail(selection: ElementSelectionne) {
         ],
       }
     }
-    case 'logistique': {
-      const l = selection.data
-      return {
-        classification: 'Confidentiel Défense',
-        titre: l.nom,
-        sousTitre: `Point logistique - ${l.statut === 'disponible' ? 'Disponible' : 'Indisponible'}.`,
-        kv: [
-          { label: 'Type', valeur: 'Point logistique' },
-          { label: 'Statut', valeur: l.statut === 'disponible' ? 'Disponible' : 'Indisponible' },
-          { label: 'Position', valeur: 'Checkpoint N2' },
-          { label: 'Logistique', valeur: `Carburant ${l.carburantPct}%, vivres ${l.vivresPct}%` },
-        ],
-      }
-    }
     case 'checkpoint': {
       const c = selection.data
       return {
@@ -55,7 +43,7 @@ function construireDetail(selection: ElementSelectionne) {
           { label: 'Type', valeur: 'Checkpoint' },
           { label: 'Statut', valeur: 'Sous contrôle' },
           { label: 'Position', valeur: 'Route de progression' },
-          { label: 'Logistique', valeur: `Dernier rapport : ${c.dernierRapport}` },
+          { label: 'Logistique', valeur: `Dernier rapport : ${c.dernierRapport ?? 'RAS'}` },
         ],
       }
     }

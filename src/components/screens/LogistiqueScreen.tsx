@@ -1,4 +1,7 @@
-import { lignesLogistique } from '../../data/mockData'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
+
+type LigneRow = Awaited<ReturnType<typeof api.logistics>>[number]
 
 const alerteStyle = {
   normal: { label: 'Normal', badge: 'bg-emerald-50 text-emerald-700' },
@@ -21,6 +24,12 @@ function Barre({ pct }: { pct: number }) {
 }
 
 export function LogistiqueScreen() {
+  const [lignes, setLignes] = useState<LigneRow[]>([])
+
+  useEffect(() => {
+    api.logistics().then(setLignes)
+  }, [])
+
   return (
     <section className="grid min-h-0 grid-rows-[auto_1fr] gap-3.5">
       <div className="flex items-center justify-between gap-3">
@@ -47,7 +56,7 @@ export function LogistiqueScreen() {
             </tr>
           </thead>
           <tbody>
-            {lignesLogistique.map((ligne) => (
+            {lignes.map((ligne) => (
               <tr key={ligne.uniteId}>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.uniteNom}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
@@ -59,8 +68,10 @@ export function LogistiqueScreen() {
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.vivresPct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.maintenancePct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${alerteStyle[ligne.alerte].badge}`}>
-                    {alerteStyle[ligne.alerte].label}
+                  <span
+                    className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${alerteStyle[ligne.alerte as keyof typeof alerteStyle].badge}`}
+                  >
+                    {alerteStyle[ligne.alerte as keyof typeof alerteStyle].label}
                   </span>
                 </td>
               </tr>

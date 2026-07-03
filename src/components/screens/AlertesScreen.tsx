@@ -1,32 +1,27 @@
-import { useState } from 'react'
-import { alertes as alertesInitiales } from '../../data/mockData'
-import type { Alerte, NiveauAlerte } from '../../types'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
 
-const niveauStyle: Record<NiveauAlerte, { label: string; badge: string; bordure: string }> = {
+type AlerteRow = Awaited<ReturnType<typeof api.alerts>>[number]
+
+const niveauStyle: Record<string, { label: string; badge: string; bordure: string }> = {
   info: { label: 'Info', badge: 'bg-blue-50 text-blue-700', bordure: 'border-l-[#1f6fb2]' },
   attention: { label: 'Attention', badge: 'bg-amber-50 text-amber-700', bordure: 'border-l-[#ba7a0b]' },
   critique: { label: 'Critique', badge: 'bg-red-50 text-red-700', bordure: 'border-l-[#b9332c]' },
 }
 
-const typeLabel = {
-  logistique: 'Logistique',
-  menace: 'Menace',
-  communication: 'Communication',
-  operationnelle: 'Opérationnelle',
-}
-
-const statutLabel = {
-  active: 'Active',
-  acquittee: 'Acquittée',
-  resolue: 'Résolue',
-}
-
-const ordreNiveau: Record<NiveauAlerte, number> = { critique: 0, attention: 1, info: 2 }
+const typeLabel: Record<string, string> = { logistique: 'Logistique', menace: 'Menace', communication: 'Communication', operationnelle: 'Opérationnelle' }
+const statutLabel: Record<string, string> = { active: 'Active', acquittee: 'Acquittée', resolue: 'Résolue' }
+const ordreNiveau: Record<string, number> = { critique: 0, attention: 1, info: 2 }
 
 export function AlertesScreen() {
-  const [alertes, setAlertes] = useState<Alerte[]>(alertesInitiales)
+  const [alertes, setAlertes] = useState<AlerteRow[]>([])
 
-  function acquitter(id: string) {
+  useEffect(() => {
+    api.alerts().then(setAlertes)
+  }, [])
+
+  async function acquitter(id: string) {
+    await api.acknowledgeAlert(id)
     setAlertes((prev) => prev.map((a) => (a.id === id ? { ...a, statut: 'acquittee' } : a)))
   }
 
@@ -62,8 +57,8 @@ export function AlertesScreen() {
                 <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${niveauStyle[alerte.niveau].badge}`}>
                   {niveauStyle[alerte.niveau].label}
                 </span>
-                <span className="text-xs text-[#65706a]">{typeLabel[alerte.type]}</span>
-                <span className="text-xs text-[#65706a]">{alerte.horodatage}</span>
+                <span className="text-xs text-[#65706a]">{typeLabel[alerte.type_alerte]}</span>
+                <span className="text-xs text-[#65706a]">{alerte.date_creation.slice(11, 16)}</span>
               </div>
               <p className="m-0 text-sm text-[#17201b]">{alerte.message}</p>
               <span className="text-xs text-[#65706a]">Statut : {statutLabel[alerte.statut]}</span>

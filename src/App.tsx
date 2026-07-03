@@ -10,7 +10,7 @@ import { OrdresScreen } from './components/screens/OrdresScreen'
 import { IncidentsScreen } from './components/screens/IncidentsScreen'
 import { AlertesScreen } from './components/screens/AlertesScreen'
 import { AdministrationScreen } from './components/screens/AdministrationScreen'
-import { evenementsFlux as evenementsInitiaux } from './data/mockData'
+import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
 const titres: Record<Vue, [string, string]> = {
@@ -25,15 +25,29 @@ const titres: Record<Vue, [string, string]> = {
   administration: ['Administration', 'Utilisateurs, rôles, permissions et journal des actions'],
 }
 
+const evenementsInitiaux: EvenementFlux[] = [
+  { heure: '12:38', titre: 'Menace confirmée A3', description: 'Renseignement : mouvement suspect observé.' },
+  { heure: '12:24', titre: 'Cie Alpha en progression', description: 'Passage checkpoint Bravo validé.' },
+  { heure: '12:12', titre: 'Alerte carburant', description: 'Compagnie Alpha sous seuil attention.' },
+  { heure: '11:58', titre: 'Poste logistique Nord', description: 'Ravitaillement disponible pour deux unités.' },
+]
+
 function App() {
   const [vue, setVue] = useState<Vue>('situation')
   const [evenements, setEvenements] = useState<EvenementFlux[]>(evenementsInitiaux)
 
-  function nouvelIncident() {
+  async function nouvelIncident() {
     const maintenant = new Date()
     const heure = `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`
+    await api.createIncident({
+      type_incident: 'securite',
+      niveau_gravite: 'moyenne',
+      localite: 'À préciser',
+      description: "Incident créé depuis le bandeau supérieur, à compléter.",
+      declarant: 'PC CPCO',
+    })
     setEvenements((prev) => [
-      { heure, titre: 'Nouvel incident préparé', description: "Formulaire de création à compléter depuis l'écran Incidents." },
+      { heure, titre: 'Nouvel incident créé', description: "Voir l'écran Incidents pour compléter les détails." },
       ...prev,
     ])
   }

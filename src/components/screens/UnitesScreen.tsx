@@ -1,7 +1,17 @@
-import { unites } from '../../data/mockData'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
 import { statutUniteStyle, typeUniteLabel } from '../../uniteStyle'
+import type { StatutUnite, TypeUnite } from '../../types'
+
+type UniteRow = Awaited<ReturnType<typeof api.units>>[number]
 
 export function UnitesScreen() {
+  const [unites, setUnites] = useState<UniteRow[]>([])
+
+  useEffect(() => {
+    api.units().then(setUnites)
+  }, [])
+
   return (
     <section className="grid min-h-0 grid-rows-[auto_1fr] gap-3.5">
       <div className="flex items-center justify-between gap-3">
@@ -38,15 +48,17 @@ export function UnitesScreen() {
             {unites.map((unite) => (
               <tr key={unite.id}>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.nom}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{typeUniteLabel[unite.typeUnite]}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{typeUniteLabel[unite.typeUnite as TypeUnite]}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${statutUniteStyle[unite.statut].badge}`}>
-                    {statutUniteStyle[unite.statut].label}
+                  <span
+                    className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${statutUniteStyle[unite.statut as StatutUnite]?.badge ?? 'bg-gray-100 text-gray-700'}`}
+                  >
+                    {statutUniteStyle[unite.statut as StatutUnite]?.label ?? unite.statut}
                   </span>
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.effectif}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.communication === 'stable' ? 'Stable' : 'Dégradée'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.dernierRapport}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.dernierRapport ?? '—'}</td>
               </tr>
             ))}
           </tbody>

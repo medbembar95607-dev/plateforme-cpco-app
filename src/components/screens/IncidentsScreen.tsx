@@ -1,27 +1,18 @@
-import { incidents } from '../../data/mockData'
-import type { GraviteIncident } from '../../types'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
 
-const graviteStyle: Record<GraviteIncident, string> = {
+type IncidentRow = Awaited<ReturnType<typeof api.incidents>>[number]
+
+const graviteStyle: Record<string, string> = {
   faible: 'bg-gray-100 text-gray-700',
   moyenne: 'bg-amber-50 text-amber-700',
   elevee: 'bg-orange-50 text-orange-700',
   critique: 'bg-red-50 text-red-700',
 }
 
-const graviteLabel: Record<GraviteIncident, string> = {
-  faible: 'Faible',
-  moyenne: 'Moyenne',
-  elevee: 'Élevée',
-  critique: 'Critique',
-}
-
-const statutLabel = {
-  nouveau: 'Nouveau',
-  en_cours: 'En cours',
-  traite: 'Traité',
-}
-
-const typeLabel = {
+const graviteLabel: Record<string, string> = { faible: 'Faible', moyenne: 'Moyenne', elevee: 'Élevée', critique: 'Critique' }
+const statutLabel: Record<string, string> = { nouveau: 'Nouveau', en_cours: 'En cours', traite: 'Traité' }
+const typeLabel: Record<string, string> = {
   securite: 'Sécurité',
   logistique: 'Logistique',
   renseignement: 'Renseignement',
@@ -30,6 +21,12 @@ const typeLabel = {
 }
 
 export function IncidentsScreen() {
+  const [incidents, setIncidents] = useState<IncidentRow[]>([])
+
+  useEffect(() => {
+    api.incidents().then(setIncidents)
+  }, [])
+
   return (
     <section className="grid min-h-0 grid-rows-[auto_1fr] gap-3.5">
       <div className="flex items-center justify-between gap-3">
@@ -70,12 +67,12 @@ export function IncidentsScreen() {
           <tbody>
             {incidents.map((incident) => (
               <tr key={incident.id}>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{incident.date}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{typeLabel[incident.type]}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{incident.date_incident.replace('T', ' ').slice(0, 16)}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{typeLabel[incident.type_incident]}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{incident.localite}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${graviteStyle[incident.gravite]}`}>
-                    {graviteLabel[incident.gravite]}
+                  <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${graviteStyle[incident.niveau_gravite]}`}>
+                    {graviteLabel[incident.niveau_gravite]}
                   </span>
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{statutLabel[incident.statut]}</td>

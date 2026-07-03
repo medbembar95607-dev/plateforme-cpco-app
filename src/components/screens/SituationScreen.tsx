@@ -1,17 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { KpiRow } from '../KpiRow'
 import { OperationalMap } from '../map/OperationalMap'
 import { DetailPanel } from '../DetailPanel'
 import { Feed } from '../Feed'
+import { api, type SituationDTO } from '../../api/client'
 import type { ElementSelectionne, EvenementFlux } from '../../types'
-
-const kpis = [
-  { label: 'Opérations actives', valeur: '4', note: '2 en phase critique' },
-  { label: 'Unités engagées', valeur: '17', note: '1 communication dégradée' },
-  { label: 'Effectifs engagés', valeur: '1 240', note: 'Zone nord-ouest' },
-  { label: 'Menaces détectées', valeur: '6', note: '3 confirmées' },
-  { label: 'Niveau logistique', valeur: '68%', note: 'Carburant sous tension' },
-]
 
 const couches = [
   { label: 'Unités', couleur: 'bg-[#1f6fb2]' },
@@ -26,6 +19,32 @@ interface SituationScreenProps {
 
 export function SituationScreen({ evenements }: SituationScreenProps) {
   const [selection, setSelection] = useState<ElementSelectionne | null>(null)
+  const [situation, setSituation] = useState<SituationDTO | null>(null)
+
+  useEffect(() => {
+    Promise.all([api.situation(), api.logistics()]).then(([situationData, logistiqueRows]) => {
+      const logistiqueParUnite = new Map(logistiqueRows.map((row) => [row.uniteId, row]))
+      setSituation({
+        ...situationData,
+        unites: situationData.unites.map((unite) => {
+          const logistique = logistiqueParUnite.get(unite.id)
+          return logistique ? { ...unite, carburantPct: logistique.carburantPct, munitionsPct: logistique.munitionsPct } : unite
+        }),
+      })
+    })
+  }, [])
+
+  if (!situation) {
+    return <p className="text-sm text-[#65706a]">Chargement de la situation opérationnelle…</p>
+  }
+
+  const kpis = [
+    { label: 'Opérations actives', valeur: String(situation.kpis.operationsActives), note: 'en cours ou sous tension' },
+    { label: 'Unités engagées', valeur: String(situation.kpis.unitesEngagees), note: 'toutes unités suivies' },
+    { label: 'Effectifs engagés', valeur: situation.kpis.effectifsEngages.toLocaleString('fr-FR'), note: 'secteur Nouakchott Nord' },
+    { label: 'Menaces détectées', valeur: String(situation.kpis.menacesDetectees), note: `${situation.kpis.menacesConfirmees} confirmées` },
+    { label: 'Niveau logistique', valeur: `${situation.kpis.niveauLogistiquePct}%`, note: 'moyenne carburant' },
+  ]
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_1fr] gap-4">
@@ -47,7 +66,7 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
               ))}
             </div>
           </div>
-          <OperationalMap selection={selection} onSelect={setSelection} />
+          <OperationalMap situation={situation} onSelect={setSelection} />
         </section>
 
         <div className="grid min-h-0 grid-rows-[auto_1fr] gap-4">

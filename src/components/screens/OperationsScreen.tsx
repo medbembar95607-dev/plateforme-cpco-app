@@ -1,7 +1,9 @@
-import { operations } from '../../data/mockData'
-import type { StatutOperation } from '../../types'
+import { useEffect, useState } from 'react'
+import { api } from '../../api/client'
 
-const statutStyle: Record<StatutOperation, { label: string; badge: string }> = {
+type OperationRow = Awaited<ReturnType<typeof api.operations>>[number]
+
+const statutStyle: Record<string, { label: string; badge: string }> = {
   planifiee: { label: 'Planifiée', badge: 'bg-amber-50 text-amber-700' },
   en_cours: { label: 'En cours', badge: 'bg-blue-50 text-blue-700' },
   sous_tension: { label: 'Sous tension', badge: 'bg-red-50 text-red-700' },
@@ -9,6 +11,12 @@ const statutStyle: Record<StatutOperation, { label: string; badge: string }> = {
 }
 
 export function OperationsScreen() {
+  const [operations, setOperations] = useState<OperationRow[]>([])
+
+  useEffect(() => {
+    api.operations().then(setOperations)
+  }, [])
+
   return (
     <section className="grid min-h-0 grid-rows-[auto_1fr] gap-3.5">
       <div className="flex items-center justify-between gap-3">
@@ -27,8 +35,8 @@ export function OperationsScreen() {
             <span className={`inline-flex w-fit min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${statutStyle[operation.statut].badge}`}>
               {statutStyle[operation.statut].label}
             </span>
-            <h3 className="m-0 text-[17px] text-[#17201b]">{operation.nom}</h3>
-            <p className="m-0 text-[13px] leading-relaxed text-[#65706a]">{operation.description}</p>
+            <h3 className="m-0 text-[17px] text-[#17201b]">{operation.nom_operation}</h3>
+            <p className="m-0 text-[13px] leading-relaxed text-[#65706a]">{operation.objectif}</p>
             <div className="h-2 overflow-hidden rounded-full bg-[#e5e9e5]">
               <div className="h-full bg-[#1f6fb2]" style={{ width: `${operation.progression}%` }} />
             </div>
