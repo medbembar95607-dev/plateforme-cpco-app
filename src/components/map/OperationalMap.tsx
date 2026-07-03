@@ -55,6 +55,7 @@ export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
     mapRef.current = map
     map.dragRotate.disable()
     map.touchZoomRotate.disableRotation()
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right')
 
     const observateurTaille = new ResizeObserver(() => map.resize())
@@ -132,7 +133,7 @@ export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
       <div ref={conteneurRef} className="h-full w-full" />
       <button
         onClick={recentrer}
-        className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg border border-[#d8ded9] bg-white/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#17201b] shadow-sm"
+        className="absolute right-3 top-[76px] flex items-center gap-1.5 rounded-lg border border-[#d8ded9] bg-white/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#17201b] shadow-sm"
       >
         <Crosshair size={13} /> Recentrer
       </button>
