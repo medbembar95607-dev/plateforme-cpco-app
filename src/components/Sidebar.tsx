@@ -1,4 +1,5 @@
 import { AlertTriangle, ClipboardList, Diamond, Eye, FileText, Home, Settings, Siren, Square } from 'lucide-react'
+import { UserSwitcher } from './UserSwitcher'
 
 export type Vue =
   | 'situation'
@@ -30,7 +31,7 @@ interface SidebarProps {
 
 export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
   return (
-    <aside className="grid grid-rows-[auto_1fr_auto] gap-4 bg-[#17201b] px-3.5 py-4 text-[#dce5df]">
+    <aside className="grid grid-rows-[auto_1fr_auto_auto] gap-4 bg-[#17201b] px-3.5 py-4 text-[#dce5df]">
       <div className="flex items-center gap-3 border-b border-white/10 px-2 pb-3.5">
         <div className="grid h-[42px] w-[42px] place-items-center rounded-lg bg-[#e2eee5] font-extrabold text-[#17201b]">C2</div>
         <div>
@@ -58,6 +59,8 @@ export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
         <span className="text-xs text-[#bdc9c0]">Niveau global</span>
         <strong className="mt-1.5 block text-[21px] text-white">Vigilance élevée</strong>
       </div>
+
+      <UserSwitcher />
     </aside>
   )
 }

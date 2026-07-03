@@ -105,6 +105,7 @@ export function AdministrationScreen() {
             <thead>
               <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
                 <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Horodatage</th>
+                <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Utilisateur</th>
                 <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Action</th>
                 <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Table cible</th>
               </tr>
@@ -112,14 +113,15 @@ export function AdministrationScreen() {
             <tbody>
               {journal.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-3.5 py-3 text-sm text-[#65706a]">
-                    Aucune action journalisée pour l'instant (table `audit_log` pas encore alimentée par le backend).
+                  <td colSpan={4} className="px-3.5 py-3 text-sm text-[#65706a]">
+                    Aucune action journalisée pour l'instant — déclenche une action (ordre, alerte, incident) pour voir apparaître une ligne ici.
                   </td>
                 </tr>
               )}
               {journal.map((entree, i) => (
                 <tr key={i}>
-                  <td className="border-b border-[#d8ded9] px-3.5 py-3">{entree.horodatage}</td>
+                  <td className="border-b border-[#d8ded9] px-3.5 py-3">{entree.horodatage.replace('T', ' ').slice(0, 19)}</td>
+                  <td className="border-b border-[#d8ded9] px-3.5 py-3">{entree.utilisateur}</td>
                   <td className="border-b border-[#d8ded9] px-3.5 py-3">{entree.action}</td>
                   <td className="border-b border-[#d8ded9] px-3.5 py-3">{entree.tableCible}</td>
                 </tr>

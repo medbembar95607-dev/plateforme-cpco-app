@@ -1,10 +1,15 @@
 const BASE_URL = 'http://localhost:8000/api'
 
+// Pas de vraie authentification pour l'instant (voir README) : l'utilisateur actif est choisi
+// dans un sélecteur de démonstration (Sidebar) et transmis via cet en-tête, pour que le journal
+// d'audit puisse quand même attribuer les actions à quelqu'un.
+export const session = { userId: null as string | null }
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-  })
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(init?.headers as Record<string, string>) }
+  if (session.userId) headers['X-User-Id'] = session.userId
+
+  const res = await fetch(`${BASE_URL}${path}`, { ...init, headers })
   if (!res.ok) {
     throw new Error(`${init?.method ?? 'GET'} ${path} a échoué (${res.status})`)
   }
@@ -76,5 +81,6 @@ export const api = {
   acknowledgeAlert: (id: string) => request(`/alerts/${id}/acknowledge`, { method: 'POST' }),
   adminUsers: () => request<Array<{ id: string; nom_complet: string; grade: string; role: string; clearance_level: string; actif: boolean }>>('/admin/users'),
   adminRoles: () => request<Record<string, string[]>>('/admin/roles'),
-  adminAuditLog: () => request<Array<{ horodatage: string; userId: string | null; action: string; tableCible: string }>>('/admin/audit-log'),
+  adminAuditLog: () =>
+    request<Array<{ horodatage: string; utilisateur: string; action: string; tableCible: string; enregistrementId: string }>>('/admin/audit-log'),
 }
