@@ -4,13 +4,21 @@ Application de Commandement et de Contrôle (C2/C4ISR) pour le Centre de Planifi
 
 Le cadrage complet (besoins, décisions d'architecture, modèle de données, maquettes, exigences de sécurité) vit dans [`../plateforme-cpco/`](../plateforme-cpco/), pas ici. Ce README couvre uniquement le code. Projet distinct du MVP [`../c2-militaire-app/`](../c2-militaire-app/) — voir `../plateforme-cpco/README.md` pour la justification.
 
+## Démo en ligne
+
+**https://imaginative-croissant-f46ef5.netlify.app**
+
+Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur Netlify (déploiement continu depuis la branche `main`). Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-cpco-api/README.md`).
+
+Variable d'environnement de build (Netlify → Project configuration → Environment variables) : `VITE_API_URL=https://plateforme-cpco-api.onrender.com`. Elle est lue au moment du build (Vite), pas à l'exécution — toute modification impose un redéploiement (Deploys → Trigger deploy).
+
 ## Stack
 
 - React 19 + TypeScript, Vite
 - Tailwind CSS v4
 - MapLibre GL JS (fond de carte [OpenFreeMap](https://openfreemap.org), style `positron`)
 - `milsymbol` pour la symbologie militaire APP-6/MIL-STD-2525E
-- Toutes les données viennent de l'API (`src/api/client.ts`, `http://localhost:8000/api`) — plus aucune donnée mockée en dur dans le frontend
+- Toutes les données viennent de l'API (`src/api/client.ts`), URL configurable via `VITE_API_URL` (défaut : `http://localhost:8000` en dev) — plus aucune donnée mockée en dur dans le frontend
 
 ## Démarrer en local
 
