@@ -1,31 +1,11 @@
-import { AlertTriangle, ClipboardList, Diamond, Eye, FileText, Home, Mail, Settings, Siren, Square, Video } from 'lucide-react'
+import { Mail, ShieldHalf } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 
-export type Vue =
-  | 'situation'
-  | 'liveops'
-  | 'courrier'
-  | 'unites'
-  | 'renseignement'
-  | 'logistique'
-  | 'operations'
-  | 'ordres'
-  | 'incidents'
-  | 'alertes'
-  | 'administration'
+export type Vue = 'ops' | 'courrier'
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
-  { vue: 'situation', label: 'Situation', icone: <Home size={17} /> },
-  { vue: 'liveops', label: 'LIVE OPS', icone: <Video size={17} /> },
+  { vue: 'ops', label: 'OPS', icone: <ShieldHalf size={17} /> },
   { vue: 'courrier', label: 'Courrier du Chef', icone: <Mail size={17} /> },
-  { vue: 'unites', label: 'Unités', icone: <Diamond size={17} /> },
-  { vue: 'renseignement', label: 'Renseignement', icone: <Eye size={17} /> },
-  { vue: 'logistique', label: 'Logistique', icone: <Square size={17} /> },
-  { vue: 'operations', label: 'Opérations', icone: <ClipboardList size={17} /> },
-  { vue: 'ordres', label: 'Ordres', icone: <FileText size={17} /> },
-  { vue: 'incidents', label: 'Incidents', icone: <Siren size={17} /> },
-  { vue: 'alertes', label: 'Alertes', icone: <AlertTriangle size={17} /> },
-  { vue: 'administration', label: 'Administration', icone: <Settings size={17} /> },
 ]
 
 interface SidebarProps {
@@ -39,7 +19,7 @@ export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
       <div className="flex items-center gap-3 border-b border-black/10 px-2 pb-3.5">
         <div className="h-[42px] w-[42px] rounded-lg bg-[#e2eee5]" />
         <div>
-          <strong className="block text-[15px] text-[#17201b]">Tableau de Bord COP</strong>
+          <strong className="block text-[15px] text-[#17201b]">Tableau de Bord du CHEF</strong>
           <span className="block text-xs text-[#5c4a10]">Centre opérationnel</span>
         </div>
       </div>

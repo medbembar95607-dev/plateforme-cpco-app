@@ -31,9 +31,9 @@ npm run dev
 
 ## Écrans
 
-11 écrans, accessibles depuis la barre latérale : Situation (carte COP + tableau de bord), LIVE OPS, Courrier du Chef, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+La barre latérale ne comporte que 2 entrées : **OPS** et **Courrier du Chef**. OPS (`OpsScreen.tsx`) regroupe les 10 écrans opérationnels sous forme de sous-onglets internes : Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
 
-Les 5 écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
+Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
 
 **LIVE OPS** (ajouté le 2026-07-03) : deux panneaux empilés — carte des unités engagées (statut en mission/en progression) en haut, et en bas un suivi "live" d'une unité + drone d'appui. Le mouvement de l'unité et du drone, ainsi que le flux vidéo (`DroneVideoFeed.tsx`), sont **entièrement simulés côté frontend** — aucun drone ni caméra réelle n'est connecté, et ces données ne viennent pas de l'API (pas de table `drones` dans le modèle de données).
 
@@ -47,7 +47,7 @@ Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau
 src/
   api/client.ts        appels fetch typés vers l'API FastAPI
   components/
-    screens/            un composant par écran (SituationScreen, UnitesScreen, ...)
+    screens/            un composant par écran (OpsScreen regroupe SituationScreen, UnitesScreen, ... en sous-onglets ; CourrierScreen séparé)
     map/                 OperationalMap.tsx (wrapper MapLibre + symbologie militaire)
     Sidebar.tsx, TopBar.tsx, KpiRow.tsx, DetailPanel.tsx, Feed.tsx   éléments partagés
   types.ts               types partagés (les DTO détaillés viennent de api/client.ts)
