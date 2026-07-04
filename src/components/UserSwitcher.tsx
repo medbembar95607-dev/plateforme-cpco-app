@@ -33,15 +33,15 @@ export function UserSwitcher() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-      <label className="mb-1.5 block text-xs text-[#bdc9c0]" htmlFor="user-switcher">
+    <div className="rounded-lg border border-black/10 bg-black/5 p-3">
+      <label className="mb-1.5 block text-xs text-[#5c4a10]" htmlFor="user-switcher">
         Connecté en tant que
       </label>
       <select
         id="user-switcher"
         value={selectionId}
         onChange={(e) => changer(e.target.value)}
-        className="w-full rounded-md border border-white/10 bg-[#17201b] px-2 py-1.5 text-sm text-white"
+        className="w-full rounded-md border border-black/10 bg-[#17201b] px-2 py-1.5 text-sm text-white"
       >
         {utilisateurs.map((u) => (
           <option key={u.id} value={u.id}>
