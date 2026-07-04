@@ -14,7 +14,7 @@ import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
 const titres: Record<Vue, [string, string]> = {
-  situation: ['Carte opérationnelle commune', 'Dernière mise à jour : 03 juillet 2026, 12:40 UTC'],
+  situation: ['Point de Situation Opérationnel', 'Dernière mise à jour : 03 juillet 2026, 12:40 UTC'],
   unites: ['Gestion des unités', 'Positions, statuts, effectifs et communications'],
   renseignement: ['Module renseignement', 'Observations, menaces, fiabilité et classification'],
   logistique: ['Suivi logistique', 'Carburant, munitions, vivres, maintenance et alertes'],
