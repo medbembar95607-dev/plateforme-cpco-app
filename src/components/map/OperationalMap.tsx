@@ -29,8 +29,8 @@ function versLigneMaplibre(coordinates: [number, number][]): Feature<LineString>
   return { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } }
 }
 
-function versPolygoneMaplibre(coordinates: [number, number][]): Feature<Polygon> {
-  return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [coordinates] } }
+function versPolygoneMaplibre(coordinates: [number, number][], nom: string): Feature<Polygon> {
+  return { type: 'Feature', properties: { nom }, geometry: { type: 'Polygon', coordinates: [coordinates] } }
 }
 
 interface OperationalMapProps {
@@ -67,9 +67,16 @@ export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
         const estMenace = zone.typeZone === 'zone_menace'
         const couleur = estMenace ? '#b9332c' : '#6554a3'
         const sourceId = `zone-${zone.id}`
-        map.addSource(sourceId, { type: 'geojson', data: versPolygoneMaplibre(zone.coordinates) })
+        map.addSource(sourceId, { type: 'geojson', data: versPolygoneMaplibre(zone.coordinates, zone.nom) })
         map.addLayer({ id: `${sourceId}-fill`, type: 'fill', source: sourceId, paint: { 'fill-color': couleur, 'fill-opacity': 0.1 } })
         map.addLayer({ id: `${sourceId}-line`, type: 'line', source: sourceId, paint: { 'line-color': couleur, 'line-width': 2 } })
+        map.addLayer({
+          id: `${sourceId}-label`,
+          type: 'symbol',
+          source: sourceId,
+          layout: { 'text-field': ['get', 'nom'], 'text-size': 12 },
+          paint: { 'text-color': couleur, 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+        })
       })
 
       situation.axes.forEach((axe) => {
