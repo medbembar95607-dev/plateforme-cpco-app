@@ -7,7 +7,7 @@ interface TopBarProps {
 export function TopBar({ titre, sousTitre, onNouvelIncident }: TopBarProps) {
   return (
     <header className="flex min-h-[72px] items-center justify-between gap-4 border-b border-[#d8ded9] bg-white/90 px-5 py-3.5">
-      <div>
+      <div className="rounded-lg bg-emerald-100 px-4 py-2">
         <h1 className="m-0 text-[22px] leading-tight text-[#17201b]">{titre}</h1>
         <div className="mt-1 text-[13px] text-[#65706a]">{sousTitre}</div>
       </div>
