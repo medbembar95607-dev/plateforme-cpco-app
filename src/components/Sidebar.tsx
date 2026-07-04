@@ -19,7 +19,7 @@ export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
       <div className="flex items-center gap-3 border-b border-black/10 px-2 pb-3.5">
         <div className="h-[42px] w-[42px] rounded-lg bg-[#e2eee5]" />
         <div>
-          <strong className="block text-[15px] text-[#17201b]">Tableau de Bord CEMGA</strong>
+          <strong className="block text-[15px] text-[#17201b]">Tableau de Bord Commandement</strong>
         </div>
       </div>
 
