@@ -111,7 +111,8 @@ export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
           e.stopPropagation()
           onSelectRef.current({ kind: 'menace', data: menace })
         })
-        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([menace.lon, menace.lat]).addTo(map)
+        // Décalé vers le haut (nord) pour ne pas masquer le nom de la localité affiché par le fond de carte.
+        new maplibregl.Marker({ element: el, anchor: 'center', offset: [0, -16] }).setLngLat([menace.lon, menace.lat]).addTo(map)
       })
 
       situation.checkpoints.forEach((checkpoint: CheckpointSituation) => {
