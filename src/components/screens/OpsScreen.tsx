@@ -36,7 +36,7 @@ type OngletOps =
   | 'administration'
 
 const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> = [
-  { id: 'situation', label: 'Situation', icone: <Home size={16} /> },
+  { id: 'situation', label: 'Point de Situation', icone: <Home size={16} /> },
   { id: 'liveops', label: 'LIVE OPS', icone: <Video size={16} /> },
   { id: 'unites', label: 'Unités', icone: <Diamond size={16} /> },
   { id: 'renseignement', label: 'Renseignement', icone: <Eye size={16} /> },
