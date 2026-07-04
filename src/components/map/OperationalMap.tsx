@@ -13,6 +13,13 @@ const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const CENTRE_INITIAL: [number, number] = [-11.0, 18.1]
 const ZOOM_INITIAL = 4.9
 
+// Sans ce plugin, MapLibre affiche les lettres arabes isolées au lieu de les lier correctement
+// (ex. noms de localités mauritaniennes du fond de carte) — un défaut connu du moteur de rendu.
+maplibregl.setRTLTextPlugin(
+  'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js',
+  true,
+)
+
 function symboleUniteSvg(typeUnite: TypeUnite, taille: number) {
   return new ms.Symbol(typeUniteSidc[typeUnite], { size: taille, fillColor: couleurAmie }).asSVG()
 }
