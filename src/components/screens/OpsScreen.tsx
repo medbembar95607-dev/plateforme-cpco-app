@@ -56,7 +56,7 @@ export function OpsScreen({ evenements }: OpsScreenProps) {
   const [onglet, setOnglet] = useState<OngletOps>('situation')
 
   return (
-    <div className="grid min-h-0 grid-rows-[auto_1fr] gap-3">
+    <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3">
       <nav className="flex flex-wrap gap-1.5 border-b border-[#d8ded9] pb-2" aria-label="Sous-navigation OPS">
         {onglets.map((o) => (
           <button
