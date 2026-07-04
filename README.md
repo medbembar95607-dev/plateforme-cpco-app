@@ -31,9 +31,11 @@ npm run dev
 
 ## Écrans
 
-9 écrans, accessibles depuis la barre latérale : Situation (carte COP + tableau de bord), Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+10 écrans, accessibles depuis la barre latérale : Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
 
-Les 5 premiers reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Les 4 derniers (Ordres, Incidents, Alertes, Administration) sont une première implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
+Les 5 écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
+
+**LIVE OPS** (ajouté le 2026-07-03) : deux panneaux empilés — carte des unités engagées (statut en mission/en progression) en haut, et en bas un suivi "live" d'une unité + drone d'appui. Le mouvement de l'unité et du drone, ainsi que le flux vidéo (`DroneVideoFeed.tsx`), sont **entièrement simulés côté frontend** — aucun drone ni caméra réelle n'est connecté, et ces données ne viennent pas de l'API (pas de table `drones` dans le modèle de données).
 
 Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes).
 
@@ -56,3 +58,4 @@ src/
 - Pas de mode hors-ligne (axe encore en hypothèse de travail, voir `../plateforme-cpco/02-architecture/decisions.md`)
 - Écrans Ordres/Incidents/Alertes/Administration non validés par capture d'un prototype existant, contrairement aux 5 premiers
 - Le "Flux opérationnel" de l'écran Situation reste un journal local à la session (pas encore persisté côté API)
+- LIVE OPS : drone et flux vidéo entièrement simulés, aucune intégration matérielle réelle (voir section Écrans)
