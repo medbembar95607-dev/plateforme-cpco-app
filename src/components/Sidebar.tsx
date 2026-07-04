@@ -1,8 +1,9 @@
-import { AlertTriangle, ClipboardList, Diamond, Eye, FileText, Home, Settings, Siren, Square } from 'lucide-react'
+import { AlertTriangle, ClipboardList, Diamond, Eye, FileText, Home, Settings, Siren, Square, Video } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 
 export type Vue =
   | 'situation'
+  | 'liveops'
   | 'unites'
   | 'renseignement'
   | 'logistique'
@@ -14,6 +15,7 @@ export type Vue =
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'situation', label: 'Situation', icone: <Home size={17} /> },
+  { vue: 'liveops', label: 'LIVE OPS', icone: <Video size={17} /> },
   { vue: 'unites', label: 'Unités', icone: <Diamond size={17} /> },
   { vue: 'renseignement', label: 'Renseignement', icone: <Eye size={17} /> },
   { vue: 'logistique', label: 'Logistique', icone: <Square size={17} /> },
