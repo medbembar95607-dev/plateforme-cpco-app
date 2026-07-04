@@ -209,7 +209,7 @@ export function CourrierScreen() {
                       <option key={d}>{d}</option>
                     ))}
                   </select>
-                  <button onClick={orienter} className="h-9 shrink-0 rounded-lg border border-[#d8ded9] bg-white px-3 text-sm text-[#17201b]">
+                  <button onClick={orienter} className="h-9 shrink-0 rounded-lg border border-blue-700 bg-blue-600 px-3 text-sm text-white">
                     Orienter
                   </button>
                 </div>
@@ -220,14 +220,14 @@ export function CourrierScreen() {
                 <button
                   onClick={genererOrdre}
                   disabled={!!selectionne.ordreGenereId}
-                  className="h-9 rounded-lg border border-[#d8ded9] bg-white px-3 text-sm text-[#17201b] disabled:opacity-50"
+                  className="h-9 rounded-lg border border-violet-700 bg-violet-600 px-3 text-sm text-white disabled:opacity-50"
                 >
                   {selectionne.ordreGenereId ? 'Ordre déjà généré' : 'Générer un ordre'}
                 </button>
-                <button onClick={marquerTraite} className="h-9 rounded-lg border border-[#d8ded9] bg-white px-3 text-sm text-[#17201b]">
+                <button onClick={marquerTraite} className="h-9 rounded-lg border border-emerald-700 bg-emerald-600 px-3 text-sm text-white">
                   Marquer traité
                 </button>
-                <button onClick={classerSansSuite} className="h-9 rounded-lg border border-[#d8ded9] bg-white px-3 text-sm text-[#17201b]">
+                <button onClick={classerSansSuite} className="h-9 rounded-lg border border-gray-500 bg-gray-400 px-3 text-sm text-white">
                   Classer sans suite
                 </button>
               </div>
