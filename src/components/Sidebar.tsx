@@ -35,7 +35,7 @@ export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
       <div className="flex items-center gap-3 border-b border-white/10 px-2 pb-3.5">
         <div className="grid h-[42px] w-[42px] place-items-center rounded-lg bg-[#e2eee5] font-extrabold text-[#17201b]">C2</div>
         <div>
-          <strong className="block text-[15px] text-white">CPCO COP</strong>
+          <strong className="block text-[15px] text-white">Tableau de Bord COP</strong>
           <span className="block text-xs text-[#bdc9c0]">Centre opérationnel</span>
         </div>
       </div>
