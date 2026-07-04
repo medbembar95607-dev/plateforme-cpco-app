@@ -9,8 +9,9 @@ import type { CheckpointSituation, ElementSelectionne, MenaceSituation, TypeUnit
 import { couleurAmie, typeUniteSidc } from '../../uniteStyle'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
-const CENTRE_INITIAL: [number, number] = [-15.978, 18.185]
-const ZOOM_INITIAL = 10.6
+// Vue élargie au territoire mauritanien (+ Léré au Mali) depuis la répartition du 2026-07-03.
+const CENTRE_INITIAL: [number, number] = [-11.0, 18.1]
+const ZOOM_INITIAL = 4.9
 
 function symboleUniteSvg(typeUnite: TypeUnite, taille: number) {
   return new ms.Symbol(typeUniteSidc[typeUnite], { size: taille, fillColor: couleurAmie }).asSVG()
