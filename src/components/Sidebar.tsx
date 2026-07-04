@@ -4,7 +4,7 @@ import { UserSwitcher } from './UserSwitcher'
 export type Vue = 'ops' | 'courrier'
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
-  { vue: 'ops', label: 'OPS', icone: <ShieldHalf size={17} /> },
+  { vue: 'ops', label: 'Opérations', icone: <ShieldHalf size={17} /> },
   { vue: 'courrier', label: 'Courrier du Chef', icone: <Mail size={17} /> },
 ]
 
