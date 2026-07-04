@@ -7,7 +7,7 @@ import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
 const titres: Record<Vue, [string, string]> = {
-  ops: ['OPS', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
+  ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
 }
 
