@@ -20,7 +20,6 @@ export function Sidebar({ vueActive, onChangeVue }: SidebarProps) {
         <div className="h-[42px] w-[42px] rounded-lg bg-[#e2eee5]" />
         <div>
           <strong className="block text-[15px] text-[#17201b]">Tableau de Bord CEMGA</strong>
-          <span className="block text-xs text-[#5c4a10]">Centre opérationnel</span>
         </div>
       </div>
 
