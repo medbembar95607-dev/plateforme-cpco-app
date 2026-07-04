@@ -41,7 +41,7 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
   const kpis = [
     { label: 'Opérations actives', valeur: String(situation.kpis.operationsActives), note: 'en cours ou sous tension' },
     { label: 'Unités engagées', valeur: String(situation.kpis.unitesEngagees), note: 'toutes unités suivies' },
-    { label: 'Effectifs engagés', valeur: situation.kpis.effectifsEngages.toLocaleString('fr-FR'), note: 'secteur Nouakchott Nord' },
+    { label: 'Effectifs engagés', valeur: situation.kpis.effectifsEngages.toLocaleString('fr-FR'), note: 'territoire national' },
     { label: 'Menaces détectées', valeur: String(situation.kpis.menacesDetectees), note: `${situation.kpis.menacesConfirmees} confirmées` },
     { label: 'Niveau logistique', valeur: `${situation.kpis.niveauLogistiquePct}%`, note: 'moyenne carburant' },
   ]
@@ -53,7 +53,7 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
       <div className="grid min-h-0 grid-cols-[minmax(440px,1fr)_360px] gap-4">
         <section className="grid min-h-0 grid-rows-[auto_1fr] overflow-hidden rounded-lg border border-[#d8ded9] bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-[#d8ded9] px-3.5 py-3">
-            <h2 className="m-0 text-base text-[#17201b]">Vue COP - secteur Nouakchott Nord</h2>
+            <h2 className="m-0 text-base text-[#17201b]">Vue COP</h2>
             <div className="flex flex-wrap justify-end gap-2">
               {couches.map((couche) => (
                 <span
