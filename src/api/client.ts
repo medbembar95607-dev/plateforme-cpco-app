@@ -45,6 +45,27 @@ export interface SituationDTO {
   }
 }
 
+export interface CourrierDTO {
+  id: string
+  numero: string
+  typeDocument: string
+  origine: string
+  expediteur: string
+  objet: string
+  resume: string
+  contenu: string
+  classification: string
+  priorite: string
+  statut: string
+  dateReception: string
+  dateLimiteReponse: string | null
+  annotation: string | null
+  annotePar: string | null
+  dateAnnotation: string | null
+  orienteVers: string | null
+  ordreGenereId: string | null
+}
+
 export const api = {
   situation: () => request<SituationDTO>('/situation'),
   units: () =>
@@ -85,4 +106,12 @@ export const api = {
   adminRoles: () => request<Record<string, string[]>>('/admin/roles'),
   adminAuditLog: () =>
     request<Array<{ horodatage: string; utilisateur: string; action: string; tableCible: string; enregistrementId: string }>>('/admin/audit-log'),
+  courriers: () => request<CourrierDTO[]>('/courriers'),
+  annoterCourrier: (id: string, annotation: string) =>
+    request<CourrierDTO>(`/courriers/${id}/annoter`, { method: 'POST', body: JSON.stringify({ annotation }) }),
+  orienterCourrier: (id: string, destination: string) =>
+    request<CourrierDTO>(`/courriers/${id}/orienter`, { method: 'POST', body: JSON.stringify({ destination }) }),
+  classerCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/classer`, { method: 'POST' }),
+  traiterCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/traiter`, { method: 'POST' }),
+  genererOrdreDepuisCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/generer-ordre`, { method: 'POST' }),
 }
