@@ -19,7 +19,7 @@ function symboleUniteSvg(typeUnite: TypeUnite, taille: number) {
 
 function marqueurRond(lettre: string, couleur: string) {
   const el = document.createElement('button')
-  el.className = 'grid h-9 w-9 place-items-center rounded-full border-[3px] border-white font-extrabold text-white shadow-lg'
+  el.className = 'grid h-[26px] w-[26px] place-items-center rounded-full border-2 border-white text-xs font-extrabold text-white shadow-lg'
   el.style.background = couleur
   el.textContent = lettre
   return el
