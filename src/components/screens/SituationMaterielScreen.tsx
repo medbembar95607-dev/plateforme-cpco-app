@@ -52,7 +52,7 @@ export function SituationMaterielScreen() {
   const [materiels, setMateriels] = useState<MaterielDTO[]>([])
   const [indicateurs, setIndicateurs] = useState<IndicateursMaterielDTO | null>(null)
   const [rubrique, setRubrique] = useState<Rubrique>('en_dotation')
-  const [armeeFiltre, setArmeeFiltre] = useState<string>('toutes')
+  const [armeeFiltre, setArmeeFiltre] = useState<string>(Object.keys(armeeLabel)[0])
   const [groupeFiltre, setGroupeFiltre] = useState<string>(groupes[0])
 
   useEffect(() => {
@@ -60,9 +60,7 @@ export function SituationMaterielScreen() {
     api.materielIndicateurs().then(setIndicateurs)
   }, [])
 
-  const lignes = materiels.filter(
-    (m) => m.statutDotation === rubrique && (armeeFiltre === 'toutes' || m.armee === armeeFiltre) && groupeDeCategorie[m.categorie] === groupeFiltre,
-  )
+  const lignes = materiels.filter((m) => m.statutDotation === rubrique && m.armee === armeeFiltre && groupeDeCategorie[m.categorie] === groupeFiltre)
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
@@ -108,12 +106,6 @@ export function SituationMaterielScreen() {
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => setArmeeFiltre('toutes')}
-            className={`h-8 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === 'toutes' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
-          >
-            Toutes les armées
-          </button>
           {Object.entries(armeeLabel).map(([valeur, label]) => (
             <button
               key={valeur}
