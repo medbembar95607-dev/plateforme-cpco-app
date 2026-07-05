@@ -10,7 +10,7 @@ import type { EvenementFlux } from './types'
 const titres: Record<Vue, [string, string]> = {
   ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
-  calendrier: ['Calendrier du Chef', 'Gestion des rendez-vous et engagements du chef'],
+  calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
 }
 
 const evenementsInitiaux: EvenementFlux[] = [

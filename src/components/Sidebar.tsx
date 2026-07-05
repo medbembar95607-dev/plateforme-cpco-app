@@ -6,7 +6,7 @@ export type Vue = 'ops' | 'courrier' | 'calendrier'
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'ops', label: 'Les Opérations', icone: <ShieldHalf size={17} /> },
   { vue: 'courrier', label: 'Parapheur Numérique', icone: <Mail size={17} /> },
-  { vue: 'calendrier', label: 'Calendrier du Chef', icone: <Calendar size={17} /> },
+  { vue: 'calendrier', label: 'Agenda du Chef', icone: <Calendar size={17} /> },
 ]
 
 interface SidebarProps {
