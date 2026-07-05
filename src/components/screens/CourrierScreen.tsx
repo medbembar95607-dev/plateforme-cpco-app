@@ -36,14 +36,14 @@ const statutLabel: Record<string, { label: string; badge: string }> = {
 }
 
 const destinations = [
+  'Ministère de la Défense',
+  'CMGAA',
+  'Chef Division',
+  'Directeur',
   'Officier opérations (OPS)',
   'Officier renseignement (RENS)',
   'Officier logistique (LOG)',
   'Administration',
-  'Chef Division',
-  'Directeur',
-  'Ministère de la Défense',
-  'CMGAA',
   'Externe',
 ]
 
