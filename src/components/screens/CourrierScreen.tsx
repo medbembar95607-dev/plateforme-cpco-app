@@ -72,10 +72,17 @@ export function CourrierScreen() {
 
   const aTraiter = courriers.filter((c) => c.statut !== 'traite' && c.statut !== 'classe_sans_suite').length
 
+  function choisirDecision(valeur: string) {
+    setDecision(valeur)
+    setBrouillonAnnotation((prev) => {
+      const sansDecision = prev.replace(/^\[[^\]]+\]\s*/, '')
+      return valeur ? `[${valeur}] ${sansDecision}` : sansDecision
+    })
+  }
+
   async function enregistrerAnnotation() {
     if (!selectionne) return
-    const texte = decision ? `[${decision}] ${brouillonAnnotation}` : brouillonAnnotation
-    await api.annoterCourrier(selectionne.id, texte)
+    await api.annoterCourrier(selectionne.id, brouillonAnnotation)
     charger()
   }
 
@@ -183,7 +190,7 @@ export function CourrierScreen() {
                 <select
                   id="decision"
                   value={decision}
-                  onChange={(e) => setDecision(e.target.value)}
+                  onChange={(e) => choisirDecision(e.target.value)}
                   className="h-9 rounded-lg border border-[#d8ded9] px-2 text-sm"
                 >
                   <option value="">Décision…</option>
