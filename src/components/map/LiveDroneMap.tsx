@@ -43,7 +43,7 @@ export function LiveDroneMap({ unite }: LiveDroneMapProps) {
       container: conteneurRef.current,
       style: STYLE_URL,
       center: centre,
-      zoom: 13,
+      zoom: 10,
     })
     mapRef.current = map
     map.dragRotate.disable()
@@ -64,7 +64,7 @@ export function LiveDroneMap({ unite }: LiveDroneMapProps) {
     })
 
     let angle = 0
-    const rayon = 0.006
+    const rayon = 0.02
     const intervalle = setInterval(() => {
       const jitterLon = unite.lon! + (Math.random() - 0.5) * 0.0008
       const jitterLat = unite.lat! + (Math.random() - 0.5) * 0.0008
