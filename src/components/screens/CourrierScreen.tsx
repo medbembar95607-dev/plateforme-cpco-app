@@ -189,7 +189,7 @@ export function CourrierScreen() {
                     {selectionne.dateAnnotation ? ` — ${new Date(selectionne.dateAnnotation).toLocaleString('fr-FR')}` : ''}
                   </span>
                 )}
-                <button onClick={enregistrerAnnotation} className="h-9 rounded-lg border border-[#17201b] bg-[#17201b] px-3 text-sm text-white">
+                <button onClick={enregistrerAnnotation} className="h-9 rounded-lg border border-sky-400 bg-sky-400 px-3 text-sm text-[#17201b]">
                   Enregistrer l'annotation
                 </button>
               </div>
