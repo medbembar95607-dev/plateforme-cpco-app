@@ -7,17 +7,6 @@ const armeeLabel: Record<string, string> = {
   mer: 'Marine',
 }
 
-const categorieLabel: Record<string, string> = {
-  vehicule: 'Véhicule',
-  arme: 'Arme',
-  munition: 'Munition',
-  aeronef: 'Aéronef',
-  navire: 'Navire',
-  communication: 'Communication',
-  optique: 'Optique',
-  equipement: 'Équipement',
-}
-
 // Regroupement des catégories précises en grandes familles de matériel + Autre (radio, optique, équipements divers).
 const groupeDeCategorie: Record<string, string> = {
   navire: 'bateau',
@@ -156,9 +145,7 @@ export function SituationMaterielScreen() {
           <thead>
             <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Formation d'affectation</th>
-              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Catégorie</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Type</th>
-              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Nom</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Fonction</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Caractéristiques</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">État</th>
@@ -169,9 +156,7 @@ export function SituationMaterielScreen() {
             {lignes.map((m) => (
               <tr key={m.id} className={m.enAlerte ? 'bg-red-50/50' : undefined}>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.formationAffectation}</td>
-                <td className="border-b border-[#d8ded9] px-3 py-3">{categorieLabel[m.categorie] ?? m.categorie}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.typeMateriel}</td>
-                <td className="border-b border-[#d8ded9] px-3 py-3">{m.nom}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.fonction}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-xs text-[#65706a]">{m.caracteristiques}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">
@@ -193,7 +178,7 @@ export function SituationMaterielScreen() {
             ))}
             {lignes.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                <td colSpan={6} className="px-3 py-6 text-center text-sm text-[#65706a]">
                   Aucun matériel pour ce filtre.
                 </td>
               </tr>
