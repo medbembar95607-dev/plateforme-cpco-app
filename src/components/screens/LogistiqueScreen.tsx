@@ -39,6 +39,7 @@ export function LogistiqueScreen() {
           <option>Munitions</option>
           <option>Vivres</option>
           <option>Maintenance</option>
+          <option>Armement</option>
         </select>
         <button className="h-10 rounded-lg border border-[#17201b] bg-[#17201b] px-3.5 text-white">Planifier ravitaillement</button>
       </div>
