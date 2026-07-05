@@ -78,6 +78,8 @@ export interface MaterielDTO {
   statutDotation: string
   etat: string
   quantite: number
+  quantiteOperationnelle: number
+  quantiteHorsService: number
   seuilAlerte: number
   dotationTed: number
   ecart: number

@@ -150,6 +150,7 @@ export function SituationMaterielScreen() {
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Caractéristiques</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">État</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Quantité</th>
+              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Hors service</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">TED</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Écart</th>
             </tr>
@@ -176,6 +177,13 @@ export function SituationMaterielScreen() {
                     )}
                   </div>
                 </td>
+                <td className="border-b border-[#d8ded9] px-3 py-3">
+                  {m.quantiteHorsService > 0 ? (
+                    <span className="font-bold text-amber-700">{m.quantiteHorsService}</span>
+                  ) : (
+                    <span className="text-[#65706a]">0</span>
+                  )}
+                </td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-[#65706a]">{m.dotationTed}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">
                   <span className={`font-bold ${m.ecart < 0 ? 'text-red-700' : m.ecart > 0 ? 'text-emerald-700' : 'text-[#65706a]'}`}>
@@ -186,7 +194,7 @@ export function SituationMaterielScreen() {
             ))}
             {lignes.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                <td colSpan={9} className="px-3 py-6 text-center text-sm text-[#65706a]">
                   Aucun matériel pour ce filtre.
                 </td>
               </tr>
