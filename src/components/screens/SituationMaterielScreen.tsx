@@ -18,12 +18,12 @@ const categorieLabel: Record<string, string> = {
   equipement: 'Équipement',
 }
 
-// Regroupement des catégories précises en grandes familles de matériel + Autre (armes, radio, optique, équipements divers).
+// Regroupement des catégories précises en grandes familles de matériel + Autre (radio, optique, équipements divers).
 const groupeDeCategorie: Record<string, string> = {
   navire: 'bateau',
   aeronef: 'avion',
   vehicule: 'vehicule',
-  arme: 'autre',
+  arme: 'armement',
   munition: 'munition',
   communication: 'autre',
   optique: 'autre',
@@ -33,12 +33,13 @@ const groupeDeCategorie: Record<string, string> = {
 const groupeLabel: Record<string, string> = {
   bateau: 'Bateau',
   avion: 'Avion',
-  vehicule: 'Véhicule (tout type)',
+  vehicule: 'Véhicule',
+  armement: 'Armement',
   munition: 'Munition',
   autre: 'Autre',
 }
 
-const groupes = ['bateau', 'avion', 'vehicule', 'munition', 'autre']
+const groupes = ['bateau', 'avion', 'vehicule', 'armement', 'munition', 'autre']
 
 const etatStyle: Record<string, { label: string; badge: string }> = {
   operationnel: { label: 'Opérationnel', badge: 'bg-emerald-50 text-emerald-700' },
