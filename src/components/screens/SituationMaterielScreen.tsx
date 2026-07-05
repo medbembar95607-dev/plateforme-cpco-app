@@ -18,12 +18,12 @@ const categorieLabel: Record<string, string> = {
   equipement: 'Équipement',
 }
 
-// Regroupement des catégories précises en 5 grandes familles de matériel + Autre (radio, optique, équipements divers).
+// Regroupement des catégories précises en grandes familles de matériel + Autre (armes, radio, optique, équipements divers).
 const groupeDeCategorie: Record<string, string> = {
   navire: 'bateau',
   aeronef: 'avion',
   vehicule: 'vehicule',
-  arme: 'armement',
+  arme: 'autre',
   munition: 'munition',
   communication: 'autre',
   optique: 'autre',
@@ -34,12 +34,11 @@ const groupeLabel: Record<string, string> = {
   bateau: 'Bateau',
   avion: 'Avion',
   vehicule: 'Véhicule (tout type)',
-  armement: 'Armement (tout type)',
   munition: 'Munition',
   autre: 'Autre',
 }
 
-const groupes = ['bateau', 'avion', 'vehicule', 'armement', 'munition', 'autre']
+const groupes = ['bateau', 'avion', 'vehicule', 'munition', 'autre']
 
 const etatStyle: Record<string, { label: string; badge: string }> = {
   operationnel: { label: 'Opérationnel', badge: 'bg-emerald-50 text-emerald-700' },
@@ -54,7 +53,7 @@ export function SituationMaterielScreen() {
   const [indicateurs, setIndicateurs] = useState<IndicateursMaterielDTO | null>(null)
   const [rubrique, setRubrique] = useState<Rubrique>('en_dotation')
   const [armeeFiltre, setArmeeFiltre] = useState<string>('toutes')
-  const [groupeFiltre, setGroupeFiltre] = useState<string>('toutes')
+  const [groupeFiltre, setGroupeFiltre] = useState<string>(groupes[0])
 
   useEffect(() => {
     api.materiels().then(setMateriels)
@@ -62,10 +61,7 @@ export function SituationMaterielScreen() {
   }, [])
 
   const lignes = materiels.filter(
-    (m) =>
-      m.statutDotation === rubrique &&
-      (armeeFiltre === 'toutes' || m.armee === armeeFiltre) &&
-      (groupeFiltre === 'toutes' || groupeDeCategorie[m.categorie] === groupeFiltre),
+    (m) => m.statutDotation === rubrique && (armeeFiltre === 'toutes' || m.armee === armeeFiltre) && groupeDeCategorie[m.categorie] === groupeFiltre,
   )
 
   return (
@@ -130,12 +126,6 @@ export function SituationMaterielScreen() {
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => setGroupeFiltre('toutes')}
-            className={`h-8 rounded-lg px-2.5 text-xs ${groupeFiltre === 'toutes' ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
-          >
-            Toutes catégories
-          </button>
           {groupes.map((g) => (
             <button
               key={g}
