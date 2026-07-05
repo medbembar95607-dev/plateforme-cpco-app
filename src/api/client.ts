@@ -75,7 +75,9 @@ export const api = {
       '/intelligence-reports',
     ),
   logistics: () =>
-    request<Array<{ uniteId: string; uniteNom: string; carburantPct: number; munitionsPct: number; vivresPct: number; maintenancePct: number; alerte: string }>>('/logistics'),
+    request<
+      Array<{ uniteId: string; uniteNom: string; carburantPct: number; munitionsPct: number; vivresPct: number; maintenancePct: number; armementPct: number; alerte: string }>
+    >('/logistics'),
   logisticsThresholds: () => request<Record<string, number>>('/logistics/thresholds'),
   operations: () =>
     request<Array<{ id: string; code_operation: string; nom_operation: string; objectif: string; statut: string; priorite: string; progression: number }>>('/operations'),

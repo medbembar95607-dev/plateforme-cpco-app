@@ -28,7 +28,9 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
         ...situationData,
         unites: situationData.unites.map((unite) => {
           const logistique = logistiqueParUnite.get(unite.id)
-          return logistique ? { ...unite, carburantPct: logistique.carburantPct, munitionsPct: logistique.munitionsPct } : unite
+          return logistique
+            ? { ...unite, carburantPct: logistique.carburantPct, munitionsPct: logistique.munitionsPct, armementPct: logistique.armementPct }
+            : unite
         }),
       })
     })
