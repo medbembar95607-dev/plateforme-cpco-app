@@ -31,7 +31,7 @@ npm run dev
 
 ## Écrans
 
-La barre latérale comporte 3 entrées : **Les Opérations**, **Parapheur Numérique** et **Calendrier du Chef**. Les Opérations (`OpsScreen.tsx`) regroupe les 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+La barre latérale comporte 3 entrées : **Les Opérations**, **Parapheur Numérique** et **Agenda du Chef**. Les Opérations (`OpsScreen.tsx`) regroupe 11 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Situation Matériel, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
 
 Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
 
@@ -39,9 +39,11 @@ Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reprod
 
 **Parapheur Numérique** (ajouté le 2026-07-03) : outil de triage de la correspondance qui remonte au chef d'état-major (subordonnés, Ministère de la Défense, institutions externes) — résumé court par courrier, annotation avec liste de décision (Accord, M'en parler, Rejet...), orientation vers une cellule (OPS/RENS/LOG, Chef Division, Directeur, Ministère, CMGAA...), et génération directe d'un ordre à partir d'un courrier. Modélisé sur le principe du "parapheur" administratif.
 
-**Calendrier du Chef** (ajouté le 2026-07-05) : gestion des rendez-vous et engagements du chef (réunions, audiences, déplacements, cérémonies, briefings) — création, confirmation ou annulation, avec lieu, participants et classification. Table `rendez_vous` dédiée côté API.
+**Agenda du Chef** (ajouté le 2026-07-05) : gestion des rendez-vous et engagements du chef (réunions, audiences, déplacements, cérémonies, briefings) — création, confirmation ou annulation, avec lieu, participants et classification. Table `rendez_vous` dédiée côté API.
 
-Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes), annoter/orienter/classer/générer un ordre (écran Parapheur Numérique), créer/confirmer/annuler un rendez-vous (écran Calendrier du Chef).
+**Situation Matériel** (ajouté le 2026-07-05, sous-onglet de Les Opérations) : suivi du matériel toutes armées (Terre/Air/Marine), réparti en deux rubriques **Matériel en Dotation** et **Matériel à la Réserve** — formation d'affectation, catégorie, type, nom, fonction, caractéristiques, état et quantité. Tableau de bord d'indicateurs (totaux dotation/réserve, répartition par armée) et alerte visuelle quand la quantité d'un matériel passe sous son seuil défini. Table `materiels` dédiée côté API.
+
+Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes), annoter/orienter/classer/générer un ordre (écran Parapheur Numérique), créer/confirmer/annuler un rendez-vous (écran Agenda du Chef).
 
 ## Structure
 
