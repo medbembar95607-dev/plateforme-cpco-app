@@ -17,6 +17,15 @@ export const typeUniteLabel: Record<TypeUnite, string> = {
   logistique: 'Logistique',
 }
 
+// Échelons de la hiérarchie militaire conventionnelle (du plus petit au plus grand).
+export const echelonLabel: Record<string, string> = {
+  section: 'Section',
+  compagnie: 'Compagnie',
+  bataillon: 'Bataillon',
+  groupement: 'Groupement',
+  brigade: 'Brigade',
+}
+
 // Couleur de remplissage APP-6 standard pour une unité amie (bleu).
 export const couleurAmie = '#1f6fb2'
 

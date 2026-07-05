@@ -1,5 +1,5 @@
 import type { ElementSelectionne } from '../types'
-import { statutUniteStyle } from '../uniteStyle'
+import { echelonLabel, statutUniteStyle } from '../uniteStyle'
 
 function construireDetail(selection: ElementSelectionne) {
   switch (selection.kind) {
@@ -14,7 +14,7 @@ function construireDetail(selection: ElementSelectionne) {
         titre: u.nom,
         sousTitre: `Unité amie - ${statutUniteStyle[u.statut as keyof typeof statutUniteStyle]?.label ?? u.statut}.`,
         kv: [
-          { label: 'Type', valeur: 'Unité amie' },
+          { label: 'Type', valeur: echelonLabel[u.echelon] ?? u.echelon },
           { label: 'Statut', valeur: statutUniteStyle[u.statut as keyof typeof statutUniteStyle]?.label ?? u.statut },
           { label: 'Personnel', valeur: `${u.effectif} pers. déployés` },
           { label: 'Logistique', valeur: logistique },
