@@ -7,7 +7,7 @@ function construireDetail(selection: ElementSelectionne) {
       const u = selection.data
       const logistique =
         u.carburantPct != null && u.munitionsPct != null
-          ? `Carburant ${u.carburantPct}%, munitions ${u.munitionsPct}%, armement ${u.armementPct ?? 0}%`
+          ? `Carburant ${u.carburantPct}%, munitions ${u.munitionsPct}%, Armement ${u.armementPct ?? 0}%`
           : 'Non suivi'
       return {
         classification: 'Confidentiel Défense',
