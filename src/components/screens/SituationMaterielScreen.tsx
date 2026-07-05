@@ -41,9 +41,16 @@ const groupeLabel: Record<string, string> = {
 
 const groupes = ['bateau', 'avion', 'vehicule', 'armement', 'munition', 'autre']
 
-// L'Armée de Terre n'a pas de matériel Bateau/Avion.
+// Catégories non pertinentes selon l'armée : Terre n'a ni bateau ni avion, l'Air n'a pas de bateau, la Marine pas d'avion.
+const categoriesExclues: Record<string, string[]> = {
+  terre: ['bateau', 'avion'],
+  air: ['bateau'],
+  mer: ['avion'],
+}
+
 function groupesPourArmee(armee: string) {
-  return armee === 'terre' ? groupes.filter((g) => g !== 'bateau' && g !== 'avion') : groupes
+  const exclues = categoriesExclues[armee] ?? []
+  return groupes.filter((g) => !exclues.includes(g))
 }
 
 const etatStyle: Record<string, { label: string; badge: string }> = {
