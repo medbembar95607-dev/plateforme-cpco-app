@@ -16,7 +16,7 @@ function construireDetail(selection: ElementSelectionne) {
         kv: [
           { label: 'Type', valeur: 'Unité amie' },
           { label: 'Statut', valeur: statutUniteStyle[u.statut as keyof typeof statutUniteStyle]?.label ?? u.statut },
-          { label: 'Position', valeur: `${u.effectif} pers. déployés` },
+          { label: 'Personnel', valeur: `${u.effectif} pers. déployés` },
           { label: 'Logistique', valeur: logistique },
         ],
       }
