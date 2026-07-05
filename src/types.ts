@@ -18,7 +18,12 @@ export interface EvenementFlux {
   description: string
 }
 
-export type UniteSituation = SituationDTO['unites'][number] & { carburantPct?: number; munitionsPct?: number; armementPct?: number }
+export type UniteSituation = SituationDTO['unites'][number] & {
+  carburantPct?: number
+  munitionsPct?: number
+  armementPct?: number
+  vivresPct?: number
+}
 export type MenaceSituation = SituationDTO['menaces'][number]
 export type CheckpointSituation = SituationDTO['checkpoints'][number]
 
