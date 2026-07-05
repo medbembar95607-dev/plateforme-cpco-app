@@ -187,25 +187,27 @@ export function CourrierScreen() {
                 <label className="text-xs font-bold uppercase tracking-wide text-[#65706a]" htmlFor="annotation">
                   Annotation du chef
                 </label>
-                <select
-                  id="decision"
-                  value={decision}
-                  onChange={(e) => choisirDecision(e.target.value)}
-                  className="h-9 rounded-lg border border-[#d8ded9] px-2 text-sm"
-                >
-                  <option value="">Décision…</option>
-                  {decisions.map((d) => (
-                    <option key={d}>{d}</option>
-                  ))}
-                </select>
-                <textarea
-                  id="annotation"
-                  rows={3}
-                  value={brouillonAnnotation}
-                  onChange={(e) => setBrouillonAnnotation(e.target.value)}
-                  placeholder="Instruction, décision, orientation…"
-                  className="rounded-lg border border-[#d8ded9] p-2 text-sm"
-                />
+                <div className="rounded-lg border border-[#d8ded9]">
+                  <select
+                    id="decision"
+                    value={decision}
+                    onChange={(e) => choisirDecision(e.target.value)}
+                    className="h-9 w-full border-b border-[#d8ded9] bg-transparent px-2 text-sm"
+                  >
+                    <option value="">Décision…</option>
+                    {decisions.map((d) => (
+                      <option key={d}>{d}</option>
+                    ))}
+                  </select>
+                  <textarea
+                    id="annotation"
+                    rows={3}
+                    value={brouillonAnnotation}
+                    onChange={(e) => setBrouillonAnnotation(e.target.value)}
+                    placeholder="Instruction, décision, orientation…"
+                    className="w-full border-0 p-2 text-sm outline-none"
+                  />
+                </div>
                 {selectionne.annotePar && (
                   <span className="text-xs text-[#65706a]">
                     Dernière annotation par {selectionne.annotePar}
