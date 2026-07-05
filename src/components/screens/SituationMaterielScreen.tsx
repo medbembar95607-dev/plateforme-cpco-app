@@ -18,6 +18,29 @@ const categorieLabel: Record<string, string> = {
   equipement: 'Équipement',
 }
 
+// Regroupement des catégories précises en 5 grandes familles de matériel + Autre (radio, optique, équipements divers).
+const groupeDeCategorie: Record<string, string> = {
+  navire: 'bateau',
+  aeronef: 'avion',
+  vehicule: 'vehicule',
+  arme: 'armement',
+  munition: 'munition',
+  communication: 'autre',
+  optique: 'autre',
+  equipement: 'autre',
+}
+
+const groupeLabel: Record<string, string> = {
+  bateau: 'Bateau',
+  avion: 'Avion',
+  vehicule: 'Véhicule (tout type)',
+  armement: 'Armement (tout type)',
+  munition: 'Munition',
+  autre: 'Autre',
+}
+
+const groupes = ['bateau', 'avion', 'vehicule', 'armement', 'munition', 'autre']
+
 const etatStyle: Record<string, { label: string; badge: string }> = {
   operationnel: { label: 'Opérationnel', badge: 'bg-emerald-50 text-emerald-700' },
   maintenance: { label: 'En maintenance', badge: 'bg-amber-50 text-amber-700' },
@@ -31,13 +54,19 @@ export function SituationMaterielScreen() {
   const [indicateurs, setIndicateurs] = useState<IndicateursMaterielDTO | null>(null)
   const [rubrique, setRubrique] = useState<Rubrique>('en_dotation')
   const [armeeFiltre, setArmeeFiltre] = useState<string>('toutes')
+  const [groupeFiltre, setGroupeFiltre] = useState<string>('toutes')
 
   useEffect(() => {
     api.materiels().then(setMateriels)
     api.materielIndicateurs().then(setIndicateurs)
   }, [])
 
-  const lignes = materiels.filter((m) => m.statutDotation === rubrique && (armeeFiltre === 'toutes' || m.armee === armeeFiltre))
+  const lignes = materiels.filter(
+    (m) =>
+      m.statutDotation === rubrique &&
+      (armeeFiltre === 'toutes' || m.armee === armeeFiltre) &&
+      (groupeFiltre === 'toutes' || groupeDeCategorie[m.categorie] === groupeFiltre),
+  )
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
@@ -66,7 +95,7 @@ export function SituationMaterielScreen() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="grid gap-2.5">
         <div className="flex gap-1.5">
           <button
             onClick={() => setRubrique('en_dotation')}
@@ -81,14 +110,42 @@ export function SituationMaterielScreen() {
             Matériel à la Réserve
           </button>
         </div>
-        <select value={armeeFiltre} onChange={(e) => setArmeeFiltre(e.target.value)} className="h-9 rounded-lg border border-[#d8ded9] bg-white px-2.5 text-sm">
-          <option value="toutes">Toutes les armées</option>
+
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setArmeeFiltre('toutes')}
+            className={`h-8 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === 'toutes' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+          >
+            Toutes les armées
+          </button>
           {Object.entries(armeeLabel).map(([valeur, label]) => (
-            <option key={valeur} value={valeur}>
+            <button
+              key={valeur}
+              onClick={() => setArmeeFiltre(valeur)}
+              className={`h-8 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === valeur ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+            >
               {label}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setGroupeFiltre('toutes')}
+            className={`h-8 rounded-lg px-2.5 text-xs ${groupeFiltre === 'toutes' ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+          >
+            Toutes catégories
+          </button>
+          {groupes.map((g) => (
+            <button
+              key={g}
+              onClick={() => setGroupeFiltre(g)}
+              className={`h-8 rounded-lg px-2.5 text-xs ${groupeFiltre === g ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+            >
+              {groupeLabel[g]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="overflow-auto rounded-lg border border-[#d8ded9] bg-white shadow-sm">
