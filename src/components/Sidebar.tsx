@@ -1,12 +1,13 @@
-import { Calendar, Mail, ShieldHalf } from 'lucide-react'
+import { Boxes, Calendar, Mail, ShieldHalf } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 
-export type Vue = 'ops' | 'courrier' | 'calendrier'
+export type Vue = 'ops' | 'courrier' | 'calendrier' | 'materiel'
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'ops', label: 'Les Opérations', icone: <ShieldHalf size={17} /> },
   { vue: 'courrier', label: 'Parapheur Numérique', icone: <Mail size={17} /> },
   { vue: 'calendrier', label: 'Agenda du Chef', icone: <Calendar size={17} /> },
+  { vue: 'materiel', label: 'Situation Matériel', icone: <Boxes size={17} /> },
 ]
 
 interface SidebarProps {

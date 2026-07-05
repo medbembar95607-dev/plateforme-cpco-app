@@ -4,6 +4,7 @@ import { TopBar } from './components/TopBar'
 import { OpsScreen } from './components/screens/OpsScreen'
 import { CourrierScreen } from './components/screens/CourrierScreen'
 import { CalendrierScreen } from './components/screens/CalendrierScreen'
+import { SituationMaterielScreen } from './components/screens/SituationMaterielScreen'
 import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
@@ -11,6 +12,7 @@ const titres: Record<Vue, [string, string]> = {
   ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
   calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
+  materiel: ['Situation Matériel', 'Matériel en dotation et à la réserve, toutes armées (Terre, Air, Mer)'],
 }
 
 const evenementsInitiaux: EvenementFlux[] = [
@@ -53,6 +55,7 @@ function App() {
           {vue === 'ops' && <OpsScreen evenements={evenements} />}
           {vue === 'courrier' && <CourrierScreen />}
           {vue === 'calendrier' && <CalendrierScreen />}
+          {vue === 'materiel' && <SituationMaterielScreen />}
         </div>
       </main>
     </div>
