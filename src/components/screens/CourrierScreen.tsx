@@ -35,7 +35,7 @@ const statutLabel: Record<string, { label: string; badge: string }> = {
   traite: { label: 'Traité', badge: 'bg-emerald-50 text-emerald-700' },
 }
 
-const destinations = ['Officier opérations (OPS)', 'Officier renseignement (RENS)', 'Officier logistique (LOG)', 'Administration', 'Ministère de la Défense', 'Externe']
+const destinations = ['Officier opérations (OPS)', 'Officier renseignement (RENS)', 'Officier logistique (LOG)', 'Administration', 'Ministère de la Défense', 'CMGAA', 'Externe']
 
 const decisions = ["Accord", "M'en parler", 'Rejet', 'Pour information', 'À compléter']
 
