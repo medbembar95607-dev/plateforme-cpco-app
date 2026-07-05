@@ -49,9 +49,9 @@ export function LogistiqueScreen() {
           <thead>
             <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Unité</th>
-              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Carburant</th>
-              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Munitions</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Armement</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Munitions</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Carburant</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Vivres</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Maintenance</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Alerte</th>
@@ -62,13 +62,13 @@ export function LogistiqueScreen() {
               <tr key={ligne.uniteId}>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.uniteNom}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.carburantPct} />
+                  <Barre pct={ligne.armementPct} />
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
                   <Barre pct={ligne.munitionsPct} />
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.armementPct} />
+                  <Barre pct={ligne.carburantPct} />
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.vivresPct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.maintenancePct}%</td>
