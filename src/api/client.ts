@@ -66,6 +66,19 @@ export interface CourrierDTO {
   ordreGenereId: string | null
 }
 
+export interface RendezVousDTO {
+  id: string
+  titre: string
+  typeRdv: string
+  dateDebut: string
+  dateFin: string | null
+  lieu: string
+  participants: string
+  statut: string
+  classification: string
+  notes: string | null
+}
+
 export const api = {
   situation: () => request<SituationDTO>('/situation'),
   units: () =>
@@ -116,4 +129,9 @@ export const api = {
   classerCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/classer`, { method: 'POST' }),
   traiterCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/traiter`, { method: 'POST' }),
   genererOrdreDepuisCourrier: (id: string) => request<CourrierDTO>(`/courriers/${id}/generer-ordre`, { method: 'POST' }),
+  agenda: () => request<RendezVousDTO[]>('/agenda'),
+  creerRendezVous: (payload: { titre: string; type_rdv: string; date_debut: string; date_fin?: string; lieu: string; participants: string; classification: string }) =>
+    request<RendezVousDTO>('/agenda', { method: 'POST', body: JSON.stringify(payload) }),
+  confirmerRendezVous: (id: string) => request<RendezVousDTO>(`/agenda/${id}/confirmer`, { method: 'POST' }),
+  annulerRendezVous: (id: string) => request<RendezVousDTO>(`/agenda/${id}/annuler`, { method: 'POST' }),
 }
