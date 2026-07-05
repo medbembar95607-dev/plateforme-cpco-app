@@ -66,6 +66,31 @@ export interface CourrierDTO {
   ordreGenereId: string | null
 }
 
+export interface MaterielDTO {
+  id: string
+  nom: string
+  categorie: string
+  typeMateriel: string
+  armee: string
+  formationAffectation: string
+  fonction: string
+  caracteristiques: string
+  statutDotation: string
+  etat: string
+  quantite: number
+  seuilAlerte: number
+  classification: string
+  enAlerte: boolean
+}
+
+export interface IndicateursMaterielDTO {
+  totalDotation: number
+  totalReserve: number
+  nombreAlertes: number
+  nombreHorsService: number
+  parArmee: Record<string, number>
+}
+
 export interface RendezVousDTO {
   id: string
   titre: string
@@ -134,4 +159,6 @@ export const api = {
     request<RendezVousDTO>('/agenda', { method: 'POST', body: JSON.stringify(payload) }),
   confirmerRendezVous: (id: string) => request<RendezVousDTO>(`/agenda/${id}/confirmer`, { method: 'POST' }),
   annulerRendezVous: (id: string) => request<RendezVousDTO>(`/agenda/${id}/annuler`, { method: 'POST' }),
+  materiels: () => request<MaterielDTO[]>('/materiels'),
+  materielIndicateurs: () => request<IndicateursMaterielDTO>('/materiels/indicateurs'),
 }

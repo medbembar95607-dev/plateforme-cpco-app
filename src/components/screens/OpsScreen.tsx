@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   AlertTriangle,
+  Boxes,
   ClipboardList,
   Diamond,
   Eye,
@@ -16,6 +17,7 @@ import { LiveOpsScreen } from './LiveOpsScreen'
 import { UnitesScreen } from './UnitesScreen'
 import { RenseignementScreen } from './RenseignementScreen'
 import { LogistiqueScreen } from './LogistiqueScreen'
+import { SituationMaterielScreen } from './SituationMaterielScreen'
 import { OperationsScreen } from './OperationsScreen'
 import { OrdresScreen } from './OrdresScreen'
 import { IncidentsScreen } from './IncidentsScreen'
@@ -29,6 +31,7 @@ type OngletOps =
   | 'unites'
   | 'renseignement'
   | 'logistique'
+  | 'materiel'
   | 'operations'
   | 'ordres'
   | 'incidents'
@@ -41,6 +44,7 @@ const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> =
   { id: 'unites', label: 'Unités', icone: <Diamond size={16} /> },
   { id: 'renseignement', label: 'Renseignement', icone: <Eye size={16} /> },
   { id: 'logistique', label: 'Logistique', icone: <Square size={16} /> },
+  { id: 'materiel', label: 'Situation Matériel', icone: <Boxes size={16} /> },
   { id: 'operations', label: 'Opérations', icone: <ClipboardList size={16} /> },
   { id: 'ordres', label: 'Ordres', icone: <FileText size={16} /> },
   { id: 'incidents', label: 'Incidents', icone: <Siren size={16} /> },
@@ -78,6 +82,7 @@ export function OpsScreen({ evenements }: OpsScreenProps) {
         {onglet === 'unites' && <UnitesScreen />}
         {onglet === 'renseignement' && <RenseignementScreen />}
         {onglet === 'logistique' && <LogistiqueScreen />}
+        {onglet === 'materiel' && <SituationMaterielScreen />}
         {onglet === 'operations' && <OperationsScreen />}
         {onglet === 'ordres' && <OrdresScreen />}
         {onglet === 'incidents' && <IncidentsScreen />}
