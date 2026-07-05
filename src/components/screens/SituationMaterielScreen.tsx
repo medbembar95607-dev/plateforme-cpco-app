@@ -41,6 +41,11 @@ const groupeLabel: Record<string, string> = {
 
 const groupes = ['bateau', 'avion', 'vehicule', 'armement', 'munition', 'autre']
 
+// L'Armée de Terre n'a pas de matériel Bateau/Avion.
+function groupesPourArmee(armee: string) {
+  return armee === 'terre' ? groupes.filter((g) => g !== 'bateau' && g !== 'avion') : groupes
+}
+
 const etatStyle: Record<string, { label: string; badge: string }> = {
   operationnel: { label: 'Opérationnel', badge: 'bg-emerald-50 text-emerald-700' },
   maintenance: { label: 'En maintenance', badge: 'bg-amber-50 text-amber-700' },
@@ -54,12 +59,20 @@ export function SituationMaterielScreen() {
   const [indicateurs, setIndicateurs] = useState<IndicateursMaterielDTO | null>(null)
   const [rubrique, setRubrique] = useState<Rubrique>('en_dotation')
   const [armeeFiltre, setArmeeFiltre] = useState<string>(Object.keys(armeeLabel)[0])
-  const [groupeFiltre, setGroupeFiltre] = useState<string>(groupes[0])
+  const [groupeFiltre, setGroupeFiltre] = useState<string>(groupesPourArmee(Object.keys(armeeLabel)[0])[0])
 
   useEffect(() => {
     api.materiels().then(setMateriels)
     api.materielIndicateurs().then(setIndicateurs)
   }, [])
+
+  const groupesDisponibles = groupesPourArmee(armeeFiltre)
+
+  function choisirArmee(armee: string) {
+    setArmeeFiltre(armee)
+    const disponibles = groupesPourArmee(armee)
+    if (!disponibles.includes(groupeFiltre)) setGroupeFiltre(disponibles[0])
+  }
 
   const lignes = materiels.filter((m) => m.statutDotation === rubrique && m.armee === armeeFiltre && groupeDeCategorie[m.categorie] === groupeFiltre)
 
@@ -110,7 +123,7 @@ export function SituationMaterielScreen() {
           {Object.entries(armeeLabel).map(([valeur, label]) => (
             <button
               key={valeur}
-              onClick={() => setArmeeFiltre(valeur)}
+              onClick={() => choisirArmee(valeur)}
               className={`h-8 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === valeur ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
             >
               {label}
@@ -119,7 +132,7 @@ export function SituationMaterielScreen() {
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          {groupes.map((g) => (
+          {groupesDisponibles.map((g) => (
             <button
               key={g}
               onClick={() => setGroupeFiltre(g)}
