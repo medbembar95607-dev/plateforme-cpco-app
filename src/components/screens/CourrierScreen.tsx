@@ -37,6 +37,7 @@ const statutLabel: Record<string, { label: string; badge: string }> = {
 
 const destinations = [
   'Ministère de la Défense',
+  'Conseiller',
   'CMGAA',
   'Chef Division',
   'Directeur',
