@@ -150,6 +150,8 @@ export function SituationMaterielScreen() {
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Caractéristiques</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">État</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Quantité</th>
+              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">TED</th>
+              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Écart</th>
             </tr>
           </thead>
           <tbody>
@@ -174,11 +176,17 @@ export function SituationMaterielScreen() {
                     )}
                   </div>
                 </td>
+                <td className="border-b border-[#d8ded9] px-3 py-3 text-[#65706a]">{m.dotationTed}</td>
+                <td className="border-b border-[#d8ded9] px-3 py-3">
+                  <span className={`font-bold ${m.ecart < 0 ? 'text-red-700' : m.ecart > 0 ? 'text-emerald-700' : 'text-[#65706a]'}`}>
+                    {m.ecart > 0 ? `+${m.ecart}` : m.ecart}
+                  </span>
+                </td>
               </tr>
             ))}
             {lignes.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                <td colSpan={8} className="px-3 py-6 text-center text-sm text-[#65706a]">
                   Aucun matériel pour ce filtre.
                 </td>
               </tr>

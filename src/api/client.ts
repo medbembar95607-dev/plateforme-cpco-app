@@ -79,6 +79,8 @@ export interface MaterielDTO {
   etat: string
   quantite: number
   seuilAlerte: number
+  dotationTed: number
+  ecart: number
   classification: string
   enAlerte: boolean
 }
