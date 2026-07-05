@@ -37,6 +37,8 @@ const statutLabel: Record<string, { label: string; badge: string }> = {
 
 const destinations = ['Officier opérations (OPS)', 'Officier renseignement (RENS)', 'Officier logistique (LOG)', 'Administration', 'Ministère de la Défense', 'Externe']
 
+const decisions = ["Accord", "M'en parler", 'Rejet', 'Pour information', 'À compléter']
+
 function estEnRetard(c: CourrierDTO): boolean {
   if (!c.dateLimiteReponse) return false
   if (c.statut === 'traite' || c.statut === 'classe_sans_suite') return false
@@ -47,6 +49,7 @@ export function CourrierScreen() {
   const [courriers, setCourriers] = useState<CourrierDTO[]>([])
   const [selectionneId, setSelectionneId] = useState<string | null>(null)
   const [brouillonAnnotation, setBrouillonAnnotation] = useState('')
+  const [decision, setDecision] = useState('')
   const [destination, setDestination] = useState(destinations[0])
 
   function charger() {
@@ -64,13 +67,15 @@ export function CourrierScreen() {
 
   useEffect(() => {
     setBrouillonAnnotation(selectionne?.annotation ?? '')
+    setDecision('')
   }, [selectionne?.id, selectionne?.annotation])
 
   const aTraiter = courriers.filter((c) => c.statut !== 'traite' && c.statut !== 'classe_sans_suite').length
 
   async function enregistrerAnnotation() {
     if (!selectionne) return
-    await api.annoterCourrier(selectionne.id, brouillonAnnotation)
+    const texte = decision ? `[${decision}] ${brouillonAnnotation}` : brouillonAnnotation
+    await api.annoterCourrier(selectionne.id, texte)
     charger()
   }
 
@@ -175,6 +180,17 @@ export function CourrierScreen() {
                 <label className="text-xs font-bold uppercase tracking-wide text-[#65706a]" htmlFor="annotation">
                   Annotation du chef
                 </label>
+                <select
+                  id="decision"
+                  value={decision}
+                  onChange={(e) => setDecision(e.target.value)}
+                  className="h-9 rounded-lg border border-[#d8ded9] px-2 text-sm"
+                >
+                  <option value="">Décision…</option>
+                  {decisions.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
                 <textarea
                   id="annotation"
                   rows={3}
