@@ -31,15 +31,17 @@ npm run dev
 
 ## Écrans
 
-La barre latérale ne comporte que 2 entrées : **OPS** et **Courrier du Chef**. OPS (`OpsScreen.tsx`) regroupe les 10 écrans opérationnels sous forme de sous-onglets internes : Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+La barre latérale comporte 3 entrées : **Les Opérations**, **Parapheur Numérique** et **Calendrier du Chef**. Les Opérations (`OpsScreen.tsx`) regroupe les 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
 
 Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
 
 **LIVE OPS** (ajouté le 2026-07-03) : deux panneaux empilés — carte des unités engagées (statut en mission/en progression) en haut, et en bas un suivi "live" d'une unité + drone d'appui. Le mouvement de l'unité et du drone, ainsi que le flux vidéo (`DroneVideoFeed.tsx`), sont **entièrement simulés côté frontend** — aucun drone ni caméra réelle n'est connecté, et ces données ne viennent pas de l'API (pas de table `drones` dans le modèle de données).
 
-**Courrier du Chef** (ajouté le 2026-07-03) : outil de triage de la correspondance qui remonte au chef d'état-major (subordonnés, Ministère de la Défense, institutions externes) — résumé court par courrier, zone d'annotation, orientation vers une cellule, et génération directe d'un ordre à partir d'un courrier. Modélisé sur le principe du "parapheur" administratif.
+**Parapheur Numérique** (ajouté le 2026-07-03) : outil de triage de la correspondance qui remonte au chef d'état-major (subordonnés, Ministère de la Défense, institutions externes) — résumé court par courrier, annotation avec liste de décision (Accord, M'en parler, Rejet...), orientation vers une cellule (OPS/RENS/LOG, Chef Division, Directeur, Ministère, CMGAA...), et génération directe d'un ordre à partir d'un courrier. Modélisé sur le principe du "parapheur" administratif.
 
-Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes), annoter/orienter/classer/générer un ordre (écran Courrier du Chef).
+**Calendrier du Chef** (ajouté le 2026-07-05) : gestion des rendez-vous et engagements du chef (réunions, audiences, déplacements, cérémonies, briefings) — création, confirmation ou annulation, avec lieu, participants et classification. Table `rendez_vous` dédiée côté API.
+
+Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes), annoter/orienter/classer/générer un ordre (écran Parapheur Numérique), créer/confirmer/annuler un rendez-vous (écran Calendrier du Chef).
 
 ## Structure
 
