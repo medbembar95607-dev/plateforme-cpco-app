@@ -48,6 +48,7 @@ export function LiveDroneMap({ unite }: LiveDroneMapProps) {
     mapRef.current = map
     map.dragRotate.disable()
     map.touchZoomRotate.disableRotation()
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
 
     const observateurTaille = new ResizeObserver(() => map.resize())
     observateurTaille.observe(conteneurRef.current)
