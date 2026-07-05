@@ -51,6 +51,7 @@ export function LogistiqueScreen() {
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Unité</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Carburant</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Munitions</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Armement</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Vivres</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Maintenance</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Alerte</th>
@@ -65,6 +66,9 @@ export function LogistiqueScreen() {
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
                   <Barre pct={ligne.munitionsPct} />
+                </td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">
+                  <Barre pct={ligne.armementPct} />
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.vivresPct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.maintenancePct}%</td>
