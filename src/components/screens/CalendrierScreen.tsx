@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 
 const typeRdvLabel: Record<string, string> = {
@@ -26,6 +26,10 @@ function formaterHeure(iso: string) {
   return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
 
+function deux(n: number) {
+  return String(n).padStart(2, '0')
+}
+
 export function CalendrierScreen() {
   const [rendezVous, setRendezVous] = useState<Awaited<ReturnType<typeof api.agenda>>>([])
   const [titre, setTitre] = useState('')
@@ -44,6 +48,31 @@ export function CalendrierScreen() {
   useEffect(() => {
     charger()
   }, [])
+
+  const [maintenant, setMaintenant] = useState(() => Date.now())
+
+  useEffect(() => {
+    const intervalle = setInterval(() => setMaintenant(Date.now()), 1000)
+    return () => clearInterval(intervalle)
+  }, [])
+
+  const prochainRdv = useMemo(() => {
+    return (
+      rendezVous
+        .filter((r) => r.statut !== 'annule' && new Date(r.dateDebut).getTime() > maintenant)
+        .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())[0] ?? null
+    )
+  }, [rendezVous, maintenant])
+
+  const compteARebours = useMemo(() => {
+    if (!prochainRdv) return null
+    const diff = Math.max(0, new Date(prochainRdv.dateDebut).getTime() - maintenant)
+    const jours = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const heures = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    const minutes = Math.floor((diff / (1000 * 60)) % 60)
+    const secondes = Math.floor((diff / 1000) % 60)
+    return { jours, heures, minutes, secondes }
+  }, [prochainRdv, maintenant])
 
   async function ajouter() {
     if (!titre || !date || !heureDebut) return
@@ -81,6 +110,24 @@ export function CalendrierScreen() {
   return (
     <div className="grid min-h-0 grid-cols-[1fr_340px] gap-3.5">
       <div className="grid content-start gap-3 overflow-auto">
+        {prochainRdv && compteARebours && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-sky-300 bg-sky-50 p-3.5 shadow-sm">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wide text-sky-700">Rappel — Prochain rendez-vous</span>
+              <h3 className="m-0 mt-1 text-base text-[#17201b]">{prochainRdv.titre}</h3>
+              <span className="text-xs capitalize text-[#65706a]">
+                {formaterDate(prochainRdv.dateDebut)} · {formaterHeure(prochainRdv.dateDebut)}
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="block font-mono text-2xl font-bold tabular-nums text-sky-700">
+                {compteARebours.jours > 0 && `${compteARebours.jours}j `}
+                {deux(compteARebours.heures)}:{deux(compteARebours.minutes)}:{deux(compteARebours.secondes)}
+              </span>
+              <span className="text-xs text-[#65706a]">avant le rendez-vous</span>
+            </div>
+          </div>
+        )}
         {aVenir.map((r) => (
           <div key={r.id} className="grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
