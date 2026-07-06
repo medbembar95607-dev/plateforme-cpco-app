@@ -146,7 +146,6 @@ export function SituationMaterielScreen() {
             <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Formation d'affectation</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Type</th>
-              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Fonction</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Caractéristiques</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">État</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Quantité</th>
@@ -160,7 +159,6 @@ export function SituationMaterielScreen() {
               <tr key={m.id} className={m.enAlerte ? 'bg-red-50/50' : undefined}>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.formationAffectation}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.typeMateriel}</td>
-                <td className="border-b border-[#d8ded9] px-3 py-3">{m.fonction}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-xs text-[#65706a]">{m.caracteristiques}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">
                   <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${etatStyle[m.etat]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
@@ -194,7 +192,7 @@ export function SituationMaterielScreen() {
             ))}
             {lignes.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                <td colSpan={8} className="px-3 py-6 text-center text-sm text-[#65706a]">
                   Aucun matériel pour ce filtre.
                 </td>
               </tr>
