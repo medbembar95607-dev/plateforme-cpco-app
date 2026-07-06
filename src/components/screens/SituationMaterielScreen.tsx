@@ -77,7 +77,7 @@ export function SituationMaterielScreen() {
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
-      <div className="grid grid-cols-5 gap-3 rounded-lg bg-amber-100 p-3">
+      <div className="grid grid-cols-6 gap-3 rounded-lg bg-amber-100 p-3">
         <div className="rounded-lg bg-white p-2.5 shadow-sm">
           <span className="block text-xs text-[#65706a]">Matériel en dotation</span>
           <strong className="text-xl text-[#17201b]">{indicateurs?.totalDotation ?? '—'}</strong>
@@ -91,10 +91,12 @@ export function SituationMaterielScreen() {
           <strong className="text-xl text-[#17201b]">{indicateurs?.parArmee.terre ?? '—'}</strong>
         </div>
         <div className="rounded-lg bg-white p-2.5 shadow-sm">
-          <span className="block text-xs text-[#65706a]">Air / Marine</span>
-          <strong className="text-xl text-[#17201b]">
-            {indicateurs ? indicateurs.parArmee.air + indicateurs.parArmee.mer : '—'}
-          </strong>
+          <span className="block text-xs text-[#65706a]">Armée de l'Air</span>
+          <strong className="text-xl text-[#17201b]">{indicateurs?.parArmee.air ?? '—'}</strong>
+        </div>
+        <div className="rounded-lg bg-white p-2.5 shadow-sm">
+          <span className="block text-xs text-[#65706a]">Marine</span>
+          <strong className="text-xl text-[#17201b]">{indicateurs?.parArmee.mer ?? '—'}</strong>
         </div>
         <div className="rounded-lg bg-red-50 p-2.5 shadow-sm">
           <span className="block text-xs text-red-700">Alertes seuil dépassé</span>
