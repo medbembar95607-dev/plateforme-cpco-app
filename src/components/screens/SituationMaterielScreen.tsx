@@ -66,6 +66,8 @@ export function SituationMaterielScreen() {
 
   const lignes = materiels.filter((m) => m.statutDotation === rubrique && m.armee === armeeFiltre && groupeDeCategorie[m.categorie] === groupeFiltre)
 
+  const totalParGroupe = (g: string) => materiels.filter((m) => groupeDeCategorie[m.categorie] === g).reduce((somme, m) => somme + m.quantite, 0)
+
   const rubriqueEnDeficit = (r: Rubrique) => materiels.some((m) => m.statutDotation === r && m.ecart < 0)
   const armeeEnDeficit = (armee: string) => materiels.some((m) => m.statutDotation === rubrique && m.armee === armee && m.ecart < 0)
   const groupeEnDeficit = (g: string) =>
@@ -76,7 +78,7 @@ export function SituationMaterielScreen() {
   }
 
   return (
-    <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
+    <section className="grid min-h-0 grid-rows-[auto_auto_auto_1fr] gap-3.5">
       <div className="grid grid-cols-6 gap-3 rounded-lg bg-amber-100 p-3">
         <div className="rounded-lg bg-white p-2.5 shadow-sm">
           <span className="block text-xs text-[#65706a]">Matériel en dotation</span>
@@ -102,6 +104,15 @@ export function SituationMaterielScreen() {
           <span className="block text-xs text-red-700">Alertes seuil dépassé</span>
           <strong className="text-xl text-red-700">{indicateurs?.nombreAlertes ?? '—'}</strong>
         </div>
+      </div>
+
+      <div className="grid grid-cols-5 gap-3 rounded-lg bg-amber-100 p-3">
+        {(['bateau', 'avion', 'vehicule', 'armement', 'munition'] as const).map((g) => (
+          <div key={g} className="rounded-lg bg-white p-2.5 shadow-sm">
+            <span className="block text-xs text-[#65706a]">{groupeLabel[g]}</span>
+            <strong className="text-xl text-[#17201b]">{totalParGroupe(g)}</strong>
+          </div>
+        ))}
       </div>
 
       <div className="grid gap-2.5">
