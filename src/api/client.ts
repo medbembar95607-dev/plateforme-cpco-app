@@ -128,6 +128,7 @@ export interface MilitaireDTO {
   formationAffectation: string
   age: number
   anciennete: number
+  ancienneteGrade: number
   anneesAvantRetraite: number
   procheRetraite: boolean
   classification: string

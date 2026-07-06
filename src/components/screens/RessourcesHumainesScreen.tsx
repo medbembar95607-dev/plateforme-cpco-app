@@ -52,6 +52,7 @@ export function RessourcesHumainesScreen() {
   const [onglet, setOnglet] = useState<Onglet>('annuaire')
   const [categorieFiltre, setCategorieFiltre] = useState<string>('officier')
   const [typePropositionFiltre, setTypePropositionFiltre] = useState<string>('affectation')
+  const [categorieRetraiteFiltre, setCategorieRetraiteFiltre] = useState<string>('officier')
 
   function charger() {
     api.personnel().then(setPersonnel)
@@ -76,7 +77,9 @@ export function RessourcesHumainesScreen() {
 
   const personnelFiltre = personnel.filter((m) => m.categorie === categorieFiltre)
   const propositionsFiltrees = propositions.filter((p) => p.typeProposition === typePropositionFiltre)
-  const departsARetraite = [...personnel].sort((a, b) => a.anneesAvantRetraite - b.anneesAvantRetraite)
+  const departsARetraite = personnel
+    .filter((m) => m.categorie === categorieRetraiteFiltre)
+    .sort((a, b) => b.ancienneteGrade - a.ancienneteGrade)
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
@@ -239,38 +242,58 @@ export function RessourcesHumainesScreen() {
         )}
 
         {onglet === 'retraite' && (
-          <div className="overflow-auto rounded-lg border border-[#d8ded9] bg-white shadow-sm">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Nom</th>
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Grade</th>
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Catégorie</th>
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Armée</th>
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Âge</th>
-                  <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Années avant retraite</th>
-                </tr>
-              </thead>
-              <tbody>
-                {departsARetraite.map((m) => (
-                  <tr key={m.id} className={m.procheRetraite ? 'bg-amber-50/50' : undefined}>
-                    <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{m.nomComplet}</td>
-                    <td className="border-b border-[#d8ded9] px-3 py-3">{m.grade}</td>
-                    <td className="border-b border-[#d8ded9] px-3 py-3">{categorieLabel[m.categorie] ?? m.categorie}</td>
-                    <td className="border-b border-[#d8ded9] px-3 py-3">{armeeLabel[m.armee] ?? m.armee}</td>
-                    <td className="border-b border-[#d8ded9] px-3 py-3">{m.age} ans</td>
-                    <td className="border-b border-[#d8ded9] px-3 py-3">
-                      <span className={`font-bold ${m.procheRetraite ? 'text-amber-700' : 'text-[#17201b]'}`}>{m.anneesAvantRetraite} ans</span>
-                      {m.procheRetraite && (
-                        <span className="ml-2 inline-flex min-h-[22px] items-center rounded-full bg-amber-50 px-2 text-xs font-bold text-amber-700">
-                          Proche
-                        </span>
-                      )}
-                    </td>
+          <div className="grid min-h-0 grid-rows-[auto_1fr] gap-3">
+            <div className="flex gap-1.5">
+              {Object.entries(categorieLabel).map(([valeur, label]) => (
+                <button
+                  key={valeur}
+                  onClick={() => setCategorieRetraiteFiltre(valeur)}
+                  className={`h-9 rounded-lg px-3 text-sm ${categorieRetraiteFiltre === valeur ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="overflow-auto rounded-lg border border-[#d8ded9] bg-white shadow-sm">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Nom</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Grade</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Armée</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Âge</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Ancienneté au grade</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Années avant retraite</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {departsARetraite.map((m) => (
+                    <tr key={m.id} className={m.procheRetraite ? 'bg-amber-50/50' : undefined}>
+                      <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{m.nomComplet}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{m.grade}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{armeeLabel[m.armee] ?? m.armee}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{m.age} ans</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{m.ancienneteGrade} ans</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">
+                        <span className={`font-bold ${m.procheRetraite ? 'text-amber-700' : 'text-[#17201b]'}`}>{m.anneesAvantRetraite} ans</span>
+                        {m.procheRetraite && (
+                          <span className="ml-2 inline-flex min-h-[22px] items-center rounded-full bg-amber-50 px-2 text-xs font-bold text-amber-700">
+                            Proche
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {departsARetraite.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                        Aucun militaire pour ce filtre.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
