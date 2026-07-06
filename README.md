@@ -31,7 +31,7 @@ npm run dev
 
 ## Écrans
 
-La barre latérale comporte 5 entrées : **Les Opérations**, **Parapheur Numérique**, **Agenda du Chef**, **Situation Matériel** et **Volet Financier**. Les Opérations (`OpsScreen.tsx`) regroupe 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+La barre latérale comporte 6 entrées : **Les Opérations**, **Parapheur Numérique**, **Agenda du Chef**, **Situation Matériel**, **Volet Financier** et **Ressources Humaines**. Les Opérations (`OpsScreen.tsx`) regroupe 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
 
 Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
 
@@ -44,6 +44,8 @@ Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reprod
 **Situation Matériel** (ajouté le 2026-07-05, entrée autonome de la sidebar) : suivi du matériel toutes armées (Terre/Air/Marine), réparti en deux rubriques **Matériel en Dotation** et **Matériel à la Réserve** — formation d'affectation, catégorie, type, nom, fonction, caractéristiques, état et quantité. Tableau de bord d'indicateurs (totaux dotation/réserve, répartition par armée) et alerte visuelle quand la quantité d'un matériel passe sous son seuil défini. Table `materiels` dédiée côté API.
 
 **Volet Financier** (ajouté le 2026-07-06) : vue d'ensemble budgétaire du chef — budget global, réparti en **Fonctionnement** et **Investissement**, par ligne budgétaire (libellé, formation bénéficiaire, montant alloué/consommé, taux de consommation). Tableau de bord d'indicateurs et alerte visuelle (approche de seuil ou dépassement) par ligne. Table `lignes_budgetaires` dédiée côté API.
+
+**Ressources Humaines** (ajouté le 2026-07-06) : grandes lignes de gestion RH — effectif total par catégorie (officiers, sous-officiers, hommes du rang) et par armée, **Annuaire** filtrable par catégorie, **Propositions** d'affectation et d'avancement (création, validation, rejet), **Départs à la retraite** (calcul de l'âge et des années restantes selon la catégorie, alerte si proche), **Besoins en recrutement** (poste, priorité, statut). Tables `militaires`, `propositions_rh`, `besoins_recrutement` dédiées côté API.
 
 Actions qui écrivent réellement en base via l'API : "Nouvel incident" (bandeau supérieur), "Valider"/"Diffuser" sur un ordre (écran Ordres), "Acquitter" une alerte (écran Alertes), annoter/orienter/classer/générer un ordre (écran Parapheur Numérique), créer/confirmer/annuler un rendez-vous (écran Agenda du Chef).
 
