@@ -35,6 +35,30 @@ const statutBesoinStyle: Record<string, { label: string; badge: string }> = {
   pourvu: { label: 'Pourvu', badge: 'bg-emerald-50 text-emerald-700' },
 }
 
+// Ordre hiérarchique militaire, du plus élevé au plus bas.
+const ordreGrades = [
+  'Général',
+  'Colonel',
+  'Lieutenant-Colonel',
+  'Commandant',
+  'Capitaine',
+  'Lieutenant',
+  'Sous-Lieutenant',
+  'Adjudant-chef',
+  'Adjudant',
+  'Sergent-chef',
+  'Sergent',
+  'Caporal-chef',
+  'Caporal',
+  'Soldat de 1ère classe',
+  'Soldat de 2ème classe',
+]
+
+function rangGrade(grade: string): number {
+  const rang = ordreGrades.indexOf(grade)
+  return rang === -1 ? ordreGrades.length : rang
+}
+
 type Onglet = 'annuaire' | 'propositions' | 'retraite' | 'recrutement'
 
 const onglets: Array<{ id: Onglet; label: string }> = [
@@ -75,11 +99,13 @@ export function RessourcesHumainesScreen() {
     charger()
   }
 
-  const personnelFiltre = personnel.filter((m) => m.categorie === categorieFiltre)
-  const propositionsFiltrees = propositions.filter((p) => p.typeProposition === typePropositionFiltre)
+  const personnelFiltre = personnel.filter((m) => m.categorie === categorieFiltre).sort((a, b) => rangGrade(a.grade) - rangGrade(b.grade))
+  const propositionsFiltrees = propositions
+    .filter((p) => p.typeProposition === typePropositionFiltre)
+    .sort((a, b) => rangGrade(a.militaireGrade) - rangGrade(b.militaireGrade))
   const departsARetraite = personnel
     .filter((m) => m.categorie === categorieRetraiteFiltre)
-    .sort((a, b) => b.ancienneteGrade - a.ancienneteGrade)
+    .sort((a, b) => rangGrade(a.grade) - rangGrade(b.grade) || b.ancienneteGrade - a.ancienneteGrade)
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
