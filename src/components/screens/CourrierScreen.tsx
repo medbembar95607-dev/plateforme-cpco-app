@@ -27,6 +27,8 @@ const prioriteLabel: Record<string, { label: string; badge: string }> = {
   tres_urgent: { label: 'Très urgent', badge: 'bg-red-50 text-red-700' },
 }
 
+const prioriteOrdre: Record<string, number> = { tres_urgent: 0, urgent: 1, normal: 2 }
+
 const statutLabel: Record<string, { label: string; badge: string }> = {
   nouveau: { label: 'Nouveau', badge: 'bg-gray-100 text-gray-700' },
   annote: { label: 'Annoté', badge: 'bg-blue-50 text-blue-700' },
@@ -82,6 +84,8 @@ export function CourrierScreen() {
   }, [selectionne?.id, selectionne?.annotation])
 
   const aTraiter = courriers.filter((c) => c.statut !== 'traite' && c.statut !== 'classe_sans_suite').length
+
+  const courriersTries = [...courriers].sort((a, b) => (prioriteOrdre[a.priorite] ?? 3) - (prioriteOrdre[b.priorite] ?? 3))
 
   function choisirDecision(valeur: string) {
     setDecision(valeur)
@@ -145,7 +149,7 @@ export function CourrierScreen() {
 
       <div className="grid min-h-0 grid-cols-[1fr_400px] gap-3.5">
         <div className="grid gap-3 overflow-auto">
-          {courriers.map((c) => (
+          {courriersTries.map((c) => (
             <button
               key={c.id}
               onClick={() => setSelectionneId(c.id)}
