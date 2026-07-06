@@ -51,6 +51,7 @@ export function RessourcesHumainesScreen() {
   const [besoins, setBesoins] = useState<BesoinRecrutementDTO[]>([])
   const [onglet, setOnglet] = useState<Onglet>('annuaire')
   const [categorieFiltre, setCategorieFiltre] = useState<string>('officier')
+  const [typePropositionFiltre, setTypePropositionFiltre] = useState<string>('affectation')
 
   function charger() {
     api.personnel().then(setPersonnel)
@@ -74,6 +75,7 @@ export function RessourcesHumainesScreen() {
   }
 
   const personnelFiltre = personnel.filter((m) => m.categorie === categorieFiltre)
+  const propositionsFiltrees = propositions.filter((p) => p.typeProposition === typePropositionFiltre)
   const departsARetraite = [...personnel].sort((a, b) => a.anneesAvantRetraite - b.anneesAvantRetraite)
 
   return (
@@ -172,35 +174,67 @@ export function RessourcesHumainesScreen() {
         )}
 
         {onglet === 'propositions' && (
-          <div className="grid gap-3">
-            {propositions.map((p) => (
-              <div key={p.id} className="grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <strong className="text-[#17201b]">{p.militaireNom}</strong>
-                    <span className="inline-flex min-h-[24px] items-center rounded-full bg-blue-50 px-2 text-xs font-bold text-blue-700">
-                      {typePropositionLabel[p.typeProposition] ?? p.typeProposition}
-                    </span>
-                  </div>
-                  <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${statutPropositionStyle[p.statut]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
-                    {statutPropositionStyle[p.statut]?.label ?? p.statut}
-                  </span>
-                </div>
-                <span className="text-sm text-[#17201b]">{p.proposition}</span>
-                <span className="text-xs text-[#65706a]">{p.motif}</span>
-                {p.statut === 'en_cours' && (
-                  <div className="flex gap-2">
-                    <button onClick={() => valider(p.id)} className="h-8 rounded-lg border border-emerald-700 bg-emerald-600 px-3 text-xs text-white">
-                      Valider
-                    </button>
-                    <button onClick={() => rejeter(p.id)} className="h-8 rounded-lg border border-gray-500 bg-gray-400 px-3 text-xs text-white">
-                      Rejeter
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-            {propositions.length === 0 && <p className="text-sm text-[#65706a]">Aucune proposition.</p>}
+          <div className="grid min-h-0 grid-rows-[auto_1fr] gap-3">
+            <div className="flex gap-1.5">
+              {Object.entries(typePropositionLabel).map(([valeur, label]) => (
+                <button
+                  key={valeur}
+                  onClick={() => setTypePropositionFiltre(valeur)}
+                  className={`h-9 rounded-lg px-3 text-sm ${typePropositionFiltre === valeur ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="overflow-auto rounded-lg border border-[#d8ded9] bg-white shadow-sm">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Militaire</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Proposition</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Argumentation</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Décision</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {propositionsFiltrees.map((p) => (
+                    <tr key={p.id}>
+                      <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{p.militaireNom}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{p.proposition}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3 text-xs text-[#65706a]">{p.motif}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">
+                        <div className="grid gap-1.5">
+                          <span
+                            className={`inline-flex w-fit min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${
+                              statutPropositionStyle[p.statut]?.badge ?? 'bg-gray-100 text-gray-700'
+                            }`}
+                          >
+                            {statutPropositionStyle[p.statut]?.label ?? p.statut}
+                          </span>
+                          {p.statut === 'en_cours' && (
+                            <div className="flex gap-1.5">
+                              <button onClick={() => valider(p.id)} className="h-7 rounded-lg border border-emerald-700 bg-emerald-600 px-2.5 text-xs text-white">
+                                Valider
+                              </button>
+                              <button onClick={() => rejeter(p.id)} className="h-7 rounded-lg border border-gray-500 bg-gray-400 px-2.5 text-xs text-white">
+                                Rejeter
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {propositionsFiltrees.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                        Aucune proposition pour ce filtre.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
