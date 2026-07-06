@@ -6,6 +6,7 @@ import { CourrierScreen } from './components/screens/CourrierScreen'
 import { CalendrierScreen } from './components/screens/CalendrierScreen'
 import { SituationMaterielScreen } from './components/screens/SituationMaterielScreen'
 import { VoletFinancierScreen } from './components/screens/VoletFinancierScreen'
+import { RessourcesHumainesScreen } from './components/screens/RessourcesHumainesScreen'
 import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
@@ -15,6 +16,7 @@ const titres: Record<Vue, [string, string]> = {
   calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
   materiel: ['Situation Matériel', 'Matériel en dotation et à la réserve, toutes armées (Terre, Air, Mer)'],
   budget: ['Volet Financier', 'Budget global, fonctionnement et investissement, indicateurs et alertes de seuil'],
+  rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
 }
 
 const evenementsInitiaux: EvenementFlux[] = [
@@ -59,6 +61,7 @@ function App() {
           {vue === 'calendrier' && <CalendrierScreen />}
           {vue === 'materiel' && <SituationMaterielScreen />}
           {vue === 'budget' && <VoletFinancierScreen />}
+          {vue === 'rh' && <RessourcesHumainesScreen />}
         </div>
       </main>
     </div>

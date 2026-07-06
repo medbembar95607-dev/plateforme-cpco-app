@@ -118,6 +118,55 @@ export interface IndicateursBudgetDTO {
   nombreAttentions: number
 }
 
+export interface MilitaireDTO {
+  id: string
+  matricule: string
+  nomComplet: string
+  grade: string
+  categorie: string
+  armee: string
+  formationAffectation: string
+  age: number
+  anciennete: number
+  anneesAvantRetraite: number
+  procheRetraite: boolean
+  classification: string
+}
+
+export interface IndicateursRHDTO {
+  effectifTotal: number
+  parCategorie: Record<string, number>
+  parArmee: Record<string, number>
+  procheRetraite: number
+  propositionsEnCours: number
+  besoinsOuverts: number
+}
+
+export interface PropositionRHDTO {
+  id: string
+  militaireId: string
+  militaireNom: string
+  militaireGrade: string
+  typeProposition: string
+  motif: string
+  proposition: string
+  statut: string
+  dateCreation: string
+  classification: string
+}
+
+export interface BesoinRecrutementDTO {
+  id: string
+  poste: string
+  categorie: string
+  armee: string
+  formationAffectation: string
+  nombrePostes: number
+  priorite: string
+  statut: string
+  classification: string
+}
+
 export interface RendezVousDTO {
   id: string
   titre: string
@@ -190,4 +239,12 @@ export const api = {
   materielIndicateurs: () => request<IndicateursMaterielDTO>('/materiels/indicateurs'),
   budget: () => request<LigneBudgetaireDTO[]>('/budget'),
   budgetIndicateurs: () => request<IndicateursBudgetDTO>('/budget/indicateurs'),
+  personnel: () => request<MilitaireDTO[]>('/rh/personnel'),
+  rhIndicateurs: () => request<IndicateursRHDTO>('/rh/indicateurs'),
+  propositionsRH: () => request<PropositionRHDTO[]>('/rh/propositions'),
+  creerPropositionRH: (payload: { militaire_id: string; type_proposition: string; motif: string; proposition: string; classification: string }) =>
+    request<PropositionRHDTO>('/rh/propositions', { method: 'POST', body: JSON.stringify(payload) }),
+  validerPropositionRH: (id: string) => request<PropositionRHDTO>(`/rh/propositions/${id}/valider`, { method: 'POST' }),
+  rejeterPropositionRH: (id: string) => request<PropositionRHDTO>(`/rh/propositions/${id}/rejeter`, { method: 'POST' }),
+  besoinsRecrutement: () => request<BesoinRecrutementDTO[]>('/rh/besoins-recrutement'),
 }

@@ -1,7 +1,7 @@
-import { Boxes, Calendar, Mail, ShieldHalf, Wallet } from 'lucide-react'
+import { Boxes, Calendar, Mail, ShieldHalf, Users, Wallet } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 
-export type Vue = 'ops' | 'courrier' | 'calendrier' | 'materiel' | 'budget'
+export type Vue = 'ops' | 'courrier' | 'calendrier' | 'materiel' | 'budget' | 'rh'
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'ops', label: 'Les Opérations', icone: <ShieldHalf size={17} /> },
@@ -9,6 +9,7 @@ const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'calendrier', label: 'Agenda du Chef', icone: <Calendar size={17} /> },
   { vue: 'materiel', label: 'Situation Matériel', icone: <Boxes size={17} /> },
   { vue: 'budget', label: 'Volet Financier', icone: <Wallet size={17} /> },
+  { vue: 'rh', label: 'Ressources Humaines', icone: <Users size={17} /> },
 ]
 
 interface SidebarProps {
