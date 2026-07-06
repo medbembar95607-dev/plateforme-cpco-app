@@ -66,6 +66,15 @@ export function SituationMaterielScreen() {
 
   const lignes = materiels.filter((m) => m.statutDotation === rubrique && m.armee === armeeFiltre && groupeDeCategorie[m.categorie] === groupeFiltre)
 
+  const rubriqueEnDeficit = (r: Rubrique) => materiels.some((m) => m.statutDotation === r && m.ecart < 0)
+  const armeeEnDeficit = (armee: string) => materiels.some((m) => m.statutDotation === rubrique && m.armee === armee && m.ecart < 0)
+  const groupeEnDeficit = (g: string) =>
+    materiels.some((m) => m.statutDotation === rubrique && m.armee === armeeFiltre && groupeDeCategorie[m.categorie] === g && m.ecart < 0)
+
+  function PointDeficit() {
+    return <span className="h-2 w-2 rounded-full bg-red-600" />
+  }
+
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
       <div className="grid grid-cols-5 gap-3 rounded-lg bg-amber-100 p-3">
@@ -97,15 +106,17 @@ export function SituationMaterielScreen() {
         <div className="flex gap-1.5">
           <button
             onClick={() => setRubrique('en_dotation')}
-            className={`h-9 rounded-lg px-3 text-sm ${rubrique === 'en_dotation' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+            className={`flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm ${rubrique === 'en_dotation' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
           >
             Matériel en Dotation
+            {rubriqueEnDeficit('en_dotation') && <PointDeficit />}
           </button>
           <button
             onClick={() => setRubrique('en_reserve')}
-            className={`h-9 rounded-lg px-3 text-sm ${rubrique === 'en_reserve' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+            className={`flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm ${rubrique === 'en_reserve' ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
           >
             Matériel à la Réserve
+            {rubriqueEnDeficit('en_reserve') && <PointDeficit />}
           </button>
         </div>
 
@@ -114,9 +125,10 @@ export function SituationMaterielScreen() {
             <button
               key={valeur}
               onClick={() => choisirArmee(valeur)}
-              className={`h-8 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === valeur ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+              className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold ${armeeFiltre === valeur ? 'bg-[#17201b] text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
             >
               {label}
+              {armeeEnDeficit(valeur) && <PointDeficit />}
             </button>
           ))}
         </div>
@@ -126,9 +138,10 @@ export function SituationMaterielScreen() {
             <button
               key={g}
               onClick={() => setGroupeFiltre(g)}
-              className={`h-8 rounded-lg px-2.5 text-xs ${groupeFiltre === g ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+              className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs ${groupeFiltre === g ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
             >
               {groupeLabel[g]}
+              {groupeEnDeficit(g) && <PointDeficit />}
             </button>
           ))}
         </div>
