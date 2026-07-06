@@ -95,6 +95,29 @@ export interface IndicateursMaterielDTO {
   parArmee: Record<string, number>
 }
 
+export interface LigneBudgetaireDTO {
+  id: string
+  libelle: string
+  typeBudget: string
+  formationBeneficiaire: string
+  periode: string
+  montantAlloue: number
+  montantConsomme: number
+  seuilAlertePct: number
+  tauxConsommationPct: number
+  statut: string
+  classification: string
+}
+
+export interface IndicateursBudgetDTO {
+  budgetGlobalAlloue: number
+  budgetGlobalConsomme: number
+  tauxConsommationGlobalPct: number
+  parType: Record<string, { montantAlloue: number; montantConsomme: number; tauxConsommationPct: number }>
+  nombreDepassements: number
+  nombreAttentions: number
+}
+
 export interface RendezVousDTO {
   id: string
   titre: string
@@ -165,4 +188,6 @@ export const api = {
   annulerRendezVous: (id: string) => request<RendezVousDTO>(`/agenda/${id}/annuler`, { method: 'POST' }),
   materiels: () => request<MaterielDTO[]>('/materiels'),
   materielIndicateurs: () => request<IndicateursMaterielDTO>('/materiels/indicateurs'),
+  budget: () => request<LigneBudgetaireDTO[]>('/budget'),
+  budgetIndicateurs: () => request<IndicateursBudgetDTO>('/budget/indicateurs'),
 }
