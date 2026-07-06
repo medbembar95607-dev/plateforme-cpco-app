@@ -42,12 +42,6 @@ function groupesPourArmee(armee: string) {
   return groupes.filter((g) => !exclues.includes(g))
 }
 
-const etatStyle: Record<string, { label: string; badge: string }> = {
-  operationnel: { label: 'Opérationnel', badge: 'bg-emerald-50 text-emerald-700' },
-  maintenance: { label: 'En maintenance', badge: 'bg-amber-50 text-amber-700' },
-  hors_service: { label: 'Hors service', badge: 'bg-red-50 text-red-700' },
-}
-
 type Rubrique = 'en_dotation' | 'en_reserve'
 
 export function SituationMaterielScreen() {
@@ -147,10 +141,10 @@ export function SituationMaterielScreen() {
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Formation d'affectation</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Type</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Caractéristiques</th>
-              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">État</th>
+              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">TED</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Quantité</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Hors service</th>
-              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">TED</th>
+              <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Opérationnel</th>
               <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Écart</th>
             </tr>
           </thead>
@@ -160,11 +154,7 @@ export function SituationMaterielScreen() {
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.formationAffectation}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.typeMateriel}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-xs text-[#65706a]">{m.caracteristiques}</td>
-                <td className="border-b border-[#d8ded9] px-3 py-3">
-                  <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${etatStyle[m.etat]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
-                    {etatStyle[m.etat]?.label ?? m.etat}
-                  </span>
-                </td>
+                <td className="border-b border-[#d8ded9] px-3 py-3 text-[#65706a]">{m.dotationTed}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">
                   <div className="flex items-center gap-1.5">
                     <span className="font-bold text-[#17201b]">{m.quantite}</span>
@@ -182,7 +172,7 @@ export function SituationMaterielScreen() {
                     <span className="text-[#65706a]">0</span>
                   )}
                 </td>
-                <td className="border-b border-[#d8ded9] px-3 py-3 text-[#65706a]">{m.dotationTed}</td>
+                <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-emerald-700">{m.quantiteOperationnelle}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">
                   <span className={`font-bold ${m.ecart < 0 ? 'text-red-700' : m.ecart > 0 ? 'text-emerald-700' : 'text-[#65706a]'}`}>
                     {m.ecart > 0 ? `+${m.ecart}` : m.ecart}
