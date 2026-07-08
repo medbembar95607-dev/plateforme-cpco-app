@@ -6,7 +6,7 @@ Le cadrage complet (besoins, décisions d'architecture, modèle de données, maq
 
 ## Démo en ligne
 
-**https://imaginative-croissant-f46ef5.netlify.app**
+**https://tbcomd.netlify.app**
 
 Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur Netlify (déploiement continu depuis la branche `main`). Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-cpco-api/README.md`).
 
