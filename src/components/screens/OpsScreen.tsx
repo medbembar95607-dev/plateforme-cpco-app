@@ -57,7 +57,7 @@ interface OpsScreenProps {
 }
 
 export function OpsScreen({ evenements }: OpsScreenProps) {
-  const [onglet, setOnglet] = useState<OngletOps>('situation')
+  const [onglet, setOnglet] = useState<OngletOps>('deploiement')
 
   return (
     <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3">
