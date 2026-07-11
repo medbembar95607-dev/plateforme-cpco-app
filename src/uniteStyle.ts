@@ -8,9 +8,9 @@ export const typeUniteSidc: Record<TypeUnite, string> = {
   artillerie: 'SFGPUCF-------------',
   genie: 'SFGPUCE-------------',
   logistique: 'SFGPUSS-------------',
-  force_speciale: 'SFFPUCI-------------',
-  aerien: 'SFAPUCF-------------',
-  marine: 'SFSPUCF-------------',
+  force_speciale: 'SFFPG---------------',
+  aerien: 'SFAPMF--------------',
+  marine: 'SFSPCH--------------',
 }
 
 export const typeUniteLabel: Record<TypeUnite, string> = {
