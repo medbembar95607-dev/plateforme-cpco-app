@@ -168,6 +168,29 @@ export interface BesoinRecrutementDTO {
   classification: string
 }
 
+export interface SignalStrategiqueDTO {
+  id: string
+  categorie: string
+  titre: string
+  zone: string
+  niveauRisque: string
+  tendance: string
+  probabiliteCrisePct: number
+  horizon: string
+  analyse: string
+  source: string
+  dateMaj: string
+  classification: string
+}
+
+export interface IndicateursVeilleDTO {
+  indiceRisqueRegionalPct: number
+  signauxCritiques: number
+  signauxEnHausse: number
+  zonesSurveillees: number
+  probabiliteMaxPct: number
+}
+
 export interface GarnisonDTO {
   id: string
   nom: string
@@ -281,4 +304,6 @@ export const api = {
   besoinsRecrutement: () => request<BesoinRecrutementDTO[]>('/rh/besoins-recrutement'),
   besoinsFormation: () => request<BesoinFormationDTO[]>('/rh/besoins-formation'),
   deploiement: () => request<GarnisonDTO[]>('/deploiement'),
+  veille: () => request<SignalStrategiqueDTO[]>('/veille'),
+  veilleIndicateurs: () => request<IndicateursVeilleDTO>('/veille/indicateurs'),
 }
