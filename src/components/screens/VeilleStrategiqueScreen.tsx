@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
-import { KpiRow } from '../KpiRow'
+import { KpiRow, type ToniteKpi } from '../KpiRow'
 import { api, type IndicateursVeilleDTO, type SignalStrategiqueDTO } from '../../api/client'
 
 const categorieLabel: Record<string, string> = {
@@ -44,12 +44,46 @@ export function VeilleStrategiqueScreen() {
   const signauxFiltres = categorieFiltre === 'toutes' ? signaux : signaux.filter((s) => s.categorie === categorieFiltre)
   const prioritaires = [...signaux].sort((a, b) => b.probabiliteCrisePct - a.probabiliteCrisePct).slice(0, 3)
 
-  const kpis = [
-    { label: 'Indice de risque régional', valeur: `${indicateurs?.indiceRisqueRegionalPct ?? '—'}%`, note: 'pondéré par niveau de risque' },
-    { label: 'Signaux critiques', valeur: String(indicateurs?.signauxCritiques ?? '—'), note: 'nécessitant une attention immédiate' },
-    { label: 'Signaux en hausse', valeur: String(indicateurs?.signauxEnHausse ?? '—'), note: 'tendance défavorable' },
-    { label: 'Zones sous surveillance', valeur: String(indicateurs?.zonesSurveillees ?? '—'), note: 'toutes catégories' },
-    { label: 'Probabilité de crise max.', valeur: `${indicateurs?.probabiliteMaxPct ?? '—'}%`, note: 'signal le plus critique' },
+  // Dégradé fort -> faible : rouge (critique) > orange (élevé) > amber (modéré) > vert (faible).
+  function tonalitePct(pct: number): ToniteKpi {
+    if (pct >= 75) return 'danger'
+    if (pct >= 50) return 'eleve'
+    if (pct >= 25) return 'alerte'
+    return 'succes'
+  }
+  function tonaliteCompte(n: number, seuilEleve: number, seuilDanger: number): ToniteKpi {
+    if (n >= seuilDanger) return 'danger'
+    if (n >= seuilEleve) return 'eleve'
+    if (n > 0) return 'alerte'
+    return 'succes'
+  }
+
+  const kpis: Array<{ label: string; valeur: string; note: string; tonalite: ToniteKpi }> = [
+    {
+      label: 'Indice de risque régional',
+      valeur: `${indicateurs?.indiceRisqueRegionalPct ?? '—'}%`,
+      note: 'pondéré par niveau de risque',
+      tonalite: tonalitePct(indicateurs?.indiceRisqueRegionalPct ?? 0),
+    },
+    {
+      label: 'Signaux critiques',
+      valeur: String(indicateurs?.signauxCritiques ?? '—'),
+      note: 'nécessitant une attention immédiate',
+      tonalite: tonaliteCompte(indicateurs?.signauxCritiques ?? 0, 1, 3),
+    },
+    {
+      label: 'Signaux en hausse',
+      valeur: String(indicateurs?.signauxEnHausse ?? '—'),
+      note: 'tendance défavorable',
+      tonalite: tonaliteCompte(indicateurs?.signauxEnHausse ?? 0, 4, 7),
+    },
+    { label: 'Zones sous surveillance', valeur: String(indicateurs?.zonesSurveillees ?? '—'), note: 'toutes catégories', tonalite: 'info' },
+    {
+      label: 'Probabilité de crise max.',
+      valeur: `${indicateurs?.probabiliteMaxPct ?? '—'}%`,
+      note: 'signal le plus critique',
+      tonalite: tonalitePct(indicateurs?.probabiliteMaxPct ?? 0),
+    },
   ]
 
   return (

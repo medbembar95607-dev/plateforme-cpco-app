@@ -1,4 +1,4 @@
-export type ToniteKpi = 'neutre' | 'succes' | 'alerte' | 'danger' | 'info'
+export type ToniteKpi = 'neutre' | 'succes' | 'alerte' | 'eleve' | 'danger' | 'info'
 
 interface Kpi {
   label: string
@@ -11,7 +11,8 @@ const tonaliteStyle: Record<ToniteKpi, { carte: string; label: string; valeur: s
   neutre: { carte: 'border-[#d8ded9] bg-white', label: 'text-[#65706a]', valeur: 'text-[#17201b]', note: 'text-[#65706a]' },
   succes: { carte: 'border-emerald-300 bg-emerald-50', label: 'text-emerald-700', valeur: 'text-emerald-600', note: 'text-emerald-700' },
   alerte: { carte: 'border-amber-300 bg-amber-50', label: 'text-amber-700', valeur: 'text-amber-800', note: 'text-amber-700' },
-  danger: { carte: 'border-red-300 bg-red-50', label: 'text-red-700', valeur: 'text-red-800', note: 'text-red-700' },
+  eleve: { carte: 'border-orange-300 bg-orange-50', label: 'text-orange-700', valeur: 'text-orange-700', note: 'text-orange-700' },
+  danger: { carte: 'border-red-300 bg-red-50', label: 'text-red-700', valeur: 'text-red-700', note: 'text-red-700' },
   info: { carte: 'border-blue-300 bg-blue-50', label: 'text-blue-700', valeur: 'text-blue-800', note: 'text-blue-700' },
 }
 
