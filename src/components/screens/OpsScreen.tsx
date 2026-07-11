@@ -7,6 +7,7 @@ import {
   FileText,
   Flag,
   Home,
+  ListChecks,
   Settings,
   Siren,
   Square,
@@ -20,6 +21,7 @@ import { RenseignementScreen } from './RenseignementScreen'
 import { LogistiqueScreen } from './LogistiqueScreen'
 import { OperationsScreen } from './OperationsScreen'
 import { OrdresScreen } from './OrdresScreen'
+import { SuiviExecutionScreen } from './SuiviExecutionScreen'
 import { IncidentsScreen } from './IncidentsScreen'
 import { AlertesScreen } from './AlertesScreen'
 import { AdministrationScreen } from './AdministrationScreen'
@@ -34,6 +36,7 @@ type OngletOps =
   | 'logistique'
   | 'operations'
   | 'ordres'
+  | 'suivi_execution'
   | 'incidents'
   | 'alertes'
   | 'administration'
@@ -47,6 +50,7 @@ const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> =
   { id: 'logistique', label: 'Logistique', icone: <Square size={16} /> },
   { id: 'operations', label: 'Opérations', icone: <ClipboardList size={16} /> },
   { id: 'ordres', label: 'Ordres', icone: <FileText size={16} /> },
+  { id: 'suivi_execution', label: "Suivi d'Exécution", icone: <ListChecks size={16} /> },
   { id: 'incidents', label: 'Incidents', icone: <Siren size={16} /> },
   { id: 'alertes', label: 'Alertes', icone: <AlertTriangle size={16} /> },
   { id: 'administration', label: 'Administration', icone: <Settings size={16} /> },
@@ -85,6 +89,7 @@ export function OpsScreen({ evenements }: OpsScreenProps) {
         {onglet === 'logistique' && <LogistiqueScreen />}
         {onglet === 'operations' && <OperationsScreen />}
         {onglet === 'ordres' && <OrdresScreen />}
+        {onglet === 'suivi_execution' && <SuiviExecutionScreen />}
         {onglet === 'incidents' && <IncidentsScreen />}
         {onglet === 'alertes' && <AlertesScreen />}
         {onglet === 'administration' && <AdministrationScreen />}

@@ -168,6 +168,33 @@ export interface BesoinRecrutementDTO {
   classification: string
 }
 
+export interface SuiviExecutionDTO {
+  id: string
+  reference: string
+  typeOrdre: string
+  objet: string
+  instruction: string
+  emetteur: string
+  uniteId: string
+  uniteNom: string
+  dateEmission: string
+  dateLimite: string
+  statut: string
+  dateExecution: string | null
+  compteRendu: string | null
+  enRetard: boolean
+  classification: string
+}
+
+export interface IndicateursExecutionDTO {
+  tauxExecutionPct: number
+  enRetard: number
+  enCours: number
+  enAttente: number
+  executesATemps: number
+  total: number
+}
+
 export interface SignalStrategiqueDTO {
   id: string
   categorie: string
@@ -306,4 +333,9 @@ export const api = {
   deploiement: () => request<GarnisonDTO[]>('/deploiement'),
   veille: () => request<SignalStrategiqueDTO[]>('/veille'),
   veilleIndicateurs: () => request<IndicateursVeilleDTO>('/veille/indicateurs'),
+  suiviExecution: () => request<SuiviExecutionDTO[]>('/execution'),
+  suiviExecutionIndicateurs: () => request<IndicateursExecutionDTO>('/execution/indicateurs'),
+  demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),
+  executerSuivi: (id: string, compte_rendu: string) =>
+    request<SuiviExecutionDTO>(`/execution/${id}/executer`, { method: 'POST', body: JSON.stringify({ compte_rendu }) }),
 }
