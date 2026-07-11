@@ -8,6 +8,7 @@ import { SituationMaterielScreen } from './components/screens/SituationMaterielS
 import { VoletFinancierScreen } from './components/screens/VoletFinancierScreen'
 import { RessourcesHumainesScreen } from './components/screens/RessourcesHumainesScreen'
 import { VeilleStrategiqueScreen } from './components/screens/VeilleStrategiqueScreen'
+import { SuiviExecutionScreen } from './components/screens/SuiviExecutionScreen'
 import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
@@ -19,6 +20,7 @@ const titres: Record<Vue, [string, string]> = {
   budget: ['Volet Financier', 'Budget global, fonctionnement et investissement, indicateurs et alertes de seuil'],
   rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
   veille: ['Veille Stratégique', "Indicateurs géopolitiques et sécuritaires régionaux, priorisés par probabilité de crise"],
+  suivi_execution: ["Suivi d'Exécution", "Suivi de l'exécution des ordres et instructions émis aux unités subordonnées"],
 }
 
 const evenementsInitiaux: EvenementFlux[] = [
@@ -65,6 +67,7 @@ function App() {
           {vue === 'budget' && <VoletFinancierScreen />}
           {vue === 'rh' && <RessourcesHumainesScreen />}
           {vue === 'veille' && <VeilleStrategiqueScreen />}
+          {vue === 'suivi_execution' && <SuiviExecutionScreen />}
         </div>
       </main>
     </div>
