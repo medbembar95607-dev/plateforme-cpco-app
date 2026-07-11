@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { KpiRow } from '../KpiRow'
+import { KpiRow, type ToniteKpi } from '../KpiRow'
 import { api, type SuiviExecutionDTO } from '../../api/client'
 import { classificationLabel } from '../../types'
 import type { Classification } from '../../types'
@@ -73,12 +73,16 @@ export function SuiviExecutionScreen() {
     return s.statut === filtre
   })
 
-  const kpis = [
-    { label: "Taux d'exécution", valeur: `${indicateurs?.tauxExecutionPct ?? '—'}%`, note: `${indicateurs?.total ?? 0} ordres/instructions suivis` },
-    { label: 'En retard', valeur: String(indicateurs?.enRetard ?? '—'), note: 'délai dépassé' },
-    { label: 'En cours', valeur: String(indicateurs?.enCours ?? '—'), note: 'exécution démarrée' },
-    { label: 'En attente', valeur: String(indicateurs?.enAttente ?? '—'), note: 'pas encore démarré' },
-    { label: 'Exécutés à temps', valeur: String(indicateurs?.executesATemps ?? '—'), note: 'dans les délais' },
+  const tauxPct = indicateurs?.tauxExecutionPct ?? 0
+  const tonaliteTaux: ToniteKpi = tauxPct >= 70 ? 'succes' : tauxPct >= 40 ? 'alerte' : 'danger'
+  const enRetardCount = indicateurs?.enRetard ?? 0
+
+  const kpis: Array<{ label: string; valeur: string; note: string; tonalite: ToniteKpi }> = [
+    { label: "Taux d'exécution", valeur: `${indicateurs?.tauxExecutionPct ?? '—'}%`, note: `${indicateurs?.total ?? 0} ordres/instructions suivis`, tonalite: tonaliteTaux },
+    { label: 'En retard', valeur: String(indicateurs?.enRetard ?? '—'), note: 'délai dépassé', tonalite: enRetardCount > 0 ? 'danger' : 'succes' },
+    { label: 'En cours', valeur: String(indicateurs?.enCours ?? '—'), note: 'exécution démarrée', tonalite: 'info' },
+    { label: 'En attente', valeur: String(indicateurs?.enAttente ?? '—'), note: 'pas encore démarré', tonalite: 'neutre' },
+    { label: 'Exécutés à temps', valeur: String(indicateurs?.executesATemps ?? '—'), note: 'dans les délais', tonalite: 'succes' },
   ]
 
   return (
