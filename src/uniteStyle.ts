@@ -1,12 +1,16 @@
 import type { StatutUnite, TypeUnite } from './types'
 
-// SIDC APP-6/MIL-STD-2525E : unité terrestre amie présente (SFGP) + function id.
+// SIDC APP-6/MIL-STD-2525E : unité amie présente (SFxP) + function id. La dimension de bataille
+// (3e caractère) varie selon le milieu : G = terre, F = forces spéciales, A = air, S = surface mer.
 export const typeUniteSidc: Record<TypeUnite, string> = {
   pc: 'SFGPU---------------',
   infanterie: 'SFGPUCI-------------',
   artillerie: 'SFGPUCF-------------',
   genie: 'SFGPUCE-------------',
   logistique: 'SFGPUSS-------------',
+  force_speciale: 'SFFPUCI-------------',
+  aerien: 'SFAPUCF-------------',
+  marine: 'SFSPUCF-------------',
 }
 
 export const typeUniteLabel: Record<TypeUnite, string> = {
@@ -15,6 +19,9 @@ export const typeUniteLabel: Record<TypeUnite, string> = {
   artillerie: 'Artillerie',
   genie: 'Génie',
   logistique: 'Logistique',
+  force_speciale: 'Force spéciale',
+  aerien: 'Base aérienne',
+  marine: 'Base navale',
 }
 
 // Échelons de la hiérarchie militaire conventionnelle (du plus petit au plus grand).
@@ -24,6 +31,7 @@ export const echelonLabel: Record<string, string> = {
   bataillon: 'Bataillon',
   groupement: 'Groupement',
   brigade: 'Brigade',
+  base: 'Base',
 }
 
 // Couleur de remplissage APP-6 standard pour une unité amie (bleu).

@@ -5,6 +5,7 @@ import {
   Diamond,
   Eye,
   FileText,
+  Flag,
   Home,
   Settings,
   Siren,
@@ -12,6 +13,7 @@ import {
   Video,
 } from 'lucide-react'
 import { SituationScreen } from './SituationScreen'
+import { DeploiementScreen } from './DeploiementScreen'
 import { LiveOpsScreen } from './LiveOpsScreen'
 import { UnitesScreen } from './UnitesScreen'
 import { RenseignementScreen } from './RenseignementScreen'
@@ -25,6 +27,7 @@ import type { EvenementFlux } from '../../types'
 
 type OngletOps =
   | 'situation'
+  | 'deploiement'
   | 'liveops'
   | 'unites'
   | 'renseignement'
@@ -37,6 +40,7 @@ type OngletOps =
 
 const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> = [
   { id: 'situation', label: 'Point de Situation', icone: <Home size={16} /> },
+  { id: 'deploiement', label: 'Déploiement Armée', icone: <Flag size={16} /> },
   { id: 'liveops', label: 'LIVE OPS', icone: <Video size={16} /> },
   { id: 'unites', label: 'Unités', icone: <Diamond size={16} /> },
   { id: 'renseignement', label: 'Renseignement', icone: <Eye size={16} /> },
@@ -74,6 +78,7 @@ export function OpsScreen({ evenements }: OpsScreenProps) {
 
       <div className="min-h-0 overflow-auto">
         {onglet === 'situation' && <SituationScreen evenements={evenements} />}
+        {onglet === 'deploiement' && <DeploiementScreen />}
         {onglet === 'liveops' && <LiveOpsScreen />}
         {onglet === 'unites' && <UnitesScreen />}
         {onglet === 'renseignement' && <RenseignementScreen />}

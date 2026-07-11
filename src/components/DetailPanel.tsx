@@ -1,5 +1,6 @@
 import type { ElementSelectionne } from '../types'
-import { echelonLabel, statutUniteStyle } from '../uniteStyle'
+import { echelonLabel, statutUniteStyle, typeUniteLabel } from '../uniteStyle'
+import type { TypeUnite } from '../types'
 
 function construireDetail(selection: ElementSelectionne) {
   switch (selection.kind) {
@@ -32,6 +33,20 @@ function construireDetail(selection: ElementSelectionne) {
           { label: 'Statut', valeur: 'Confirmée' },
           { label: 'Position', valeur: 'Zone A3' },
           { label: 'Logistique', valeur: 'Priorité critique' },
+        ],
+      }
+    }
+    case 'garnison': {
+      const g = selection.data
+      return {
+        classification: 'Confidentiel Défense',
+        titre: g.nom,
+        sousTitre: `${g.wilaya} — ${g.localite}.`,
+        kv: [
+          { label: 'Type', valeur: typeUniteLabel[g.typeUnite as TypeUnite] ?? g.typeUnite },
+          { label: 'Statut', valeur: statutUniteStyle[g.statut as keyof typeof statutUniteStyle]?.label ?? g.statut },
+          { label: 'Personnel', valeur: `${g.effectif} pers.` },
+          { label: 'Logistique', valeur: `Armement ${g.armementPct}%, Munitions ${g.munitionsPct}%, Carburant ${g.carburantPct}%, Vivres ${g.vivresPct}%` },
         ],
       }
     }

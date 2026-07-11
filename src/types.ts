@@ -1,6 +1,6 @@
-import type { SituationDTO } from './api/client'
+import type { GarnisonDTO, SituationDTO } from './api/client'
 
-export type TypeUnite = 'pc' | 'infanterie' | 'artillerie' | 'genie' | 'logistique'
+export type TypeUnite = 'pc' | 'infanterie' | 'artillerie' | 'genie' | 'logistique' | 'force_speciale' | 'aerien' | 'marine'
 export type StatutUnite = 'en_mission' | 'en_progression' | 'disponible' | 'communication_degradee'
 
 export type Classification = 'diffusion_libre' | 'confidentiel' | 'secret' | 'tres_secret'
@@ -31,3 +31,4 @@ export type ElementSelectionne =
   | { kind: 'unite'; data: UniteSituation }
   | { kind: 'menace'; data: MenaceSituation }
   | { kind: 'checkpoint'; data: CheckpointSituation }
+  | { kind: 'garnison'; data: GarnisonDTO }
