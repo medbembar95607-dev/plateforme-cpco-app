@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
-import { api, type BesoinRecrutementDTO, type IndicateursRHDTO, type MilitaireDTO, type PropositionRHDTO } from '../../api/client'
+import { api, type BesoinFormationDTO, type BesoinRecrutementDTO, type IndicateursRHDTO, type MilitaireDTO, type PropositionRHDTO } from '../../api/client'
 
 const categorieLabel: Record<string, string> = {
   officier: 'Officiers',
   sous_officier: 'Sous-officiers',
   homme_du_rang: 'Hommes du rang',
+}
+
+const categorieLabelCourt: Record<string, string> = {
+  officier: 'Officier',
+  sous_officier: 'Sous-officier',
+  homme_du_rang: 'HDT',
 }
 
 const armeeLabel: Record<string, string> = {
@@ -35,6 +41,12 @@ const statutBesoinStyle: Record<string, { label: string; badge: string }> = {
   pourvu: { label: 'Pourvu', badge: 'bg-emerald-50 text-emerald-700' },
 }
 
+const statutFormationStyle: Record<string, { label: string; badge: string }> = {
+  a_planifier: { label: 'À planifier', badge: 'bg-red-50 text-red-700' },
+  planifie: { label: 'Planifié', badge: 'bg-amber-50 text-amber-700' },
+  realise: { label: 'Réalisé', badge: 'bg-emerald-50 text-emerald-700' },
+}
+
 // Ordre hiérarchique militaire, du plus élevé au plus bas.
 const ordreGrades = [
   'Général',
@@ -59,13 +71,14 @@ function rangGrade(grade: string): number {
   return rang === -1 ? ordreGrades.length : rang
 }
 
-type Onglet = 'annuaire' | 'propositions' | 'retraite' | 'recrutement'
+type Onglet = 'annuaire' | 'propositions' | 'retraite' | 'recrutement' | 'formation'
 
 const onglets: Array<{ id: Onglet; label: string }> = [
   { id: 'annuaire', label: 'Annuaire' },
   { id: 'propositions', label: 'Propositions' },
   { id: 'retraite', label: 'Départs à la retraite' },
   { id: 'recrutement', label: 'Besoins en recrutement' },
+  { id: 'formation', label: 'Besoin en formation' },
 ]
 
 export function RessourcesHumainesScreen() {
@@ -73,16 +86,19 @@ export function RessourcesHumainesScreen() {
   const [indicateurs, setIndicateurs] = useState<IndicateursRHDTO | null>(null)
   const [propositions, setPropositions] = useState<PropositionRHDTO[]>([])
   const [besoins, setBesoins] = useState<BesoinRecrutementDTO[]>([])
+  const [besoinsFormation, setBesoinsFormation] = useState<BesoinFormationDTO[]>([])
   const [onglet, setOnglet] = useState<Onglet>('annuaire')
   const [categorieFiltre, setCategorieFiltre] = useState<string>('officier')
   const [typePropositionFiltre, setTypePropositionFiltre] = useState<string>('affectation')
   const [categorieRetraiteFiltre, setCategorieRetraiteFiltre] = useState<string>('officier')
+  const [categorieFormationFiltre, setCategorieFormationFiltre] = useState<string>('officier')
 
   function charger() {
     api.personnel().then(setPersonnel)
     api.rhIndicateurs().then(setIndicateurs)
     api.propositionsRH().then(setPropositions)
     api.besoinsRecrutement().then(setBesoins)
+    api.besoinsFormation().then(setBesoinsFormation)
   }
 
   useEffect(() => {
@@ -106,6 +122,7 @@ export function RessourcesHumainesScreen() {
   const departsARetraite = personnel
     .filter((m) => m.categorie === categorieRetraiteFiltre)
     .sort((a, b) => rangGrade(a.grade) - rangGrade(b.grade) || b.ancienneteGrade - a.ancienneteGrade)
+  const besoinsFormationFiltres = besoinsFormation.filter((b) => b.categorie === categorieFormationFiltre)
 
   return (
     <section className="grid min-h-0 grid-rows-[auto_auto_1fr] gap-3.5">
@@ -359,6 +376,63 @@ export function RessourcesHumainesScreen() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {onglet === 'formation' && (
+          <div className="grid min-h-0 grid-rows-[auto_1fr] gap-3">
+            <div className="flex gap-1.5">
+              {Object.entries(categorieLabelCourt).map(([valeur, label]) => (
+                <button
+                  key={valeur}
+                  onClick={() => setCategorieFormationFiltre(valeur)}
+                  className={`h-9 rounded-lg px-3 text-sm ${categorieFormationFiltre === valeur ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="overflow-auto rounded-lg border border-[#d8ded9] bg-white shadow-sm">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-[#f8faf7] text-xs text-[#65706a]">
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Formation</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Armée</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Formation d'affectation</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Places</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Priorité</th>
+                    <th className="border-b border-[#d8ded9] px-3 py-3 text-left">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {besoinsFormationFiltres.map((b) => (
+                    <tr key={b.id}>
+                      <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{b.intitule}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{armeeLabel[b.armee] ?? b.armee}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{b.formationAffectation}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">{b.nombrePlaces}</td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">
+                        <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${prioriteBesoinStyle[b.priorite]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
+                          {prioriteBesoinStyle[b.priorite]?.label ?? b.priorite}
+                        </span>
+                      </td>
+                      <td className="border-b border-[#d8ded9] px-3 py-3">
+                        <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${statutFormationStyle[b.statut]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
+                          {statutFormationStyle[b.statut]?.label ?? b.statut}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {besoinsFormationFiltres.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-6 text-center text-sm text-[#65706a]">
+                        Aucun besoin en formation pour ce filtre.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

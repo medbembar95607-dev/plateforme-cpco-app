@@ -168,6 +168,18 @@ export interface BesoinRecrutementDTO {
   classification: string
 }
 
+export interface BesoinFormationDTO {
+  id: string
+  intitule: string
+  categorie: string
+  armee: string
+  formationAffectation: string
+  nombrePlaces: number
+  priorite: string
+  statut: string
+  classification: string
+}
+
 export interface RendezVousDTO {
   id: string
   titre: string
@@ -248,4 +260,5 @@ export const api = {
   validerPropositionRH: (id: string) => request<PropositionRHDTO>(`/rh/propositions/${id}/valider`, { method: 'POST' }),
   rejeterPropositionRH: (id: string) => request<PropositionRHDTO>(`/rh/propositions/${id}/rejeter`, { method: 'POST' }),
   besoinsRecrutement: () => request<BesoinRecrutementDTO[]>('/rh/besoins-recrutement'),
+  besoinsFormation: () => request<BesoinFormationDTO[]>('/rh/besoins-formation'),
 }
