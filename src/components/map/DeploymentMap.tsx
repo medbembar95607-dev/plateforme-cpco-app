@@ -1,11 +1,12 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import ms from 'milsymbol'
-import { Crosshair } from 'lucide-react'
+import { BoxSelect, Crosshair } from 'lucide-react'
 import type { GarnisonDTO } from '../../api/client'
 import type { ElementSelectionne, TypeUnite } from '../../types'
 import { couleurAmie, typeUniteSidc } from '../../uniteStyle'
+import { activerZoomSelection } from './zoomSelection'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const CENTRE_INITIAL: [number, number] = [-11.5, 19.0]
@@ -25,6 +26,8 @@ export function DeploymentMap({ garnisons, onSelect }: DeploymentMapProps) {
   const mapRef = useRef<maplibregl.Map | null>(null)
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
+  const annulerSelectionRef = useRef<(() => void) | null>(null)
+  const [selectionActive, setSelectionActive] = useState(false)
 
   useEffect(() => {
     if (!conteneurRef.current) return
@@ -61,6 +64,7 @@ export function DeploymentMap({ garnisons, onSelect }: DeploymentMapProps) {
     })
 
     return () => {
+      annulerSelectionRef.current?.()
       observateurTaille.disconnect()
       map.remove()
       mapRef.current = null
@@ -72,15 +76,38 @@ export function DeploymentMap({ garnisons, onSelect }: DeploymentMapProps) {
     mapRef.current?.flyTo({ center: CENTRE_INITIAL, zoom: ZOOM_INITIAL })
   }
 
+  function toggleZoomSelection() {
+    if (!mapRef.current || !conteneurRef.current) return
+    if (selectionActive) {
+      annulerSelectionRef.current?.()
+      return
+    }
+    setSelectionActive(true)
+    annulerSelectionRef.current = activerZoomSelection(mapRef.current, conteneurRef.current, () => {
+      setSelectionActive(false)
+      annulerSelectionRef.current = null
+    })
+  }
+
   return (
     <div className="relative min-h-0 overflow-hidden rounded-b-lg">
       <div ref={conteneurRef} className="h-full w-full" />
-      <button
-        onClick={recentrer}
-        className="absolute right-3 top-[76px] flex items-center gap-1.5 rounded-lg border border-[#d8ded9] bg-white/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#17201b] shadow-sm"
-      >
-        <Crosshair size={13} /> Recentrer
-      </button>
+      <div className="absolute right-3 top-[76px] flex flex-col items-end gap-2">
+        <button
+          onClick={recentrer}
+          className="flex items-center gap-1.5 rounded-lg border border-[#d8ded9] bg-white/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#17201b] shadow-sm"
+        >
+          <Crosshair size={13} /> Recentrer
+        </button>
+        <button
+          onClick={toggleZoomSelection}
+          className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold uppercase tracking-wide shadow-sm ${
+            selectionActive ? 'border-sky-600 bg-sky-600 text-white' : 'border-[#d8ded9] bg-white/95 text-[#17201b]'
+          }`}
+        >
+          <BoxSelect size={13} /> Zoom sélection
+        </button>
+      </div>
     </div>
   )
 }
