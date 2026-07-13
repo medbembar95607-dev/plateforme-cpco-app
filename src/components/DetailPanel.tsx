@@ -45,10 +45,10 @@ function construireDetail(selection: ElementSelectionne) {
         kv: [
           { label: 'Type', valeur: typeUniteLabel[g.typeUnite as TypeUnite] ?? g.typeUnite },
           { label: 'Statut', valeur: statutUniteStyle[g.statut as keyof typeof statutUniteStyle]?.label ?? g.statut },
-          { label: 'Personnel', valeur: `${g.effectif} pers. — Santé ${g.santePct}%, Véhicules ${g.vehiculePct}%` },
+          { label: 'Personnel', valeur: `${g.effectif} pers.\nSanté ${g.santePct}%\nVéhicules ${g.vehiculePct}%` },
           {
             label: 'Logistique',
-            valeur: `Armement ${g.armementPct}%, Munitions ${g.munitionsPct}%, Carburant ${g.carburantPct}%, Vivres ${g.vivresPct}%`,
+            valeur: `Armement ${g.armementPct}%\nMunitions ${g.munitionsPct}%\nCarburant ${g.carburantPct}%\nVivres ${g.vivresPct}%`,
           },
         ],
       }
@@ -90,7 +90,7 @@ export function DetailPanel({ selection }: { selection: ElementSelectionne | nul
         {detail.kv.map((item) => (
           <div key={item.label} className="rounded-lg bg-[#eef2ed] p-2.5">
             <span className="mb-1 block text-xs text-[#65706a]">{item.label}</span>
-            <strong className="text-[#17201b]">{item.valeur}</strong>
+            <strong className="whitespace-pre-line text-[#17201b]">{item.valeur}</strong>
           </div>
         ))}
       </div>
