@@ -17,7 +17,7 @@ const titres: Record<Vue, [string, string]> = {
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
   calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
   materiel: ['Situation Matériel', 'Matériel en dotation et à la réserve, toutes armées (Terre, Air, Mer)'],
-  budget: ['Finance', 'Budget global, fonctionnement et investissement, indicateurs et alertes de seuil'],
+  budget: ['Situation Financière', 'Budget global, fonctionnement et investissement, indicateurs et alertes de seuil'],
   rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
   veille: ['Veille Stratégique', "Indicateurs géopolitiques et sécuritaires régionaux, priorisés par probabilité de crise"],
   suivi_execution: ['Suivi Exécution Ordres', "Suivi de l'exécution des ordres et instructions émis aux unités subordonnées"],
