@@ -6,18 +6,10 @@ import type { StatutUnite, TypeUnite } from '../../types'
 type UniteRow = Awaited<ReturnType<typeof api.units>>[number]
 type LogistiqueRow = Awaited<ReturnType<typeof api.logistics>>[number]
 
-function couleurBarre(pct: number) {
-  if (pct <= 30) return 'bg-[#b9332c]'
-  if (pct <= 50) return 'bg-[#ba7a0b]'
-  return 'bg-[#21835d]'
-}
-
-function Barre({ pct }: { pct: number }) {
-  return (
-    <div className="h-[9px] w-[90px] overflow-hidden rounded-full bg-[#e5e9e5]">
-      <div className={`h-full ${couleurBarre(pct)}`} style={{ width: `${pct}%` }} />
-    </div>
-  )
+function couleurTexte(pct: number) {
+  if (pct <= 30) return 'text-[#b9332c] font-bold'
+  if (pct <= 50) return 'text-[#ba7a0b] font-bold'
+  return 'text-[#17201b]'
 }
 
 export function UnitesScreen() {
@@ -84,12 +76,12 @@ export function UnitesScreen() {
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.effectif}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.communication === 'stable' ? 'Stable' : 'Dégradée'}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.dernierRapport ?? '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.armementPct} /> : '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.munitionsPct} /> : '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.carburantPct} /> : '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? `${log.vivresPct}%` : '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.santePct} /> : '—'}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.vehiculePct} /> : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.armementPct) : ''}`}>{log ? `${log.armementPct}%` : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.munitionsPct) : ''}`}>{log ? `${log.munitionsPct}%` : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.carburantPct) : ''}`}>{log ? `${log.carburantPct}%` : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.vivresPct) : ''}`}>{log ? `${log.vivresPct}%` : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.santePct) : ''}`}>{log ? `${log.santePct}%` : '—'}</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${log ? couleurTexte(log.vehiculePct) : ''}`}>{log ? `${log.vehiculePct}%` : '—'}</td>
               </tr>
               )
             })}

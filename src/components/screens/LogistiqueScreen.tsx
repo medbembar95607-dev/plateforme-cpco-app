@@ -9,18 +9,10 @@ const alerteStyle = {
   critique: { label: 'Critique', badge: 'bg-red-50 text-red-700' },
 }
 
-function couleurBarre(pct: number) {
-  if (pct <= 30) return 'bg-[#b9332c]'
-  if (pct <= 50) return 'bg-[#ba7a0b]'
-  return 'bg-[#21835d]'
-}
-
-function Barre({ pct }: { pct: number }) {
-  return (
-    <div className="h-[9px] w-[150px] overflow-hidden rounded-full bg-[#e5e9e5]">
-      <div className={`h-full ${couleurBarre(pct)}`} style={{ width: `${pct}%` }} />
-    </div>
-  )
+function couleurTexte(pct: number) {
+  if (pct <= 30) return 'text-[#b9332c] font-bold'
+  if (pct <= 50) return 'text-[#ba7a0b] font-bold'
+  return 'text-[#17201b]'
 }
 
 export function LogistiqueScreen() {
@@ -65,23 +57,13 @@ export function LogistiqueScreen() {
             {lignes.map((ligne) => (
               <tr key={ligne.uniteId}>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.uniteNom}</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.armementPct} />
-                </td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.munitionsPct} />
-                </td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.carburantPct} />
-                </td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.vivresPct}%</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.maintenancePct}%</td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.santePct} />
-                </td>
-                <td className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <Barre pct={ligne.vehiculePct} />
-                </td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.armementPct)}`}>{ligne.armementPct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.munitionsPct)}`}>{ligne.munitionsPct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.carburantPct)}`}>{ligne.carburantPct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.vivresPct)}`}>{ligne.vivresPct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.maintenancePct)}`}>{ligne.maintenancePct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.santePct)}`}>{ligne.santePct}%</td>
+                <td className={`border-b border-[#d8ded9] px-3.5 py-3 ${couleurTexte(ligne.vehiculePct)}`}>{ligne.vehiculePct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
                   <span
                     className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${alerteStyle[ligne.alerte as keyof typeof alerteStyle].badge}`}

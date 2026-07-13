@@ -45,10 +45,10 @@ function construireDetail(selection: ElementSelectionne) {
         kv: [
           { label: 'Type', valeur: typeUniteLabel[g.typeUnite as TypeUnite] ?? g.typeUnite },
           { label: 'Statut', valeur: statutUniteStyle[g.statut as keyof typeof statutUniteStyle]?.label ?? g.statut },
-          { label: 'Personnel', valeur: `${g.effectif} pers.` },
+          { label: 'Personnel', valeur: `${g.effectif} pers. — Santé ${g.santePct}%, Véhicules ${g.vehiculePct}%` },
           {
             label: 'Logistique',
-            valeur: `Armement ${g.armementPct}%, Munitions ${g.munitionsPct}%, Carburant ${g.carburantPct}%, Vivres ${g.vivresPct}%, Santé ${g.santePct}%, Véhicules ${g.vehiculePct}%`,
+            valeur: `Armement ${g.armementPct}%, Munitions ${g.munitionsPct}%, Carburant ${g.carburantPct}%, Vivres ${g.vivresPct}%`,
           },
         ],
       }
