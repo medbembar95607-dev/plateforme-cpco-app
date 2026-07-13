@@ -1,14 +1,14 @@
 # Plateforme CPCO — Situation opérationnelle commune
 
-Application de Commandement et de Contrôle (C2/C4ISR) pour le Centre de Planification et de Conduite des Opérations. React + TypeScript + Tailwind + MapLibre GL, branchée sur l'API réelle de [`../plateforme-cpco-api/`](../plateforme-cpco-api/) (FastAPI + SQLite en dev).
+Application de Commandement et de Contrôle (C2/C4ISR) pour le Centre de Planification et de Conduite des Opérations. React + TypeScript + Tailwind + MapLibre GL, branchée sur l'API réelle de [`../plateforme-commandement-api/`](../plateforme-commandement-api/) (FastAPI + SQLite en dev).
 
-Le cadrage complet (besoins, décisions d'architecture, modèle de données, maquettes, exigences de sécurité) vit dans [`../plateforme-cpco/`](../plateforme-cpco/), pas ici. Ce README couvre uniquement le code. Projet distinct du MVP [`../c2-militaire-app/`](../c2-militaire-app/) — voir `../plateforme-cpco/README.md` pour la justification.
+Le cadrage complet (besoins, décisions d'architecture, modèle de données, maquettes, exigences de sécurité) vit dans [`../plateforme-commandement/`](../plateforme-commandement/), pas ici. Ce README couvre uniquement le code. Projet distinct du MVP [`../c2-militaire-app/`](../c2-militaire-app/) — voir `../plateforme-commandement/README.md` pour la justification.
 
 ## Démo en ligne
 
 **https://tbcomd.netlify.app**
 
-Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur Netlify (déploiement continu depuis la branche `main`). Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-cpco-api/README.md`).
+Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur Netlify (déploiement continu depuis la branche `main`). Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-commandement-api/README.md`).
 
 Variable d'environnement de build (Netlify → Project configuration → Environment variables) : `VITE_API_URL=https://plateforme-cpco-api.onrender.com`. Elle est lue au moment du build (Vite), pas à l'exécution — toute modification impose un redéploiement (Deploys → Trigger deploy).
 
@@ -22,7 +22,7 @@ Variable d'environnement de build (Netlify → Project configuration → Environ
 
 ## Démarrer en local
 
-Démarrer d'abord l'API (voir `../plateforme-cpco-api/README.md`), puis :
+Démarrer d'abord l'API (voir `../plateforme-commandement-api/README.md`), puis :
 
 ```bash
 npm install
@@ -31,7 +31,7 @@ npm run dev
 
 ## Écrans
 
-La barre latérale comporte 6 entrées : **Les Opérations**, **Parapheur Numérique**, **Agenda du Chef**, **Situation Matériel**, **Volet Financier** et **Ressources Humaines**. Les Opérations (`OpsScreen.tsx`) regroupe 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-cpco/04-cartographie/maquettes-ecrans.md`.
+La barre latérale comporte 6 entrées : **Les Opérations**, **Parapheur Numérique**, **Agenda du Chef**, **Situation Matériel**, **Volet Financier** et **Ressources Humaines**. Les Opérations (`OpsScreen.tsx`) regroupe 10 écrans opérationnels sous forme de sous-onglets internes : Point de Situation (carte COP + tableau de bord), LIVE OPS, Unités, Renseignement, Logistique, Opérations, Ordres, Incidents, Alertes, Administration. Détail de chaque écran dans `../plateforme-commandement/04-cartographie/maquettes-ecrans.md`.
 
 Les 5 sous-écrans Situation/Unités/Renseignement/Logistique/Opérations reproduisent fidèlement le prototype de référence (`C:\Users\HP\Documents\OPS_2026\App_IA\index.html`, HTML/CSS/JS statique). Ordres/Incidents/Alertes/Administration/LIVE OPS/Courrier du Chef sont une implémentation d'après nos propres maquettes, ce prototype ne les couvrant pas.
 
@@ -64,8 +64,8 @@ src/
 
 ## Limitations connues
 
-- Pas d'authentification côté frontend (l'API ne vérifie ni rôle ni habilitation pour l'instant, voir `../plateforme-cpco-api/README.md`)
-- Pas de mode hors-ligne (axe encore en hypothèse de travail, voir `../plateforme-cpco/02-architecture/decisions.md`)
+- Pas d'authentification côté frontend (l'API ne vérifie ni rôle ni habilitation pour l'instant, voir `../plateforme-commandement-api/README.md`)
+- Pas de mode hors-ligne (axe encore en hypothèse de travail, voir `../plateforme-commandement/02-architecture/decisions.md`)
 - Écrans Ordres/Incidents/Alertes/Administration non validés par capture d'un prototype existant, contrairement aux 5 premiers
 - Le "Flux opérationnel" de l'écran Situation reste un journal local à la session (pas encore persisté côté API)
 - LIVE OPS : drone et flux vidéo entièrement simulés, aucune intégration matérielle réelle (voir section Écrans)
