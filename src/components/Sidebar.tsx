@@ -10,7 +10,7 @@ const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'courrier', label: 'Parapheur Numérique', icone: <Mail size={17} /> },
   { vue: 'calendrier', label: 'Agenda du Chef', icone: <Calendar size={17} /> },
   { vue: 'materiel', label: 'Situation Matériel', icone: <Boxes size={17} /> },
-  { vue: 'budget', label: 'Volet Financier', icone: <Wallet size={17} /> },
+  { vue: 'budget', label: 'Financier', icone: <Wallet size={17} /> },
   { vue: 'rh', label: 'Ressources Humaines', icone: <Users size={17} /> },
 ]
 
