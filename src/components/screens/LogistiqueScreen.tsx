@@ -40,6 +40,8 @@ export function LogistiqueScreen() {
           <option>Vivres</option>
           <option>Maintenance</option>
           <option>Armement</option>
+          <option>Santé</option>
+          <option>Véhicules</option>
         </select>
         <button className="h-10 rounded-lg border border-[#17201b] bg-[#17201b] px-3.5 text-white">Planifier ravitaillement</button>
       </div>
@@ -54,6 +56,8 @@ export function LogistiqueScreen() {
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Carburant</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Vivres</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Maintenance</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Santé</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Véhicules</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Alerte</th>
             </tr>
           </thead>
@@ -72,6 +76,12 @@ export function LogistiqueScreen() {
                 </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.vivresPct}%</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{ligne.maintenancePct}%</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">
+                  <Barre pct={ligne.santePct} />
+                </td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">
+                  <Barre pct={ligne.vehiculePct} />
+                </td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">
                   <span
                     className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${alerteStyle[ligne.alerte as keyof typeof alerteStyle].badge}`}

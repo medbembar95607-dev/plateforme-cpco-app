@@ -234,6 +234,8 @@ export interface GarnisonDTO {
   munitionsPct: number
   armementPct: number
   vivresPct: number
+  santePct: number
+  vehiculePct: number
   classification: string
 }
 
@@ -272,7 +274,18 @@ export const api = {
     ),
   logistics: () =>
     request<
-      Array<{ uniteId: string; uniteNom: string; carburantPct: number; munitionsPct: number; vivresPct: number; maintenancePct: number; armementPct: number; alerte: string }>
+      Array<{
+        uniteId: string
+        uniteNom: string
+        carburantPct: number
+        munitionsPct: number
+        vivresPct: number
+        maintenancePct: number
+        armementPct: number
+        santePct: number
+        vehiculePct: number
+        alerte: string
+      }>
     >('/logistics'),
   logisticsThresholds: () => request<Record<string, number>>('/logistics/thresholds'),
   operations: () =>

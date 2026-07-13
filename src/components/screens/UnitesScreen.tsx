@@ -4,12 +4,29 @@ import { statutUniteStyle, typeUniteLabel } from '../../uniteStyle'
 import type { StatutUnite, TypeUnite } from '../../types'
 
 type UniteRow = Awaited<ReturnType<typeof api.units>>[number]
+type LogistiqueRow = Awaited<ReturnType<typeof api.logistics>>[number]
+
+function couleurBarre(pct: number) {
+  if (pct <= 30) return 'bg-[#b9332c]'
+  if (pct <= 50) return 'bg-[#ba7a0b]'
+  return 'bg-[#21835d]'
+}
+
+function Barre({ pct }: { pct: number }) {
+  return (
+    <div className="h-[9px] w-[90px] overflow-hidden rounded-full bg-[#e5e9e5]">
+      <div className={`h-full ${couleurBarre(pct)}`} style={{ width: `${pct}%` }} />
+    </div>
+  )
+}
 
 export function UnitesScreen() {
   const [unites, setUnites] = useState<UniteRow[]>([])
+  const [logistique, setLogistique] = useState<Map<string, LogistiqueRow>>(new Map())
 
   useEffect(() => {
     api.units().then(setUnites)
+    api.logistics().then((lignes) => setLogistique(new Map(lignes.map((l) => [l.uniteId, l]))))
   }, [])
 
   return (
@@ -42,10 +59,18 @@ export function UnitesScreen() {
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Effectif</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Communication</th>
               <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Dernier rapport</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Armement</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Munitions</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Carburant</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Vivres</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Santé</th>
+              <th className="border-b border-[#d8ded9] px-3.5 py-3 text-left">Véhicules</th>
             </tr>
           </thead>
           <tbody>
-            {unites.map((unite) => (
+            {unites.map((unite) => {
+              const log = logistique.get(unite.id)
+              return (
               <tr key={unite.id}>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.nom}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{typeUniteLabel[unite.typeUnite as TypeUnite]}</td>
@@ -59,8 +84,15 @@ export function UnitesScreen() {
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.effectif}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.communication === 'stable' ? 'Stable' : 'Dégradée'}</td>
                 <td className="border-b border-[#d8ded9] px-3.5 py-3">{unite.dernierRapport ?? '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.armementPct} /> : '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.munitionsPct} /> : '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.carburantPct} /> : '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? `${log.vivresPct}%` : '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.santePct} /> : '—'}</td>
+                <td className="border-b border-[#d8ded9] px-3.5 py-3">{log ? <Barre pct={log.vehiculePct} /> : '—'}</td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>
