@@ -9,6 +9,7 @@ import { VoletFinancierScreen } from './components/screens/VoletFinancierScreen'
 import { RessourcesHumainesScreen } from './components/screens/RessourcesHumainesScreen'
 import { VeilleStrategiqueScreen } from './components/screens/VeilleStrategiqueScreen'
 import { SuiviExecutionScreen } from './components/screens/SuiviExecutionScreen'
+import { CommunicationScreen } from './components/screens/CommunicationScreen'
 import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
@@ -16,6 +17,7 @@ const titres: Record<Vue, [string, string]> = {
   ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
   calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
+  communication: ['Communication', 'Chat écrit/vocal/documents et réunions en ligne avec les unités subordonnées'],
   materiel: ['Situation Matériel', 'Matériel en dotation et à la réserve, toutes armées (Terre, Air, Mer)'],
   budget: ['Situation Financière', 'Budget global, fonctionnement et investissement, indicateurs et alertes de seuil'],
   rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
@@ -63,6 +65,7 @@ function App() {
           {vue === 'ops' && <OpsScreen evenements={evenements} />}
           {vue === 'courrier' && <CourrierScreen />}
           {vue === 'calendrier' && <CalendrierScreen />}
+          {vue === 'communication' && <CommunicationScreen />}
           {vue === 'materiel' && <SituationMaterielScreen />}
           {vue === 'budget' && <VoletFinancierScreen />}
           {vue === 'rh' && <RessourcesHumainesScreen />}

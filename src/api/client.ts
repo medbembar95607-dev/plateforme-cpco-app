@@ -1,6 +1,13 @@
 // VITE_API_URL permet de pointer vers l'API déployée (Render) en production ; par défaut,
 // l'API locale de dev. Voir .env.production et README (section déploiement).
-const BASE_URL = `${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/api`
+const API_ROOT_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const BASE_URL = `${API_ROOT_URL}/api`
+
+// Les pièces jointes (documents, messages vocaux) sont servies par l'API sous /uploads, en dehors
+// du préfixe /api (voir app/main.py côté backend).
+export function mediaUrl(chemin: string): string {
+  return `${API_ROOT_URL}${chemin}`
+}
 
 // Pas de vraie authentification pour l'instant (voir README) : l'utilisateur actif est choisi
 // dans un sélecteur de démonstration (Sidebar) et transmis via cet en-tête, pour que le journal
@@ -251,6 +258,31 @@ export interface BesoinFormationDTO {
   classification: string
 }
 
+export interface MessageDTO {
+  id: string
+  expediteurNom: string
+  typeMessage: string
+  contenu: string | null
+  fichierUrl: string | null
+  fichierNom: string | null
+  dureeSecondes: number | null
+  diffusion: boolean
+  classification: string
+  dateEnvoi: string
+  destinataires: Array<{ uniteId: string; uniteNom: string }>
+}
+
+export interface ReunionDTO {
+  id: string
+  titre: string
+  organisateurNom: string
+  dateConvocation: string
+  statut: string
+  classification: string
+  notes: string | null
+  participants: Array<{ id: string; uniteId: string; uniteNom: string; statut: string }>
+}
+
 export interface RendezVousDTO {
   id: string
   titre: string
@@ -351,4 +383,22 @@ export const api = {
   demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),
   executerSuivi: (id: string, compte_rendu: string) =>
     request<SuiviExecutionDTO>(`/execution/${id}/executer`, { method: 'POST', body: JSON.stringify({ compte_rendu }) }),
+  messages: () => request<MessageDTO[]>('/communication/messages'),
+  envoyerMessageTexte: (payload: { contenu: string; destinataire_unit_ids: string[]; diffusion: boolean }) =>
+    request<MessageDTO>('/communication/messages', { method: 'POST', body: JSON.stringify(payload) }),
+  envoyerMessageMedia: async (form: FormData) => {
+    const headers: Record<string, string> = {}
+    if (session.userId) headers['X-User-Id'] = session.userId
+    const res = await fetch(`${BASE_URL}/communication/messages/upload`, { method: 'POST', body: form, headers })
+    if (!res.ok) throw new Error(`POST /communication/messages/upload a échoué (${res.status})`)
+    return res.json() as Promise<MessageDTO>
+  },
+  reunions: () => request<ReunionDTO[]>('/communication/reunions'),
+  convoquerReunion: (payload: { titre: string; participant_unit_ids: string[]; notes?: string }) =>
+    request<ReunionDTO>('/communication/reunions', { method: 'POST', body: JSON.stringify(payload) }),
+  demarrerReunion: (id: string) => request<ReunionDTO>(`/communication/reunions/${id}/demarrer`, { method: 'POST' }),
+  terminerReunion: (id: string) => request<ReunionDTO>(`/communication/reunions/${id}/terminer`, { method: 'POST' }),
+  annulerReunion: (id: string) => request<ReunionDTO>(`/communication/reunions/${id}/annuler`, { method: 'POST' }),
+  basculerParticipant: (reunionId: string, participantId: string) =>
+    request<ReunionDTO>(`/communication/reunions/${reunionId}/participants/${participantId}/basculer`, { method: 'POST' }),
 }
