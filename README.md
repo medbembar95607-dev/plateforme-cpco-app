@@ -2,7 +2,7 @@
 
 Application de Commandement et de Contrôle (C2/C4ISR) pour le Centre de Planification et de Conduite des Opérations. React + TypeScript + Tailwind + MapLibre GL, branchée sur l'API réelle de [`../plateforme-commandement-api/`](../plateforme-commandement-api/) (FastAPI + SQLite en dev).
 
-Le cadrage complet (besoins, décisions d'architecture, modèle de données, maquettes, exigences de sécurité) vit dans [`../plateforme-commandement/`](../plateforme-commandement/), pas ici. Ce README couvre uniquement le code. Projet distinct du MVP [`../c2-militaire-app/`](../c2-militaire-app/) — voir `../plateforme-commandement/README.md` pour la justification.
+Le cadrage complet (besoins, décisions d'architecture, modèle de données, maquettes, exigences de sécurité) vit dans [`../plateforme-commandement/`](../plateforme-commandement/), pas ici. Ce README couvre uniquement le code.
 
 ## Démo en ligne
 
