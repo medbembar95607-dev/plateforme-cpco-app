@@ -66,6 +66,7 @@ export function LogistiqueScreen() {
   const [selectionCarteId, setSelectionCarteId] = useState<string | null>(null)
   const hautRef = useRef<HTMLDivElement>(null)
   const [filtre, setFiltre] = useState<CleRessource | ''>('')
+  const [afficherNormales, setAfficherNormales] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
   const [occupeId, setOccupeId] = useState<string | null>(null)
 
@@ -109,7 +110,11 @@ export function LogistiqueScreen() {
 
   const colonnes = filtre ? ressources.filter((r) => r.cle === filtre) : ressources
   // Avec une ressource filtrée, les unités les plus en manque passent en tête.
-  const lignesAffichees = filtre ? [...lignes].sort((a, b) => niveau(a, filtre) - niveau(b, filtre)) : lignes
+  // Par défaut, le tableau ne montre que les unités en alerte (attention ou critique).
+  // Le formulaire de demande, lui, garde toutes les unités.
+  const lignesEnAlerte = afficherNormales ? lignes : lignes.filter((l) => l.alerte !== 'normal')
+  const nbNormales = lignes.filter((l) => l.alerte === 'normal').length
+  const lignesAffichees = filtre ? [...lignesEnAlerte].sort((a, b) => niveau(a, filtre) - niveau(b, filtre)) : lignesEnAlerte
   const ligneChoisie = lignes.find((l) => l.uniteId === uniteId)
   const niveauActuel = niveau(ligneChoisie, ressource)
   const demandesTriees = [...demandes].sort(
@@ -307,6 +312,17 @@ export function LogistiqueScreen() {
               ))}
             </tbody>
           </table>
+          {lignesAffichees.length === 0 && <p className="m-0 px-3.5 py-3 text-sm text-[#65706a]">Aucune unité en alerte logistique.</p>}
+          {nbNormales > 0 && (
+            <div className="flex items-center justify-between border-t border-[#d8ded9] bg-[#f8faf7] px-3.5 py-2 text-xs text-[#65706a]">
+              <span>
+                {afficherNormales ? `Toutes les unités affichées` : `${nbNormales} unité(s) en situation normale masquée(s)`}
+              </span>
+              <button onClick={() => setAfficherNormales((v) => !v)} className="font-bold text-[#17201b] underline">
+                {afficherNormales ? 'Masquer les unités normales' : 'Tout afficher'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-3.5">
