@@ -61,7 +61,8 @@ export function RenseignementMap({
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right')
     const observateurTaille = new ResizeObserver(() => map.resize())
     observateurTaille.observe(conteneurRef.current)
-    map.on('load', () => setCarteChargee(true))
+    // Uniquement des marqueurs : inutile d'attendre le chargement complet du fond de carte.
+    setCarteChargee(true)
     map.on('click', (e) => {
       if (modePlacementRef.current) onPlacerRef.current(e.lngLat.lng, e.lngLat.lat)
     })

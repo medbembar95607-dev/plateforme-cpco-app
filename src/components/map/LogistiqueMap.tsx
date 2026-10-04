@@ -69,7 +69,8 @@ export function LogistiqueMap({ unites, niveaux, demandes, selectionId, onSelect
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right')
     const observateurTaille = new ResizeObserver(() => map.resize())
     observateurTaille.observe(conteneurRef.current)
-    map.on('load', () => setCarteChargee(true))
+    // Uniquement des marqueurs : inutile d'attendre le chargement complet du fond de carte.
+    setCarteChargee(true)
     return () => {
       observateurTaille.disconnect()
       map.remove()

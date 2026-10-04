@@ -94,6 +94,16 @@ export interface RapportRensCreate {
   lat: number | null
 }
 
+export interface OperationCarteDTO {
+  operationId: string
+  lon: number | null
+  lat: number | null
+  zones: Array<{ id: string; nom: string; typeZone: string; coordinates: [number, number][] }>
+  axes: Array<{ id: string; nom: string; coordinates: [number, number][] }>
+  checkpoints: Array<{ id: string; nom: string; statut: string; lon: number; lat: number }>
+  unites: Array<{ id: string; nom: string; typeUnite: string; lon: number; lat: number }>
+}
+
 export interface DemandeRavitaillementDTO {
   id: string
   uniteId: string
@@ -385,6 +395,7 @@ export const api = {
   logisticsThresholds: () => request<Record<string, number>>('/logistics/thresholds'),
   operations: () =>
     request<Array<{ id: string; code_operation: string; nom_operation: string; objectif: string; statut: string; priorite: string; progression: number }>>('/operations'),
+  operationsCarte: () => request<OperationCarteDTO[]>('/operations/carte'),
   orders: () =>
     request<
       Array<{
