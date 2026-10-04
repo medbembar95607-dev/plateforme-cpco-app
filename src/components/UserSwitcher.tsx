@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api, session } from '../api/client'
+import { api, definirUtilisateurActif } from '../api/client'
 
 type UserRow = Awaited<ReturnType<typeof api.adminUsers>>[number]
 
@@ -21,14 +21,15 @@ export function UserSwitcher() {
     api.adminUsers().then((data) => {
       setUtilisateurs(data)
       if (data[0]) {
-        session.userId = data[0].id
+        definirUtilisateurActif(data[0].id, data[0].role)
         setSelectionId(data[0].id)
       }
     })
   }, [])
 
   function changer(id: string) {
-    session.userId = id
+    const utilisateur = utilisateurs.find((u) => u.id === id)
+    if (utilisateur) definirUtilisateurActif(id, utilisateur.role)
     setSelectionId(id)
   }
 

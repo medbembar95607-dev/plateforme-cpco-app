@@ -15,3 +15,8 @@ body {
   padding: 0.75rem;
   box-shadow: 0 12px 30px rgba(23, 32, 27, 0.18);
 }
+
+/* Mode placement d'un renseignement : les clics traversent les symboles pour atteindre la carte. */
+.placement-actif .maplibregl-marker {
+  pointer-events: none;
+}

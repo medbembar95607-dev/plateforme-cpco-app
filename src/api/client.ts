@@ -12,7 +12,19 @@ export function mediaUrl(chemin: string): string {
 // Pas de vraie authentification pour l'instant (voir README) : l'utilisateur actif est choisi
 // dans un sélecteur de démonstration (Sidebar) et transmis via cet en-tête, pour que le journal
 // d'audit puisse quand même attribuer les actions à quelqu'un.
-export const session = { userId: null as string | null }
+export const session = { userId: null as string | null, role: null as string | null }
+
+// Les écrans qui adaptent leurs actions au rôle s'abonnent au changement d'utilisateur actif.
+const abonnesSession = new Set<() => void>()
+export function definirUtilisateurActif(userId: string, role: string) {
+  session.userId = userId
+  session.role = role
+  abonnesSession.forEach((f) => f())
+}
+export function abonnerSession(f: () => void): () => void {
+  abonnesSession.add(f)
+  return () => abonnesSession.delete(f)
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(init?.headers as Record<string, string>) }
@@ -20,6 +32,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   const res = await fetch(`${BASE_URL}${path}`, { ...init, headers })
   if (!res.ok) {
+    // L'API renvoie un motif lisible dans `detail` pour les refus métier (403, 409, 422).
+    const corps = await res.json().catch(() => null)
+    if (corps && typeof corps.detail === 'string') throw new Error(corps.detail)
     throw new Error(`${init?.method ?? 'GET'} ${path} a échoué (${res.status})`)
   }
   if (res.status === 204) return undefined as T
@@ -50,6 +65,48 @@ export interface SituationDTO {
     menacesConfirmees: number
     niveauLogistiquePct: number
   }
+}
+
+export interface RapportRensDTO {
+  id: string
+  reference: string
+  type_renseignement: string
+  classification: string
+  titre: string
+  resume: string
+  fiabilite_source: string
+  credibilite_info: number
+  statut: string
+  date_rapport: string
+  lon: number | null
+  lat: number | null
+}
+
+export interface RapportRensCreate {
+  type_renseignement: string
+  classification: string
+  titre: string
+  resume: string
+  fiabilite_source: string
+  credibilite_info: number
+  statut: string
+  lon: number | null
+  lat: number | null
+}
+
+export interface DemandeRavitaillementDTO {
+  id: string
+  uniteId: string
+  uniteNom: string
+  typeStock: string
+  pointsPct: number
+  priorite: string
+  statut: string
+  commentaire: string
+  demandeur: string | null
+  traitePar: string | null
+  dateDemande: string
+  dateTraitement: string | null
 }
 
 export interface CourrierDTO {
@@ -300,10 +357,16 @@ export const api = {
   situation: () => request<SituationDTO>('/situation'),
   units: () =>
     request<Array<{ id: string; nom: string; typeUnite: string; echelon: string; statut: string; effectif: number; communication: string; dernierRapport: string | null }>>('/units'),
-  intelligenceReports: () =>
-    request<Array<{ id: string; reference: string; type_renseignement: string; classification: string; titre: string; resume: string; fiabilite_source: string; statut: string }>>(
-      '/intelligence-reports',
-    ),
+  intelligenceReports: () => request<RapportRensDTO[]>('/intelligence-reports'),
+  creerRapport: (payload: RapportRensCreate) =>
+    request<RapportRensDTO>('/intelligence-reports', { method: 'POST', body: JSON.stringify(payload) }),
+  changerStatutRapport: (id: string, statut: string) =>
+    request<RapportRensDTO>(`/intelligence-reports/${id}/statut`, { method: 'POST', body: JSON.stringify({ statut }) }),
+  demandesRavitaillement: () => request<DemandeRavitaillementDTO[]>('/logistics/demandes'),
+  creerDemandeRavitaillement: (payload: { unit_id: string; type_stock: string; points_pct: number; priorite: string; commentaire: string }) =>
+    request<DemandeRavitaillementDTO>('/logistics/demandes', { method: 'POST', body: JSON.stringify(payload) }),
+  traiterDemandeRavitaillement: (id: string, action: 'prendre-en-charge' | 'livrer' | 'refuser') =>
+    request<DemandeRavitaillementDTO>(`/logistics/demandes/${id}/${action}`, { method: 'POST' }),
   logistics: () =>
     request<
       Array<{
