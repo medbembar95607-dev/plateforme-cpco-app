@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api/client'
-import type { DemandeRavitaillementDTO } from '../../api/client'
+import type { DemandeRavitaillementDTO, SituationDTO } from '../../api/client'
 import { useRoleActif } from '../../useRoleActif'
+import { LogistiqueMap, type NiveauxUnite } from '../map/LogistiqueMap'
 
 type LigneRow = Awaited<ReturnType<typeof api.logistics>>[number]
 
@@ -61,6 +62,9 @@ export function LogistiqueScreen() {
 
   const [lignes, setLignes] = useState<LigneRow[]>([])
   const [demandes, setDemandes] = useState<DemandeRavitaillementDTO[]>([])
+  const [unitesCarte, setUnitesCarte] = useState<SituationDTO['unites']>([])
+  const [selectionCarteId, setSelectionCarteId] = useState<string | null>(null)
+  const hautRef = useRef<HTMLDivElement>(null)
   const [filtre, setFiltre] = useState<CleRessource | ''>('')
   const [erreur, setErreur] = useState<string | null>(null)
   const [occupeId, setOccupeId] = useState<string | null>(null)
@@ -81,7 +85,27 @@ export function LogistiqueScreen() {
 
   useEffect(() => {
     recharger()
+    // Positions des unités : déjà servies par l'écran Situation.
+    api.situation().then((s) => setUnitesCarte(s.unites))
   }, [])
+
+  // Pour la carte : ressources sous 50 % de chaque unité, de la plus basse à la plus haute.
+  const niveauxCarte: NiveauxUnite[] = lignes.map((l) => ({
+    uniteId: l.uniteId,
+    uniteNom: l.uniteNom,
+    alerte: l.alerte,
+    ressourcesBasses: ressources
+      .map((r) => ({ label: r.label, pct: l[r.champ] }))
+      .filter((r) => r.pct <= 50)
+      .sort((a, b) => a.pct - b.pct),
+  }))
+
+  function ravitaillerDepuisCarte(uniteId: string) {
+    const ligne = lignes.find((l) => l.uniteId === uniteId)
+    if (!ligne) return
+    ouvrirFormulaire(ligne)
+    hautRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const colonnes = filtre ? ressources.filter((r) => r.cle === filtre) : ressources
   // Avec une ressource filtrée, les unités les plus en manque passent en tête.
@@ -169,6 +193,7 @@ export function LogistiqueScreen() {
       </div>
 
       <div className="grid min-h-0 content-start gap-3.5 overflow-auto">
+        <div ref={hautRef} className="-mb-3.5" />
         {erreur && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</div>}
 
         {formulaire && (
@@ -249,7 +274,12 @@ export function LogistiqueScreen() {
             </thead>
             <tbody>
               {lignesAffichees.map((ligne) => (
-                <tr key={ligne.uniteId}>
+                <tr
+                  key={ligne.uniteId}
+                  onClick={() => setSelectionCarteId(ligne.uniteId)}
+                  title="Localiser sur la carte"
+                  className={`cursor-pointer hover:bg-[#f8faf7] ${ligne.uniteId === selectionCarteId ? 'bg-[#f3f5f2]' : ''}`}
+                >
                   <td className={td}>{ligne.uniteNom}</td>
                   {colonnes.map((r) => (
                     <td key={r.cle} className={`${td} ${couleurTexte(ligne[r.champ])}`}>
@@ -263,7 +293,10 @@ export function LogistiqueScreen() {
                   </td>
                   <td className={`${td} text-right`}>
                     <button
-                      onClick={() => ouvrirFormulaire(ligne)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        ouvrirFormulaire(ligne)
+                      }}
                       disabled={role === null}
                       className="rounded-md border border-[#d8ded9] px-2 py-1 text-xs text-[#17201b] hover:bg-[#f3f5f2] disabled:opacity-40"
                     >
@@ -276,47 +309,65 @@ export function LogistiqueScreen() {
           </table>
         </div>
 
-        <div className="rounded-lg border border-[#d8ded9] bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#d8ded9] px-3.5 py-3">
-            <h3 className="m-0 text-[15px] text-[#17201b]">Demandes de ravitaillement · {nbOuvertes} ouverte(s)</h3>
-            {!peutTraiter && <span className="text-xs text-[#65706a]">Traitement réservé à la logistique et au commandement</span>}
+        <div className="grid grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-3.5">
+          <div className="h-[460px]">
+            <LogistiqueMap
+              unites={unitesCarte}
+              niveaux={niveauxCarte}
+              demandes={demandes}
+              selectionId={selectionCarteId}
+              onSelect={setSelectionCarteId}
+              onRavitailler={ravitaillerDepuisCarte}
+            />
           </div>
-          {demandesTriees.length === 0 && <p className="m-0 px-3.5 py-3 text-sm text-[#65706a]">Aucune demande.</p>}
-          {demandesTriees.map((d) => {
-            const ouverte = d.statut === 'demandee' || d.statut === 'en_cours'
-            return (
-              <div key={d.id} className={`flex flex-wrap items-center gap-3 border-b border-[#eef1ee] px-3.5 py-3 last:border-b-0 ${ouverte ? '' : 'opacity-60'}`}>
-                <span className={`inline-flex min-h-[24px] items-center rounded border px-1.5 text-xs font-bold ${prioriteStyle[d.priorite].badge}`}>{prioriteStyle[d.priorite].label}</span>
-                <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${statutDemandeStyle[d.statut].badge}`}>{statutDemandeStyle[d.statut].label}</span>
-                <div className="min-w-[220px] flex-1">
-                  <div className="text-sm font-bold text-[#17201b]">
-                    {d.uniteNom} · {labelRessource[d.typeStock] ?? d.typeStock} +{d.pointsPct} pts
-                  </div>
-                  <div className="text-xs text-[#65706a]">
-                    {new Date(d.dateDemande).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
-                    {d.demandeur && ` · demandé par ${d.demandeur}`}
-                    {d.traitePar && ` · traité par ${d.traitePar}`}
-                    {d.commentaire && ` · ${d.commentaire}`}
-                  </div>
-                </div>
-                {peutTraiter && ouverte && (
-                  <div className="flex gap-1.5">
-                    {d.statut === 'demandee' && (
-                      <button disabled={occupeId === d.id} onClick={() => traiter(d.id, 'prendre-en-charge')} className="rounded-md border border-[#d8ded9] px-2 py-1 text-xs disabled:opacity-40">
-                        Prendre en charge
-                      </button>
+          <div className="flex h-[460px] flex-col rounded-lg border border-[#d8ded9] bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-[#d8ded9] px-3.5 py-3">
+              <h3 className="m-0 text-[15px] text-[#17201b]">Demandes de ravitaillement · {nbOuvertes} ouverte(s)</h3>
+              {!peutTraiter && <span className="text-xs text-[#65706a]">Traitement réservé à la logistique et au commandement</span>}
+            </div>
+            <div className="min-h-0 flex-1 overflow-auto">
+              {demandesTriees.length === 0 && <p className="m-0 px-3.5 py-3 text-sm text-[#65706a]">Aucune demande.</p>}
+              {demandesTriees.map((d) => {
+                const ouverte = d.statut === 'demandee' || d.statut === 'en_cours'
+                return (
+                  <div
+                    key={d.id}
+                    onClick={() => setSelectionCarteId(d.uniteId)}
+                    className={`flex cursor-pointer flex-wrap items-center gap-3 border-b border-[#eef1ee] px-3.5 py-3 last:border-b-0 hover:bg-[#f8faf7] ${ouverte ? '' : 'opacity-60'}`}
+                  >
+                    <span className={`inline-flex min-h-[24px] items-center rounded border px-1.5 text-xs font-bold ${prioriteStyle[d.priorite].badge}`}>{prioriteStyle[d.priorite].label}</span>
+                    <span className={`inline-flex min-h-[26px] items-center rounded-full px-2.5 text-xs font-bold ${statutDemandeStyle[d.statut].badge}`}>{statutDemandeStyle[d.statut].label}</span>
+                    <div className="min-w-[220px] flex-1">
+                      <div className="text-sm font-bold text-[#17201b]">
+                        {d.uniteNom} · {labelRessource[d.typeStock] ?? d.typeStock} +{d.pointsPct} pts
+                      </div>
+                      <div className="text-xs text-[#65706a]">
+                        {new Date(d.dateDemande).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
+                        {d.demandeur && ` · demandé par ${d.demandeur}`}
+                        {d.traitePar && ` · traité par ${d.traitePar}`}
+                        {d.commentaire && ` · ${d.commentaire}`}
+                      </div>
+                    </div>
+                    {peutTraiter && ouverte && (
+                      <div className="flex gap-1.5">
+                        {d.statut === 'demandee' && (
+                          <button disabled={occupeId === d.id} onClick={(e) => { e.stopPropagation(); traiter(d.id, 'prendre-en-charge') }} className="rounded-md border border-[#d8ded9] px-2 py-1 text-xs disabled:opacity-40">
+                            Prendre en charge
+                          </button>
+                        )}
+                        <button disabled={occupeId === d.id} onClick={(e) => { e.stopPropagation(); traiter(d.id, 'livrer') }} className="rounded-md border border-emerald-700 bg-emerald-700 px-2 py-1 text-xs text-white disabled:opacity-40">
+                          Livrer
+                        </button>
+                        <button disabled={occupeId === d.id} onClick={(e) => { e.stopPropagation(); traiter(d.id, 'refuser') }} className="rounded-md border border-[#d8ded9] px-2 py-1 text-xs text-[#65706a] disabled:opacity-40">
+                          Refuser
+                        </button>
+                      </div>
                     )}
-                    <button disabled={occupeId === d.id} onClick={() => traiter(d.id, 'livrer')} className="rounded-md border border-emerald-700 bg-emerald-700 px-2 py-1 text-xs text-white disabled:opacity-40">
-                      Livrer
-                    </button>
-                    <button disabled={occupeId === d.id} onClick={() => traiter(d.id, 'refuser')} className="rounded-md border border-[#d8ded9] px-2 py-1 text-xs text-[#65706a] disabled:opacity-40">
-                      Refuser
-                    </button>
                   </div>
-                )}
-              </div>
-            )
-          })}
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </section>
