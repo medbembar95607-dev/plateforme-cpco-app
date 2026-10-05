@@ -84,7 +84,8 @@ export function OperationalMap({ situation, onSelect }: OperationalMapProps) {
           id: `${sourceId}-label`,
           type: 'symbol',
           source: sourceId,
-          layout: { 'text-field': ['get', 'nom'], 'text-size': 12 },
+          // Police servie par OpenFreeMap (la police par défaut de MapLibre y renvoie 404).
+          layout: { 'text-field': ['get', 'nom'], 'text-size': 12, 'text-font': ['Noto Sans Regular'] },
           paint: { 'text-color': couleur, 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
         })
       })
