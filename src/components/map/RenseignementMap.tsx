@@ -86,13 +86,14 @@ export function RenseignementMap({
         el.title = `${r.reference} — ${r.titre}`
         el.dataset.rapportId = r.id
         el.className = `rounded-full p-0.5 ${r.id === selectionId ? 'ring-2 ring-[#17201b] ring-offset-2' : ''}`
-        el.style.opacity = r.statut === 'stabilise' ? '0.55' : '1'
+        const opacite = r.statut === 'stabilise' ? '0.55' : '1'
         el.innerHTML = symboleRapportSvg(r.statut, r.id === selectionId ? 28 : 22)
         el.addEventListener('click', (e) => {
           e.stopPropagation()
           if (!modePlacementRef.current) onSelectRef.current(r.id)
         })
-        return new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([r.lon!, r.lat!]).addTo(map)
+        // Opacité passée à MapLibre : il impose la sienne au marqueur et écraserait un style inline.
+        return new maplibregl.Marker({ element: el, anchor: 'center', opacity: opacite }).setLngLat([r.lon!, r.lat!]).addTo(map)
       })
   }, [rapports, selectionId, carteChargee])
 

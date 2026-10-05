@@ -417,7 +417,7 @@ export const api = {
     ),
   createIncident: (payload: { type_incident: string; niveau_gravite: string; localite: string; description: string; declarant: string }) =>
     request('/incidents', { method: 'POST', body: JSON.stringify(payload) }),
-  alerts: () => request<Array<{ id: string; type_alerte: string; niveau: string; message: string; statut: string; date_creation: string }>>('/alerts'),
+  alerts: () => request<Array<{ id: string; type_alerte: string; niveau: string; message: string; statut: string; date_creation: string; lon: number | null; lat: number | null }>>('/alerts'),
   acknowledgeAlert: (id: string) => request(`/alerts/${id}/acknowledge`, { method: 'POST' }),
   adminUsers: () => request<Array<{ id: string; nom_complet: string; grade: string; role: string; clearance_level: string; actif: boolean }>>('/admin/users'),
   adminRoles: () => request<Record<string, string[]>>('/admin/roles'),
