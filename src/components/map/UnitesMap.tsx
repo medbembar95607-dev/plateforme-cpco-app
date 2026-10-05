@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import ms from 'milsymbol'
 import { BoxSelect, Crosshair } from 'lucide-react'
 import type { StatutUnite, TypeUnite } from '../../types'
-import { couleurAmie, statutUniteStyle, typeUniteLabel, typeUniteSidc } from '../../uniteStyle'
+import { couleurAmie, statutUniteStyle, typeUniteSidc } from '../../uniteStyle'
 import { activerZoomSelection } from './zoomSelection'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
@@ -30,11 +30,17 @@ export interface UniteCarte {
   lat: number
 }
 
+export type NiveauDeficit = 'bas' | 'critique'
+
 interface UnitesMapProps {
   unites: UniteCarte[]
+  // Unités en déficit de capacité (au moins une ressource sous le seuil) : signe sur le symbole.
+  deficits: Record<string, NiveauDeficit>
   selectionId: string | null
-  onSelect: (id: string) => void
+  onSelect: (id: string | null) => void
 }
+
+const couleurDeficit: Record<NiveauDeficit, string> = { bas: '#ba7a0b', critique: '#b9332c' }
 
 function echapper(texte: string): string {
   const el = document.createElement('span')
@@ -42,11 +48,10 @@ function echapper(texte: string): string {
   return el.innerHTML
 }
 
-export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
+export function UnitesMap({ unites, deficits, selectionId, onSelect }: UnitesMapProps) {
   const conteneurRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const marqueursRef = useRef<maplibregl.Marker[]>([])
-  const popupRef = useRef<maplibregl.Popup | null>(null)
   const annulerSelectionRef = useRef<(() => void) | null>(null)
   const [carteCreee, setCarteCreee] = useState(false)
   const [selectionActive, setSelectionActive] = useState(false)
@@ -65,6 +70,8 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: 'metric' }), 'bottom-right')
     const observateurTaille = new ResizeObserver(() => map.resize())
     observateurTaille.observe(conteneurRef.current)
+    // Clic sur le fond de carte : désélection (ferme le panneau de potentiel).
+    map.on('click', () => onSelectRef.current(null))
     // Uniquement des marqueurs : inutile d'attendre le chargement complet du fond de carte.
     setCarteCreee(true)
     return () => {
@@ -82,7 +89,6 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
     const map = mapRef.current
     const liste = unitesRef.current
     if (!map) return
-    popupRef.current?.remove()
     if (liste.length === 0) {
       map.flyTo({ center: CENTRE_INITIAL, zoom: ZOOM_INITIAL })
       return
@@ -117,9 +123,15 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
       el.className = 'flex flex-col items-center'
       const sidc = typeUniteSidc[u.typeUnite as TypeUnite] ?? typeUniteSidc.pc
       const couleur = couleurStatut[u.statut as StatutUnite] ?? '#65706a'
+      const deficit = deficits[u.id]
       el.innerHTML = `
-        <span class="rounded bg-white p-0.5 shadow-md ${u.id === selectionId ? 'ring-2 ring-[#17201b] ring-offset-1' : ''}" style="border-bottom: 3px solid ${couleur}">
+        <span class="relative rounded bg-white p-0.5 shadow-md ${u.id === selectionId ? 'ring-2 ring-[#17201b] ring-offset-1' : ''}" style="border-bottom: 3px solid ${couleur}">
           ${new ms.Symbol(sidc, { size: 20, fillColor: couleurAmie }).asSVG()}
+          ${
+            deficit
+              ? `<span data-deficit="${deficit}" title="Déficit de capacité" class="absolute grid place-items-center rounded-full border-2 border-white font-extrabold leading-none text-white shadow-md ${deficit === 'critique' ? 'animate-pulse' : ''}" style="background:${couleurDeficit[deficit]}; width:22px; height:22px; top:-13px; right:-14px; font-size:14px">!</span>`
+              : ''
+          }
         </span>
         <span class="mt-0.5 whitespace-nowrap rounded bg-white/90 px-1 text-[10px] font-bold text-[#17201b] shadow-sm">${echapper(u.nom)}</span>
       `
@@ -129,7 +141,7 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
       })
       return new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([u.lon, u.lat]).addTo(map)
     })
-  }, [unites, selectionId, carteCreee])
+  }, [unites, deficits, selectionId, carteCreee])
 
   // Cadrage automatique à l'arrivée des unités et à chaque changement de filtre.
   const signatureListe = unites.map((u) => u.id).join(',')
@@ -138,28 +150,13 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signatureListe, carteCreee])
 
-  // Unité sélectionnée (depuis la carte ou le tableau) : centrer et ouvrir sa fiche.
+  // Unité sélectionnée (carte, tableau ou panneau) : centrer dessus. Son potentiel
+  // s'affiche dans le panneau latéral de l'écran, pas dans un popup.
   useEffect(() => {
     const map = mapRef.current
-    popupRef.current?.remove()
-    popupRef.current = null
     if (!map || !carteCreee || !selectionId) return
     const u = unites.find((x) => x.id === selectionId)
-    if (!u) return
-    const statut = statutUniteStyle[u.statut as StatutUnite]
-    const contenu = document.createElement('div')
-    contenu.className = 'grid gap-1 text-xs text-[#17201b]'
-    contenu.innerHTML = `
-      <div class="text-sm font-bold">${echapper(u.nom)}</div>
-      <div>${echapper(typeUniteLabel[u.typeUnite as TypeUnite] ?? u.typeUnite)} · ${u.effectif} personnels</div>
-      <div style="color:${couleurStatut[u.statut as StatutUnite] ?? '#65706a'}" class="font-bold">${echapper(statut?.label ?? u.statut)}</div>
-      <div class="text-[#65706a]">Liaison ${u.communication === 'stable' ? 'stable' : 'dégradée'} · ${u.lat.toFixed(3)}° N, ${Math.abs(u.lon).toFixed(3)}° O</div>
-    `
-    popupRef.current = new maplibregl.Popup({ offset: 22, closeButton: false, maxWidth: '240px' })
-      .setLngLat([u.lon, u.lat])
-      .setDOMContent(contenu)
-      .addTo(map)
-    map.flyTo({ center: [u.lon, u.lat], zoom: Math.max(map.getZoom(), 6.5), duration: 700 })
+    if (u) map.flyTo({ center: [u.lon, u.lat], zoom: Math.max(map.getZoom(), 6.5), duration: 700 })
   }, [selectionId, unites, carteCreee])
 
   return (
@@ -174,6 +171,10 @@ export function UnitesMap({ unites, selectionId, onSelect }: UnitesMapProps) {
             {statutUniteStyle[statut].label}
           </div>
         ))}
+        <div className="mt-1 flex items-center gap-2 border-t border-[#d8ded9] pt-1.5">
+          <span className="grid h-4 w-4 place-items-center rounded-full bg-[#b9332c] text-[10px] font-extrabold text-white">!</span>
+          Déficit de capacité ({Object.keys(deficits).filter((id) => unites.some((u) => u.id === id)).length})
+        </div>
       </div>
 
       <div className="absolute right-14 top-3 flex gap-2">
