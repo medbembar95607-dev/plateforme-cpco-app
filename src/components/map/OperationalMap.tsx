@@ -10,9 +10,10 @@ import { couleurAmie, typeUniteSidc } from '../../uniteStyle'
 import { activerZoomSelection } from './zoomSelection'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
-// Vue élargie au territoire mauritanien (+ Léré au Mali) depuis la répartition du 2026-07-03.
-const CENTRE_INITIAL: [number, number] = [-11.0, 18.1]
-const ZOOM_INITIAL = 4.9
+// Vue sur l'ensemble du territoire mauritanien, du Tiris Zemmour (Poste Avancé Nord) à la frontière
+// sud-est et à la zone menace A3, recentrée au nord avec le dispositif frontière est (2026-10-05).
+const CENTRE_INITIAL: [number, number] = [-10.6, 19.9]
+const ZOOM_INITIAL = 4.7
 
 // Sans ce plugin, MapLibre affiche les lettres arabes isolées au lieu de les lier correctement
 // (ex. noms de localités mauritaniennes du fond de carte) — un défaut connu du moteur de rendu.
