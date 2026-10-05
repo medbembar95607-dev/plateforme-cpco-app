@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { ArrowRight, CheckCircle2, FileText, Info, MapPin, Wand2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Database, FileText, Info, MapPin, Pencil, Plus, Wand2 } from 'lucide-react'
 import { api } from '../../api/client'
-import type { AnalyseDemoDTO, DocumentDemoDTO, ImpactDemoDTO, NoteDemoDTO, ResultatDemoDTO } from '../../api/client'
+import type { AnalyseDemoDTO, DocumentDemoDTO, ImpactDemoDTO, NoteDemoDTO, ResultatDemoDTO, SchemaSaisieDTO } from '../../api/client'
 import { classificationLabel } from '../../types'
 import { definirFocus } from '../../focusDemo'
+import { FormulaireImpact } from '../FormulaireImpact'
+import { DonneesDemo } from '../DonneesDemo'
 
 const typesDocument: Record<string, string> = {
   note_information: "Note d'information",
@@ -67,13 +69,19 @@ const champ = 'w-full rounded-lg border border-[#d8ded9] bg-white px-2.5 py-2 te
 const libelle = 'mb-1 block text-xs font-bold text-[#65706a]'
 
 interface DemoScreenProps {
-  onVoir: (ecran: ImpactDemoDTO['ecran']) => void
+  onVoir: (ecran: ImpactDemoDTO['ecran'] | 'unites') => void
   onNouveauxEvenements: (evenements: Array<{ titre: string; description: string }>) => void
 }
 
 export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
   const [doc, setDoc] = useState<DocumentDemoDTO>(documentVide)
+  const [onglet, setOnglet] = useState<'document' | 'donnees'>('document')
+  const [schema, setSchema] = useState<SchemaSaisieDTO | null>(null)
   const [analyse, setAnalyse] = useState<AnalyseDemoDTO | null>(null)
+  // Impacts proposés par l'analyse, corrigés ou complétés à la main avant application.
+  const [impacts, setImpacts] = useState<ImpactDemoDTO[]>([])
+  const [enEdition, setEnEdition] = useState<string | null>(null)
+  const [ajout, setAjout] = useState(false)
   const [retenus, setRetenus] = useState<Set<string>>(new Set())
   const [resultats, setResultats] = useState<ResultatDemoDTO[] | null>(null)
   const [historique, setHistorique] = useState<NoteDemoDTO[]>([])
@@ -82,6 +90,7 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
 
   useEffect(() => {
     api.demoHistorique().then(setHistorique)
+    api.demoSchema().then(setSchema)
   }, [])
 
   function modifier(champModifie: Partial<DocumentDemoDTO>) {
@@ -98,6 +107,9 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
     try {
       const a = await api.demoAnalyser(doc)
       setAnalyse(a)
+      setImpacts(a.impacts)
+      setEnEdition(null)
+      setAjout(false)
       setRetenus(new Set(a.impacts.map((i) => i.cle)))
     } catch (err) {
       setErreur(err instanceof Error ? err.message : String(err))
@@ -111,7 +123,7 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
     setEnCours(true)
     setErreur(null)
     try {
-      const r = await api.demoAppliquer(doc, analyse.impacts.filter((i) => retenus.has(i.cle)))
+      const r = await api.demoAppliquer(doc, impacts.filter((i) => retenus.has(i.cle)))
       setResultats(r.resultats)
       onNouveauxEvenements([
         { titre: `${typesDocument[doc.type_document]} reçue`, description: `${doc.objet} (${doc.emetteur})` },
@@ -139,6 +151,17 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
     })
   }
 
+  function corriger(impact: ImpactDemoDTO) {
+    setImpacts((prev) => prev.map((i) => (i.cle === impact.cle ? impact : i)))
+    setEnEdition(null)
+  }
+
+  function ajouter(impact: ImpactDemoDTO) {
+    setImpacts((prev) => [...prev, impact])
+    setRetenus((prev) => new Set(prev).add(impact.cle))
+    setAjout(false)
+  }
+
   const valide = doc.emetteur.trim() && doc.objet.trim() && doc.texte.trim()
 
   return (
@@ -152,6 +175,26 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
         </span>
       </div>
 
+      <div className="flex gap-1">
+        {[
+          { id: 'document' as const, label: 'Analyse de document', icone: <FileText size={15} /> },
+          { id: 'donnees' as const, label: 'Données existantes', icone: <Database size={15} /> },
+        ].map((o) => (
+          <button
+            key={o.id}
+            onClick={() => setOnglet(o.id)}
+            className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
+              onglet === o.id ? 'border-[#17201b] bg-[#17201b] text-white' : 'border-[#d8ded9] bg-white text-[#17201b] hover:bg-[#f3f5f2]'
+            }`}
+          >
+            {o.icone} {o.label}
+          </button>
+        ))}
+      </div>
+
+      {onglet === 'donnees' && schema && <DonneesDemo references={schema.references} onVoir={(e) => onVoir(e as ImpactDemoDTO['ecran'])} />}
+
+      {onglet === 'document' && (
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3.5">
         {/* 1. Saisie */}
         <div className="grid gap-3 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
@@ -252,7 +295,7 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
 
           {analyse && !resultats && (
             <div className="grid gap-3 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
-              <h3 className="m-0 text-[15px] text-[#17201b]">2. Mises à jour proposées · {analyse.impacts.length}</h3>
+              <h3 className="m-0 text-[15px] text-[#17201b]">2. Mises à jour proposées · {impacts.length}</h3>
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#65706a]">
                 <span className="flex items-center gap-1">
                   <MapPin size={13} /> Lieu : <strong className="text-[#17201b]">{analyse.localite}</strong>
@@ -263,27 +306,65 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
                 {analyse.urgent && <span className="font-bold text-red-700">Caractère urgent détecté</span>}
               </div>
               <div className="grid gap-2">
-                {analyse.impacts.map((i) => (
-                  <label
-                    key={i.cle}
-                    className={`flex cursor-pointer items-start gap-2.5 rounded-lg border p-2.5 ${retenus.has(i.cle) ? 'border-[#17201b] bg-[#f8faf7]' : 'border-[#e2e7e3] opacity-60'}`}
-                  >
-                    <input type="checkbox" checked={retenus.has(i.cle)} onChange={() => basculer(i.cle)} className="mt-1" />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className={`inline-flex min-h-[22px] items-center rounded-full px-2 text-[11px] font-bold ${ecranStyle[i.ecran].badge}`}>
-                          Écran {ecranStyle[i.ecran].label}
-                        </span>
-                        <span className="text-sm font-bold text-[#17201b]">{i.titre}</span>
-                      </div>
-                      <div className="mt-0.5 text-xs text-[#65706a]">{i.resume}</div>
+                {impacts.length === 0 && (
+                  <p className="m-0 text-sm text-[#65706a]">Aucune mise à jour détectée. Vous pouvez en ajouter une manuellement.</p>
+                )}
+                {impacts.map((i) =>
+                  enEdition === i.cle && schema ? (
+                    <div key={i.cle} className="grid gap-1.5">
+                      <div className="text-xs font-bold text-[#17201b]">Correction : {i.titre}</div>
+                      <FormulaireImpact schema={schema} impact={i} onValider={corriger} onAnnuler={() => setEnEdition(null)} />
                     </div>
-                  </label>
-                ))}
+                  ) : (
+                    <div
+                      key={i.cle}
+                      className={`flex items-start gap-2.5 rounded-lg border p-2.5 ${retenus.has(i.cle) ? 'border-[#17201b] bg-[#f8faf7]' : 'border-[#e2e7e3] opacity-60'}`}
+                    >
+                      <input type="checkbox" checked={retenus.has(i.cle)} onChange={() => basculer(i.cle)} className="mt-1 cursor-pointer" aria-label={`Retenir ${i.titre}`} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className={`inline-flex min-h-[22px] items-center rounded-full px-2 text-[11px] font-bold ${ecranStyle[i.ecran].badge}`}>
+                            Écran {ecranStyle[i.ecran].label}
+                          </span>
+                          <span className="text-sm font-bold text-[#17201b]">{i.titre}</span>
+                        </div>
+                        <div className="mt-0.5 text-xs text-[#65706a]">{i.resume}</div>
+                      </div>
+                      {schema && (
+                        <button
+                          onClick={() => {
+                            setEnEdition(i.cle)
+                            setAjout(false)
+                          }}
+                          className="flex shrink-0 items-center gap-1 rounded-md border border-[#d8ded9] px-2 py-1 text-xs text-[#17201b] hover:bg-[#f3f5f2]"
+                        >
+                          <Pencil size={12} /> Modifier
+                        </button>
+                      )}
+                    </div>
+                  ),
+                )}
               </div>
+              {schema &&
+                (ajout ? (
+                  <div className="grid gap-1.5">
+                    <div className="text-xs font-bold text-[#17201b]">Nouvelle mise à jour (saisie manuelle)</div>
+                    <FormulaireImpact schema={schema} onValider={ajouter} onAnnuler={() => setAjout(false)} />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setAjout(true)
+                      setEnEdition(null)
+                    }}
+                    className="flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-[#9aa59e] px-3 py-2 text-sm text-[#17201b] hover:bg-[#f3f5f2]"
+                  >
+                    <Plus size={15} /> Ajouter une mise à jour
+                  </button>
+                ))}
               <button
                 onClick={appliquer}
-                disabled={retenus.size === 0 || enCours}
+                disabled={retenus.size === 0 || enCours || enEdition !== null || ajout}
                 className="rounded-lg border border-[#17201b] bg-[#17201b] px-3 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {enCours ? 'Application…' : `Appliquer aux écrans (${retenus.size})`}
@@ -357,6 +438,7 @@ export function DemoScreen({ onVoir, onNouveauxEvenements }: DemoScreenProps) {
           </div>
         </div>
       </div>
+      )}
     </section>
   )
 }

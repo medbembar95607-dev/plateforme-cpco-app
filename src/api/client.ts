@@ -234,6 +234,48 @@ export interface ResultatDemoDTO {
   focusId: string
 }
 
+export interface ChampSaisieDTO {
+  cle: string
+  libelle: string
+  type: 'texte' | 'texte_long' | 'nombre' | 'choix' | 'dateheure' | 'position' | 'unite' | 'unites' | 'ligne_budget' | 'materiel'
+  options: Array<{ valeur: string; libelle: string }>
+  obligatoire: boolean
+}
+
+export interface ReferencesSaisieDTO {
+  unites: Array<{ id: string; nom: string }>
+  lieux: Array<{ cle: string; libelle: string; lon: number; lat: number }>
+  lignes: Array<{ id: string; libelle: string }>
+  materiels: Array<{ id: string; nom: string }>
+}
+
+export interface SchemaImpactDTO {
+  libelle: string
+  ecran: ImpactDemoDTO['ecran']
+  type?: string
+  mode?: string
+  champs: ChampSaisieDTO[]
+}
+
+export interface SchemaSaisieDTO {
+  impacts: Record<string, SchemaImpactDTO>
+  references: ReferencesSaisieDTO
+}
+
+export interface RessourceDonneesDTO {
+  cle: string
+  libelle: string
+  ecran: string
+  suppression: boolean
+  champs: ChampSaisieDTO[]
+}
+
+export interface ElementDonneesDTO {
+  id: string
+  titre: string
+  valeurs: Record<string, unknown>
+}
+
 export interface NoteDemoDTO {
   id: string
   typeDocument: string
@@ -582,6 +624,12 @@ export const api = {
   demoAppliquer: (document: DocumentDemoDTO, impacts: ImpactDemoDTO[]) =>
     request<{ resultats: ResultatDemoDTO[]; noteId: string }>('/demo/appliquer', { method: 'POST', body: JSON.stringify({ document, impacts }) }),
   demoHistorique: () => request<NoteDemoDTO[]>('/demo/historique'),
+  demoSchema: () => request<SchemaSaisieDTO>('/demo/schema'),
+  demoRessources: () => request<RessourceDonneesDTO[]>('/demo/donnees'),
+  demoElements: (ressource: string) => request<ElementDonneesDTO[]>(`/demo/donnees/${ressource}`),
+  demoModifier: (ressource: string, id: string, valeurs: Record<string, unknown>) =>
+    request<ElementDonneesDTO>(`/demo/donnees/${ressource}/${id}`, { method: 'PATCH', body: JSON.stringify(valeurs) }),
+  demoSupprimer: (ressource: string, id: string) => request(`/demo/donnees/${ressource}/${id}`, { method: 'DELETE' }),
   suiviExecution: () => request<SuiviExecutionDTO[]>('/execution'),
   suiviExecutionIndicateurs: () => request<IndicateursExecutionDTO>('/execution/indicateurs'),
   demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),
