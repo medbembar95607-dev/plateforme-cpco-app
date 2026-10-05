@@ -40,13 +40,13 @@ type OngletOps =
 
 const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> = [
   { id: 'deploiement', label: 'Déploiement Armée', icone: <Flag size={16} /> },
+  { id: 'ordres', label: 'Ordres', icone: <FileText size={16} /> },
   { id: 'unites', label: 'Unités Engagées', icone: <Diamond size={16} /> },
   { id: 'situation', label: 'Point de Situation', icone: <Home size={16} /> },
   { id: 'liveops', label: 'LIVE OPS', icone: <Video size={16} /> },
   { id: 'renseignement', label: 'Renseignement', icone: <Eye size={16} /> },
   { id: 'logistique', label: 'Logistique', icone: <Square size={16} /> },
   { id: 'operations', label: 'Opérations', icone: <ClipboardList size={16} /> },
-  { id: 'ordres', label: 'Ordres', icone: <FileText size={16} /> },
   { id: 'incidents', label: 'Incidents', icone: <Siren size={16} /> },
   { id: 'alertes', label: 'Alertes', icone: <AlertTriangle size={16} /> },
   { id: 'administration', label: 'Administration', icone: <Settings size={16} /> },
