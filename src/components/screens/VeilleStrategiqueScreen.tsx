@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { KpiRow, type ToniteKpi } from '../KpiRow'
+import { SocialMediaPanel } from '../SocialMediaPanel'
 import { api, type IndicateursVeilleDTO, type SignalStrategiqueDTO } from '../../api/client'
 
 const categorieLabel: Record<string, string> = {
@@ -124,46 +125,57 @@ export function VeilleStrategiqueScreen() {
             {label}
           </button>
         ))}
+        {/* Rubrique à part : tendances et publications des réseaux sociaux, pas des signaux stratégiques. */}
+        <button
+          onClick={() => setCategorieFiltre('social_media')}
+          className={`h-9 rounded-lg px-3 text-sm ${categorieFiltre === 'social_media' ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+        >
+          Social Media
+        </button>
       </div>
 
-      <div className="grid min-h-0 auto-rows-min gap-3 overflow-auto">
-        {signauxFiltres.map((s) => (
-          <div key={s.id} className="grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex min-h-[24px] items-center rounded-full bg-blue-50 px-2 text-xs font-bold text-blue-700">
-                  {categorieLabel[s.categorie] ?? s.categorie}
-                </span>
-                <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${niveauStyle[s.niveauRisque]?.badge}`}>
-                  {niveauStyle[s.niveauRisque]?.label}
-                </span>
-                <span className={`inline-flex items-center gap-1 text-xs font-bold ${tendanceStyle[s.tendance]?.couleur}`}>
-                  {tendanceStyle[s.tendance]?.icone} {tendanceStyle[s.tendance]?.label}
-                </span>
-              </div>
-              <span className="inline-flex min-h-[22px] items-center rounded-md bg-[#fff0cf] px-1.5 py-1 text-xs font-bold text-[#7c5108]">
-                {s.classification === 'secret' ? 'Secret Défense' : s.classification === 'diffusion_libre' ? 'Diffusion libre' : 'Confidentiel Défense'}
-              </span>
-            </div>
-
-            <strong className="text-base text-[#17201b]">{s.titre}</strong>
-            <span className="text-xs text-[#65706a]">{s.zone} · {horizonLabel[s.horizon] ?? s.horizon}</span>
-            <p className="m-0 text-sm text-[#374151]">{s.analyse}</p>
-
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ed] pt-2">
-              <span className="text-xs text-[#65706a]">Source : {s.source}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[#65706a]">Probabilité de crise estimée</span>
-                <div className="h-2 w-28 overflow-hidden rounded-full bg-[#eef2ed]">
-                  <div className={`h-full ${niveauStyle[s.niveauRisque]?.barre}`} style={{ width: `${s.probabiliteCrisePct}%` }} />
+      {categorieFiltre === 'social_media' ? (
+        <SocialMediaPanel />
+      ) : (
+        <div className="grid min-h-0 auto-rows-min gap-3 overflow-auto">
+          {signauxFiltres.map((s) => (
+            <div key={s.id} className="grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex min-h-[24px] items-center rounded-full bg-blue-50 px-2 text-xs font-bold text-blue-700">
+                    {categorieLabel[s.categorie] ?? s.categorie}
+                  </span>
+                  <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${niveauStyle[s.niveauRisque]?.badge}`}>
+                    {niveauStyle[s.niveauRisque]?.label}
+                  </span>
+                  <span className={`inline-flex items-center gap-1 text-xs font-bold ${tendanceStyle[s.tendance]?.couleur}`}>
+                    {tendanceStyle[s.tendance]?.icone} {tendanceStyle[s.tendance]?.label}
+                  </span>
                 </div>
-                <strong className="text-sm text-[#17201b]">{s.probabiliteCrisePct}%</strong>
+                <span className="inline-flex min-h-[22px] items-center rounded-md bg-[#fff0cf] px-1.5 py-1 text-xs font-bold text-[#7c5108]">
+                  {s.classification === 'secret' ? 'Secret Défense' : s.classification === 'diffusion_libre' ? 'Diffusion libre' : 'Confidentiel Défense'}
+                </span>
+              </div>
+
+              <strong className="text-base text-[#17201b]">{s.titre}</strong>
+              <span className="text-xs text-[#65706a]">{s.zone} · {horizonLabel[s.horizon] ?? s.horizon}</span>
+              <p className="m-0 text-sm text-[#374151]">{s.analyse}</p>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ed] pt-2">
+                <span className="text-xs text-[#65706a]">Source : {s.source}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#65706a]">Probabilité de crise estimée</span>
+                  <div className="h-2 w-28 overflow-hidden rounded-full bg-[#eef2ed]">
+                    <div className={`h-full ${niveauStyle[s.niveauRisque]?.barre}`} style={{ width: `${s.probabiliteCrisePct}%` }} />
+                  </div>
+                  <strong className="text-sm text-[#17201b]">{s.probabiliteCrisePct}%</strong>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        {signauxFiltres.length === 0 && <p className="text-sm text-[#65706a]">Aucun signal pour ce filtre.</p>}
-      </div>
+          ))}
+          {signauxFiltres.length === 0 && <p className="text-sm text-[#65706a]">Aucun signal pour ce filtre.</p>}
+        </div>
+      )}
     </section>
   )
 }

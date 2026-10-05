@@ -119,6 +119,43 @@ export interface DemandeRavitaillementDTO {
   dateTraitement: string | null
 }
 
+export interface TendanceSocialeDTO {
+  id: string
+  libelle: string
+  plateformes: string
+  volumeMentions24h: number
+  evolutionPct: number
+  domaineRisque: string
+  niveauRisque: string
+  langues: string
+  resume: string
+  dateMaj: string
+}
+
+export interface PublicationSocialeDTO {
+  id: string
+  plateforme: string
+  typeAuteur: string
+  abonnes: number
+  vues: number
+  partages: number
+  commentaires: number
+  resume: string
+  domaineRisque: string
+  niveauRisque: string
+  verification: string
+  langue: string
+  actionRecommandee: string
+  datePublication: string
+}
+
+export interface SocialMediaDTO {
+  donneesSimulees: boolean
+  tendances: TendanceSocialeDTO[]
+  publications: PublicationSocialeDTO[]
+  indicateurs: { mentions24h: number; tendancesEnHausse: number; publicationsRisqueEleve: number; desinformationsAverees: number; vuesCumulees: number }
+}
+
 export interface CourrierDTO {
   id: string
   numero: string
@@ -452,6 +489,7 @@ export const api = {
   deploiement: () => request<GarnisonDTO[]>('/deploiement'),
   veille: () => request<SignalStrategiqueDTO[]>('/veille'),
   veilleIndicateurs: () => request<IndicateursVeilleDTO>('/veille/indicateurs'),
+  veilleSocialMedia: () => request<SocialMediaDTO>('/veille/social-media'),
   suiviExecution: () => request<SuiviExecutionDTO[]>('/execution'),
   suiviExecutionIndicateurs: () => request<IndicateursExecutionDTO>('/execution/indicateurs'),
   demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),
