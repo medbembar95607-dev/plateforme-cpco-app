@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type IndicateursBudgetDTO, type LigneBudgetaireDTO } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const typeBudgetLabel: Record<string, string> = {
   fonctionnement: 'Fonctionnement',
@@ -37,10 +38,17 @@ export function VoletFinancierScreen() {
   const [indicateurs, setIndicateurs] = useState<IndicateursBudgetDTO | null>(null)
   const [typeFiltre, setTypeFiltre] = useState<TypeBudget>('fonctionnement')
 
+  // Ligne budgétaire modifiée depuis l'écran de démonstration : onglet positionné dessus et ligne mise en évidence.
+  const [focusId] = useState(() => lireFocus('budget'))
+
   useEffect(() => {
-    api.budget().then(setLignes)
+    api.budget().then((data) => {
+      setLignes(data)
+      const cible = data.find((l) => l.id === focusId)
+      if (cible) setTypeFiltre(cible.typeBudget as TypeBudget)
+    })
     api.budgetIndicateurs().then(setIndicateurs)
-  }, [])
+  }, [focusId])
 
   const lignesFiltrees = lignes.filter((l) => l.typeBudget === typeFiltre)
 
@@ -106,7 +114,11 @@ export function VoletFinancierScreen() {
           </thead>
           <tbody>
             {lignesFiltrees.map((l) => (
-              <tr key={l.id} className={l.statut !== 'normal' ? 'bg-red-50/40' : undefined}>
+              <tr
+                key={l.id}
+                ref={l.id === focusId ? defilerVers : undefined}
+                className={l.id === focusId ? classeFocus : l.statut !== 'normal' ? 'bg-red-50/40' : undefined}
+              >
                 <td className="border-b border-[#d8ded9] px-3 py-3">{l.libelle}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{l.formationBeneficiaire}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-[#65706a]">{formaterMontant(l.montantAlloue)}</td>

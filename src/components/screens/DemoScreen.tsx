@@ -16,6 +16,12 @@ const ecranStyle: Record<ImpactDemoDTO['ecran'], { label: string; badge: string 
   alertes: { label: 'Alertes', badge: 'bg-amber-50 text-amber-700' },
   renseignement: { label: 'Renseignement', badge: 'bg-violet-50 text-violet-700' },
   logistique: { label: 'Logistique', badge: 'bg-sky-50 text-sky-700' },
+  courrier: { label: 'Parapheur Numérique', badge: 'bg-stone-100 text-stone-700' },
+  suivi_execution: { label: 'Suivi Exécution Ordres', badge: 'bg-indigo-50 text-indigo-700' },
+  calendrier: { label: 'Agenda du Chef', badge: 'bg-teal-50 text-teal-700' },
+  materiel: { label: 'Situation Matériel', badge: 'bg-orange-50 text-orange-700' },
+  budget: { label: 'Situation Financière', badge: 'bg-emerald-50 text-emerald-700' },
+  rh: { label: 'Ressources Humaines', badge: 'bg-pink-50 text-pink-700' },
 }
 
 // Documents d'exemple pour enchaîner une démonstration sans avoir à tout taper.
@@ -28,7 +34,7 @@ const exemples: Array<{ label: string; doc: DocumentDemoDTO }> = [
       classification: 'secret',
       objet: 'Tirs contre une patrouille près de Fassala',
       texte:
-        "Une patrouille de la Compagnie Alpha a essuyé des tirs d'hommes armés à 12 km de Fassala. Deux blessés légers, évacuation demandée. Besoin urgent de munitions.",
+        "Une patrouille de la Compagnie Alpha a essuyé des tirs d'hommes armés à 12 km de Fassala. Deux blessés légers, évacuation demandée. Un pick-up détruit. Besoin urgent de munitions.",
     },
   },
   {
@@ -38,17 +44,19 @@ const exemples: Array<{ label: string; doc: DocumentDemoDTO }> = [
       emetteur: 'Convoi',
       classification: 'confidentiel',
       objet: 'Convoi immobilisé, pénurie de carburant',
-      texte: 'Le Convoi est à court de carburant et de pièces, deux véhicules immobilisés. Perte de liaison radio intermittente depuis ce matin.',
+      texte:
+        'Le Convoi est à court de carburant et de pièces, deux véhicules immobilisés. Coût estimé de la remise en état : 4 millions MRU. Perte de liaison radio intermittente depuis ce matin.',
     },
   },
   {
-    label: 'Note de service vigilance',
+    label: 'Note de service : stage et réunion',
     doc: {
       type_document: 'note_service',
       emetteur: 'CEMGA',
       classification: 'confidentiel',
-      objet: 'Renforcement des mesures de vigilance aux points de passage',
-      texte: "À compter de ce jour, toutes les unités renforcent les contrôles aux points de passage et rendent compte de toute anomalie sans délai.",
+      objet: 'Stage de recyclage au tir et réunion de coordination',
+      texte:
+        'À compter de ce jour, toutes les unités doivent désigner 12 stagiaires pour un stage de recyclage au tir et rendre compte sous 48 h. Réunion de coordination jeudi à 10 h au PC COP.',
     },
   },
 ]

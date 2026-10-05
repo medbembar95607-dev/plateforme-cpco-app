@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type IndicateursMaterielDTO, type MaterielDTO } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const armeeLabel: Record<string, string> = {
   terre: 'Armée de Terre',
@@ -51,10 +52,21 @@ export function SituationMaterielScreen() {
   const [armeeFiltre, setArmeeFiltre] = useState<string>(Object.keys(armeeLabel)[0])
   const [groupeFiltre, setGroupeFiltre] = useState<string>(groupesPourArmee(Object.keys(armeeLabel)[0])[0])
 
+  // Matériel modifié depuis l'écran de démonstration : filtres positionnés dessus et ligne mise en évidence.
+  const [focusId] = useState(() => lireFocus('materiel'))
+
   useEffect(() => {
-    api.materiels().then(setMateriels)
+    api.materiels().then((data) => {
+      setMateriels(data)
+      const cible = data.find((m) => m.id === focusId)
+      if (cible) {
+        setRubrique(cible.statutDotation as Rubrique)
+        setArmeeFiltre(cible.armee)
+        setGroupeFiltre(groupeDeCategorie[cible.categorie] ?? 'autre')
+      }
+    })
     api.materielIndicateurs().then(setIndicateurs)
-  }, [])
+  }, [focusId])
 
   const groupesDisponibles = groupesPourArmee(armeeFiltre)
 
@@ -176,7 +188,11 @@ export function SituationMaterielScreen() {
           </thead>
           <tbody>
             {lignes.map((m) => (
-              <tr key={m.id} className={m.enAlerte ? 'bg-red-50/50' : undefined}>
+              <tr
+                key={m.id}
+                ref={m.id === focusId ? defilerVers : undefined}
+                className={m.id === focusId ? classeFocus : m.enAlerte ? 'bg-red-50/50' : undefined}
+              >
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.formationAffectation}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3">{m.typeMateriel}</td>
                 <td className="border-b border-[#d8ded9] px-3 py-3 text-xs text-[#65706a]">{m.caracteristiques}</td>

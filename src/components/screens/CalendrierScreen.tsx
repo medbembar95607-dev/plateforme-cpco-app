@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const typeRdvLabel: Record<string, string> = {
   reunion: 'Réunion',
@@ -32,6 +33,8 @@ function deux(n: number) {
 
 export function CalendrierScreen() {
   const [rendezVous, setRendezVous] = useState<Awaited<ReturnType<typeof api.agenda>>>([])
+  // Rendez-vous créé depuis l'écran de démonstration : mis en évidence à l'arrivée.
+  const [focusId] = useState(() => lireFocus('calendrier'))
   const [titre, setTitre] = useState('')
   const [typeRdv, setTypeRdv] = useState('reunion')
   const [date, setDate] = useState('')
@@ -129,7 +132,11 @@ export function CalendrierScreen() {
           </div>
         )}
         {aVenir.map((r) => (
-          <div key={r.id} className="grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
+          <div
+            key={r.id}
+            ref={r.id === focusId ? defilerVers : undefined}
+            className={`grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm ${r.id === focusId ? classeFocus : ''}`}
+          >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <strong className="text-[#17201b]">{r.titre}</strong>

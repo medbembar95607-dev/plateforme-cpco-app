@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type BesoinFormationDTO, type BesoinRecrutementDTO, type IndicateursRHDTO, type MilitaireDTO, type PropositionRHDTO } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const categorieLabel: Record<string, string> = {
   officier: 'Officiers',
@@ -88,6 +89,8 @@ export function RessourcesHumainesScreen() {
   const [besoins, setBesoins] = useState<BesoinRecrutementDTO[]>([])
   const [besoinsFormation, setBesoinsFormation] = useState<BesoinFormationDTO[]>([])
   const [onglet, setOnglet] = useState<Onglet>('annuaire')
+  // Besoin créé depuis l'écran de démonstration : onglet et filtre positionnés dessus, ligne mise en évidence.
+  const [focusId] = useState(() => lireFocus('rh'))
   const [categorieFiltre, setCategorieFiltre] = useState<string>('officier')
   const [typePropositionFiltre, setTypePropositionFiltre] = useState<string>('affectation')
   const [categorieRetraiteFiltre, setCategorieRetraiteFiltre] = useState<string>('officier')
@@ -97,12 +100,24 @@ export function RessourcesHumainesScreen() {
     api.personnel().then(setPersonnel)
     api.rhIndicateurs().then(setIndicateurs)
     api.propositionsRH().then(setPropositions)
-    api.besoinsRecrutement().then(setBesoins)
-    api.besoinsFormation().then(setBesoinsFormation)
+    api.besoinsRecrutement().then((data) => {
+      setBesoins(data)
+      if (data.some((b) => b.id === focusId)) setOnglet('recrutement')
+    })
+    api.besoinsFormation().then((data) => {
+      setBesoinsFormation(data)
+      const cible = data.find((b) => b.id === focusId)
+      if (cible) {
+        setOnglet('formation')
+        setCategorieFormationFiltre(cible.categorie)
+      }
+    })
   }
 
   useEffect(() => {
     charger()
+    // Chargement initial uniquement : focusId ne change pas après le montage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function valider(id: string) {
@@ -356,7 +371,7 @@ export function RessourcesHumainesScreen() {
               </thead>
               <tbody>
                 {besoins.map((b) => (
-                  <tr key={b.id}>
+                  <tr key={b.id} ref={b.id === focusId ? defilerVers : undefined} className={b.id === focusId ? classeFocus : undefined}>
                     <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{b.poste}</td>
                     <td className="border-b border-[#d8ded9] px-3 py-3">{categorieLabel[b.categorie] ?? b.categorie}</td>
                     <td className="border-b border-[#d8ded9] px-3 py-3">{armeeLabel[b.armee] ?? b.armee}</td>
@@ -406,7 +421,7 @@ export function RessourcesHumainesScreen() {
                 </thead>
                 <tbody>
                   {besoinsFormationFiltres.map((b) => (
-                    <tr key={b.id}>
+                    <tr key={b.id} ref={b.id === focusId ? defilerVers : undefined} className={b.id === focusId ? classeFocus : undefined}>
                       <td className="border-b border-[#d8ded9] px-3 py-3 font-bold text-[#17201b]">{b.intitule}</td>
                       <td className="border-b border-[#d8ded9] px-3 py-3">{armeeLabel[b.armee] ?? b.armee}</td>
                       <td className="border-b border-[#d8ded9] px-3 py-3">{b.formationAffectation}</td>

@@ -43,10 +43,15 @@ function App() {
     return `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`
   }
 
-  // Depuis la démonstration : ouvrir l'onglet des Opérations où l'élément a été créé.
-  function voirDansOps(onglet: OngletOps) {
-    setOngletOps(onglet)
-    setVue('ops')
+  // Depuis la démonstration : ouvrir l'écran où l'élément a été créé. Les écrans opérationnels sont
+  // des onglets des Opérations ; les écrans du chef sont des entrées du menu.
+  function voirDepuisDemo(ecran: OngletOps | Vue) {
+    if (ecran in titres) {
+      setVue(ecran as Vue)
+    } else {
+      setOngletOps(ecran as OngletOps)
+      setVue('ops')
+    }
   }
   const [evenements, setEvenements] = useState<EvenementFlux[]>(evenementsInitiaux)
 
@@ -87,7 +92,7 @@ function App() {
           {vue === 'suivi_execution' && <SuiviExecutionScreen />}
           {vue === 'demo' && (
             <DemoScreen
-              onVoir={voirDansOps}
+              onVoir={voirDepuisDemo}
               onNouveauxEvenements={(nouveaux) =>
                 setEvenements((prev) => [...nouveaux.map((e) => ({ heure: heureCourante(), ...e })), ...prev])
               }

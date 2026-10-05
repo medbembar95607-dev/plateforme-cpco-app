@@ -211,7 +211,7 @@ export interface DocumentDemoDTO {
 export interface ImpactDemoDTO {
   cle: string
   type: string
-  ecran: 'incidents' | 'alertes' | 'renseignement' | 'logistique'
+  ecran: 'incidents' | 'alertes' | 'renseignement' | 'logistique' | 'courrier' | 'suivi_execution' | 'calendrier' | 'materiel' | 'budget' | 'rh'
   titre: string
   resume: string
   localite: string | null

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type CourrierDTO } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const origineLabel: Record<string, string> = {
   subordonne: 'Subordonné',
@@ -60,7 +61,9 @@ function estEnRetard(c: CourrierDTO): boolean {
 
 export function CourrierScreen() {
   const [courriers, setCourriers] = useState<CourrierDTO[]>([])
-  const [selectionneId, setSelectionneId] = useState<string | null>(null)
+  // Courrier enregistré depuis l'écran de démonstration : sélectionné et mis en évidence à l'arrivée.
+  const [focusId] = useState(() => lireFocus('courrier'))
+  const [selectionneId, setSelectionneId] = useState<string | null>(focusId)
   const [brouillonAnnotation, setBrouillonAnnotation] = useState('')
   const [decision, setDecision] = useState('')
   const [destination, setDestination] = useState(destinations[0])
@@ -152,8 +155,9 @@ export function CourrierScreen() {
           {courriersTries.map((c) => (
             <button
               key={c.id}
+              ref={c.id === focusId ? defilerVers : undefined}
               onClick={() => setSelectionneId(c.id)}
-              className={`grid gap-2 rounded-lg border bg-white p-3.5 text-left shadow-sm ${
+              className={`grid gap-2 rounded-lg border bg-white p-3.5 text-left shadow-sm ${c.id === focusId ? classeFocus : ''} ${
                 selectionneId === c.id ? 'border-[#17201b]' : estEnRetard(c) ? 'border-red-300' : 'border-[#d8ded9]'
               }`}
             >
@@ -183,7 +187,8 @@ export function CourrierScreen() {
           ))}
         </div>
 
-        <aside className="grid content-start gap-3.5 overflow-auto rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
+        {/* Panneau de détail collé en haut : reste visible quand la liste défile (ex. arrivée depuis la démonstration). */}
+        <aside className="sticky top-0 grid max-h-[calc(100vh-140px)] content-start gap-3.5 self-start overflow-auto rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
           {selectionne ? (
             <>
               <div>

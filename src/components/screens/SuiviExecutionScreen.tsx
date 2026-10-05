@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { KpiRow, type ToniteKpi } from '../KpiRow'
 import { api, type SuiviExecutionDTO } from '../../api/client'
+import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 import { classificationLabel } from '../../types'
 import type { Classification } from '../../types'
 
@@ -34,7 +35,9 @@ export function SuiviExecutionScreen() {
     total: number
   } | null>(null)
   const [filtre, setFiltre] = useState<Filtre>('toutes')
-  const [selectionneId, setSelectionneId] = useState<string | null>(null)
+  // Instruction créée depuis l'écran de démonstration : sélectionnée et mise en évidence à l'arrivée.
+  const [focusId] = useState(() => lireFocus('suivi_execution'))
+  const [selectionneId, setSelectionneId] = useState<string | null>(focusId)
   const [compteRenduBrouillon, setCompteRenduBrouillon] = useState('')
 
   function charger() {
@@ -114,8 +117,9 @@ export function SuiviExecutionScreen() {
           {suiviFiltre.map((s) => (
             <button
               key={s.id}
+              ref={s.id === focusId ? defilerVers : undefined}
               onClick={() => setSelectionneId(s.id)}
-              className={`grid gap-1.5 rounded-lg border bg-white p-3 text-left shadow-sm ${
+              className={`grid gap-1.5 rounded-lg border bg-white p-3 text-left shadow-sm ${s.id === focusId ? classeFocus : ''} ${
                 selectionneId === s.id ? 'border-[#17201b]' : s.enRetard ? 'border-red-300' : 'border-[#d8ded9]'
               }`}
             >
@@ -143,7 +147,8 @@ export function SuiviExecutionScreen() {
           {suiviFiltre.length === 0 && <p className="text-sm text-[#65706a]">Aucun ordre/instruction pour ce filtre.</p>}
         </div>
 
-        <aside className="grid content-start gap-3 overflow-auto rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
+        {/* Panneau de détail collé en haut : reste visible quand la liste défile (ex. arrivée depuis la démonstration). */}
+        <aside className="sticky top-0 grid max-h-[calc(100vh-140px)] content-start gap-3 self-start overflow-auto rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm">
           {selectionne ? (
             <>
               <div>
