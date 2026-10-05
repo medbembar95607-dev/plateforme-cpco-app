@@ -156,6 +156,50 @@ export interface SocialMediaDTO {
   indicateurs: { mentions24h: number; tendancesEnHausse: number; publicationsRisqueEleve: number; desinformationsAverees: number; vuesCumulees: number }
 }
 
+export interface SujetMediaDTO {
+  id: string
+  libelle: string
+  articlesPressePublique: number
+  articlesPresseLibre: number
+  tonalitePublique: string
+  tonaliteLibre: string
+  domaineRisque: string
+  niveauRisque: string
+  evolutionPct: number
+  resume: string
+}
+
+export interface ArticleMediaDTO {
+  id: string
+  secteur: string
+  support: string
+  typeOrgane: string
+  titre: string
+  audience: number
+  reprises: number
+  tonalite: string
+  resume: string
+  domaineRisque: string
+  niveauRisque: string
+  langue: string
+  actionRecommandee: string
+  datePublication: string
+}
+
+export interface MediasDTO {
+  donneesSimulees: boolean
+  sujets: SujetMediaDTO[]
+  articles: ArticleMediaDTO[]
+  indicateurs: {
+    articles24h: number
+    articlesPressePublique: number
+    articlesPresseLibre: number
+    sujetsDivergents: number
+    contenusRisqueEleve: number
+    audienceCumulee: number
+  }
+}
+
 export interface CourrierDTO {
   id: string
   numero: string
@@ -490,6 +534,7 @@ export const api = {
   veille: () => request<SignalStrategiqueDTO[]>('/veille'),
   veilleIndicateurs: () => request<IndicateursVeilleDTO>('/veille/indicateurs'),
   veilleSocialMedia: () => request<SocialMediaDTO>('/veille/social-media'),
+  veilleMedias: () => request<MediasDTO>('/veille/medias'),
   suiviExecution: () => request<SuiviExecutionDTO[]>('/execution'),
   suiviExecutionIndicateurs: () => request<IndicateursExecutionDTO>('/execution/indicateurs'),
   demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),

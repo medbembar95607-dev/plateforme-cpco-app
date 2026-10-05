@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { KpiRow, type ToniteKpi } from '../KpiRow'
 import { SocialMediaPanel } from '../SocialMediaPanel'
+import { MediasPanel } from '../MediasPanel'
 import { api, type IndicateursVeilleDTO, type SignalStrategiqueDTO } from '../../api/client'
 
 const categorieLabel: Record<string, string> = {
@@ -132,10 +133,18 @@ export function VeilleStrategiqueScreen() {
         >
           Social Media
         </button>
+        <button
+          onClick={() => setCategorieFiltre('medias')}
+          className={`h-9 rounded-lg px-3 text-sm ${categorieFiltre === 'medias' ? 'bg-blue-600 text-white' : 'border border-[#d8ded9] bg-white text-[#17201b]'}`}
+        >
+          Médias
+        </button>
       </div>
 
       {categorieFiltre === 'social_media' ? (
         <SocialMediaPanel />
+      ) : categorieFiltre === 'medias' ? (
+        <MediasPanel />
       ) : (
         <div className="grid min-h-0 auto-rows-min gap-3 overflow-auto">
           {signauxFiltres.map((s) => (
