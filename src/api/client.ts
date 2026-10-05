@@ -412,7 +412,7 @@ export const api = {
     >('/orders'),
   advanceOrder: (id: string) => request(`/orders/${id}/advance`, { method: 'POST' }),
   incidents: () =>
-    request<Array<{ id: string; type_incident: string; niveau_gravite: string; localite: string; description: string; statut: string; declarant: string; date_incident: string }>>(
+    request<Array<{ id: string; type_incident: string; niveau_gravite: string; localite: string; description: string; statut: string; declarant: string; date_incident: string; lon: number | null; lat: number | null }>>(
       '/incidents',
     ),
   createIncident: (payload: { type_incident: string; niveau_gravite: string; localite: string; description: string; declarant: string }) =>
