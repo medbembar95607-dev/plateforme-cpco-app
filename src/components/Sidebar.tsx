@@ -1,7 +1,7 @@
-import { Boxes, Calendar, ListChecks, Mail, MessageSquare, Radar, ShieldHalf, Users, Wallet } from 'lucide-react'
+import { Boxes, Calendar, FlaskConical, ListChecks, Mail, MessageSquare, Radar, ShieldHalf, Users, Wallet } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 
-export type Vue = 'ops' | 'courrier' | 'calendrier' | 'communication' | 'materiel' | 'budget' | 'rh' | 'veille' | 'suivi_execution'
+export type Vue = 'ops' | 'courrier' | 'calendrier' | 'communication' | 'materiel' | 'budget' | 'rh' | 'veille' | 'suivi_execution' | 'demo'
 
 const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'ops', label: 'Les Opérations', icone: <ShieldHalf size={17} /> },
@@ -13,6 +13,7 @@ const entrees: Array<{ vue: Vue; label: string; icone: React.ReactNode }> = [
   { vue: 'materiel', label: 'Situation Matériel', icone: <Boxes size={17} /> },
   { vue: 'budget', label: 'Situation Financière', icone: <Wallet size={17} /> },
   { vue: 'rh', label: 'Ressources Humaines', icone: <Users size={17} /> },
+  { vue: 'demo', label: 'Démonstration', icone: <FlaskConical size={17} /> },
 ]
 
 interface SidebarProps {

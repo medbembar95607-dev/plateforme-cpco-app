@@ -130,7 +130,9 @@ export function AlertesMap({ alertes, selectionId, onSelect }: AlertesMapProps) 
   // Cadrage automatique à l'arrivée des alertes et à chaque changement de filtre.
   const signatureListe = alertes.map((i) => i.id).join(',')
   useEffect(() => {
-    if (carteCreee) recentrer(false)
+    // Arrivée avec un élément déjà sélectionné (bouton « Voir » de la démonstration) : on laisse
+    // l'effet de sélection centrer dessus au lieu de cadrer sur l'ensemble.
+    if (carteCreee && !selectionId) recentrer(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signatureListe, carteCreee])
 

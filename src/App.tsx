@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Sidebar, type Vue } from './components/Sidebar'
 import { TopBar } from './components/TopBar'
-import { OpsScreen } from './components/screens/OpsScreen'
+import { OpsScreen, type OngletOps } from './components/screens/OpsScreen'
+import { DemoScreen } from './components/screens/DemoScreen'
 import { CourrierScreen } from './components/screens/CourrierScreen'
 import { CalendrierScreen } from './components/screens/CalendrierScreen'
 import { SituationMaterielScreen } from './components/screens/SituationMaterielScreen'
@@ -23,6 +24,7 @@ const titres: Record<Vue, [string, string]> = {
   rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
   veille: ['Veille Stratégique', "Indicateurs géopolitiques et sécuritaires régionaux, priorisés par probabilité de crise"],
   suivi_execution: ['Suivi Exécution Ordres', "Suivi de l'exécution des ordres et instructions émis aux unités subordonnées"],
+  demo: ['Démonstration', "Saisie d'une note d'information, d'un message ou d'une note de service et mise à jour des écrans"],
 }
 
 const evenementsInitiaux: EvenementFlux[] = [
@@ -34,6 +36,18 @@ const evenementsInitiaux: EvenementFlux[] = [
 
 function App() {
   const [vue, setVue] = useState<Vue>('ops')
+  const [ongletOps, setOngletOps] = useState<OngletOps>('deploiement')
+
+  function heureCourante() {
+    const maintenant = new Date()
+    return `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`
+  }
+
+  // Depuis la démonstration : ouvrir l'onglet des Opérations où l'élément a été créé.
+  function voirDansOps(onglet: OngletOps) {
+    setOngletOps(onglet)
+    setVue('ops')
+  }
   const [evenements, setEvenements] = useState<EvenementFlux[]>(evenementsInitiaux)
 
   async function nouvelIncident() {
@@ -62,7 +76,7 @@ function App() {
         <TopBar titre={titre} sousTitre={sousTitre} onNouvelIncident={nouvelIncident} />
 
         <div className="min-h-0 overflow-auto p-4">
-          {vue === 'ops' && <OpsScreen evenements={evenements} />}
+          {vue === 'ops' && <OpsScreen evenements={evenements} onglet={ongletOps} onChangerOnglet={setOngletOps} />}
           {vue === 'courrier' && <CourrierScreen />}
           {vue === 'calendrier' && <CalendrierScreen />}
           {vue === 'communication' && <CommunicationScreen />}
@@ -71,6 +85,14 @@ function App() {
           {vue === 'rh' && <RessourcesHumainesScreen />}
           {vue === 'veille' && <VeilleStrategiqueScreen />}
           {vue === 'suivi_execution' && <SuiviExecutionScreen />}
+          {vue === 'demo' && (
+            <DemoScreen
+              onVoir={voirDansOps}
+              onNouveauxEvenements={(nouveaux) =>
+                setEvenements((prev) => [...nouveaux.map((e) => ({ heure: heureCourante(), ...e })), ...prev])
+              }
+            />
+          )}
         </div>
       </main>
     </div>

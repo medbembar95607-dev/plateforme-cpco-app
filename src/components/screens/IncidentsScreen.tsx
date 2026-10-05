@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, MapPin, X } from 'lucide-react'
 import { api } from '../../api/client'
+import { lireFocus } from '../../focusDemo'
 import { IncidentsMap, type IncidentCarte } from '../map/IncidentsMap'
 
 type IncidentRow = Awaited<ReturnType<typeof api.incidents>>[number]
@@ -32,7 +33,8 @@ export function IncidentsScreen() {
   const [filtreType, setFiltreType] = useState('')
   const [filtreGravite, setFiltreGravite] = useState('')
   const [filtreStatut, setFiltreStatut] = useState('')
-  const [selectionId, setSelectionId] = useState<string | null>(null)
+  // Élément créé depuis l'écran de démonstration : sélectionné à l'arrivée.
+  const [selectionId, setSelectionId] = useState<string | null>(() => lireFocus('incidents'))
 
   useEffect(() => {
     api.incidents().then(setIncidents)

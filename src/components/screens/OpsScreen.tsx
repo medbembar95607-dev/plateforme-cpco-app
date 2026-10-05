@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   AlertTriangle,
   ClipboardList,
@@ -25,7 +24,7 @@ import { AlertesScreen } from './AlertesScreen'
 import { AdministrationScreen } from './AdministrationScreen'
 import type { EvenementFlux } from '../../types'
 
-type OngletOps =
+export type OngletOps =
   | 'situation'
   | 'deploiement'
   | 'liveops'
@@ -54,10 +53,12 @@ const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> =
 
 interface OpsScreenProps {
   evenements: EvenementFlux[]
+  // Onglet piloté par App quand on arrive depuis l'écran de démonstration.
+  onglet: OngletOps
+  onChangerOnglet: (onglet: OngletOps) => void
 }
 
-export function OpsScreen({ evenements }: OpsScreenProps) {
-  const [onglet, setOnglet] = useState<OngletOps>('deploiement')
+export function OpsScreen({ evenements, onglet, onChangerOnglet: setOnglet }: OpsScreenProps) {
 
   return (
     <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3">

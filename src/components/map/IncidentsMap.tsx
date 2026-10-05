@@ -130,7 +130,9 @@ export function IncidentsMap({ incidents, selectionId, onSelect }: IncidentsMapP
   // Cadrage automatique à l'arrivée des incidents et à chaque changement de filtre.
   const signatureListe = incidents.map((i) => i.id).join(',')
   useEffect(() => {
-    if (carteCreee) recentrer(false)
+    // Arrivée avec un élément déjà sélectionné (bouton « Voir » de la démonstration) : on laisse
+    // l'effet de sélection centrer dessus au lieu de cadrer sur l'ensemble.
+    if (carteCreee && !selectionId) recentrer(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signatureListe, carteCreee])
 

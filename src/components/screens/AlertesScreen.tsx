@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, MapPin, X } from 'lucide-react'
 import { api } from '../../api/client'
+import { lireFocus } from '../../focusDemo'
 import { AlertesMap, type AlerteCarte } from '../map/AlertesMap'
 
 type AlerteRow = Awaited<ReturnType<typeof api.alerts>>[number]
@@ -23,7 +24,8 @@ export function AlertesScreen() {
   const [alertes, setAlertes] = useState<AlerteRow[]>([])
   const [filtreType, setFiltreType] = useState('')
   const [filtreStatut, setFiltreStatut] = useState('')
-  const [selectionId, setSelectionId] = useState<string | null>(null)
+  // Élément créé depuis l'écran de démonstration : sélectionné à l'arrivée.
+  const [selectionId, setSelectionId] = useState<string | null>(() => lireFocus('alertes'))
   const [erreur, setErreur] = useState<string | null>(null)
 
   useEffect(() => {

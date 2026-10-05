@@ -200,6 +200,49 @@ export interface MediasDTO {
   }
 }
 
+export interface DocumentDemoDTO {
+  type_document: string
+  emetteur: string
+  classification: string
+  objet: string
+  texte: string
+}
+
+export interface ImpactDemoDTO {
+  cle: string
+  type: string
+  ecran: 'incidents' | 'alertes' | 'renseignement' | 'logistique'
+  titre: string
+  resume: string
+  localite: string | null
+  payload: Record<string, unknown>
+}
+
+export interface AnalyseDemoDTO {
+  localite: string
+  unitesCitees: string[]
+  urgent: boolean
+  impacts: ImpactDemoDTO[]
+}
+
+export interface ResultatDemoDTO {
+  cle: string
+  type: string
+  ecran: ImpactDemoDTO['ecran']
+  titre: string
+  id: string
+  focusId: string
+}
+
+export interface NoteDemoDTO {
+  id: string
+  typeDocument: string
+  emetteur: string
+  objet: string
+  dateSaisie: string
+  impacts: ResultatDemoDTO[]
+}
+
 export interface CourrierDTO {
   id: string
   numero: string
@@ -535,6 +578,10 @@ export const api = {
   veilleIndicateurs: () => request<IndicateursVeilleDTO>('/veille/indicateurs'),
   veilleSocialMedia: () => request<SocialMediaDTO>('/veille/social-media'),
   veilleMedias: () => request<MediasDTO>('/veille/medias'),
+  demoAnalyser: (doc: DocumentDemoDTO) => request<AnalyseDemoDTO>('/demo/analyser', { method: 'POST', body: JSON.stringify(doc) }),
+  demoAppliquer: (document: DocumentDemoDTO, impacts: ImpactDemoDTO[]) =>
+    request<{ resultats: ResultatDemoDTO[]; noteId: string }>('/demo/appliquer', { method: 'POST', body: JSON.stringify({ document, impacts }) }),
+  demoHistorique: () => request<NoteDemoDTO[]>('/demo/historique'),
   suiviExecution: () => request<SuiviExecutionDTO[]>('/execution'),
   suiviExecutionIndicateurs: () => request<IndicateursExecutionDTO>('/execution/indicateurs'),
   demarrerExecution: (id: string) => request<SuiviExecutionDTO>(`/execution/${id}/demarrer`, { method: 'POST' }),

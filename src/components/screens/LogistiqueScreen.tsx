@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api/client'
+import { lireFocus } from '../../focusDemo'
 import type { DemandeRavitaillementDTO, SituationDTO } from '../../api/client'
 import { useRoleActif } from '../../useRoleActif'
 import { LogistiqueMap, type NiveauxUnite } from '../map/LogistiqueMap'
@@ -63,7 +64,8 @@ export function LogistiqueScreen() {
   const [lignes, setLignes] = useState<LigneRow[]>([])
   const [demandes, setDemandes] = useState<DemandeRavitaillementDTO[]>([])
   const [unitesCarte, setUnitesCarte] = useState<SituationDTO['unites']>([])
-  const [selectionCarteId, setSelectionCarteId] = useState<string | null>(null)
+  // Élément créé depuis l'écran de démonstration : sélectionné à l'arrivée.
+  const [selectionCarteId, setSelectionCarteId] = useState<string | null>(() => lireFocus('logistique'))
   const hautRef = useRef<HTMLDivElement>(null)
   const [filtre, setFiltre] = useState<CleRessource | ''>('')
   const [afficherNormales, setAfficherNormales] = useState(false)

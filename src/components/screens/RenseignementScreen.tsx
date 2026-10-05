@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
 import { api } from '../../api/client'
+import { lireFocus } from '../../focusDemo'
 import type { RapportRensDTO } from '../../api/client'
 import { classificationLabel } from '../../types'
 import type { Classification } from '../../types'
@@ -61,7 +62,8 @@ export function RenseignementScreen() {
   const [filtreClassification, setFiltreClassification] = useState('')
   const [filtreFiabilite, setFiltreFiabilite] = useState('')
   const [filtreStatut, setFiltreStatut] = useState('')
-  const [selectionId, setSelectionId] = useState<string | null>(null)
+  // Élément créé depuis l'écran de démonstration : sélectionné à l'arrivée.
+  const [selectionId, setSelectionId] = useState<string | null>(() => lireFocus('renseignement'))
   const [erreur, setErreur] = useState<string | null>(null)
 
   const [redaction, setRedaction] = useState(false)
