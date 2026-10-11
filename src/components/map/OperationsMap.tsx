@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import ms from 'milsymbol'
+import { BoxSelect, Crosshair } from 'lucide-react'
 import type { FeatureCollection } from 'geojson'
 import type { OperationCarteDTO } from '../../api/client'
 import type { TypeUnite } from '../../types'
 import { couleurAmie, typeUniteSidc } from '../../uniteStyle'
+import { activerZoomSelection } from './zoomSelection'
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
 const CENTRE_INITIAL: [number, number] = [-10.5, 18.0]
@@ -56,8 +58,14 @@ export function OperationsMap({ operations, selectionId, onSelect }: OperationsM
   // Carte créée : suffit pour poser des marqueurs. Style chargé : nécessaire pour zones et axes.
   const [carteCreee, setCarteCreee] = useState(false)
   const [carteChargee, setCarteChargee] = useState(false)
+  const [selectionActive, setSelectionActive] = useState(false)
+  const annulerSelectionRef = useRef<(() => void) | null>(null)
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
+  const operationsRef = useRef(operations)
+  operationsRef.current = operations
+  const selectionIdRef = useRef(selectionId)
+  selectionIdRef.current = selectionId
 
   useEffect(() => {
     if (!conteneurRef.current) return
@@ -93,6 +101,7 @@ export function OperationsMap({ operations, selectionId, onSelect }: OperationsM
       setCarteChargee(true)
     })
     return () => {
+      annulerSelectionRef.current?.()
       observateurTaille.disconnect()
       map.remove()
       mapRef.current = null
@@ -169,13 +178,14 @@ export function OperationsMap({ operations, selectionId, onSelect }: OperationsM
 
   // Sélection : cadrer sur l'emprise de l'opération (avec ses unités engagées).
   // Sans sélection : cadrer sur l'ensemble des opérations affichées.
-  useEffect(() => {
+  function recentrer() {
     const map = mapRef.current
-    if (!map || !carteCreee) return
-    const cible = operations.find((o) => o.id === selectionId)
+    if (!map) return
+    const liste = operationsRef.current
+    const cible = liste.find((o) => o.id === selectionIdRef.current)
     const bornes = new maplibregl.LngLatBounds()
     let vide = true
-    for (const op of cible ? [cible] : operations) {
+    for (const op of cible ? [cible] : liste) {
       const b = emprise(op)
       if (b) {
         bornes.extend(b)
@@ -187,12 +197,51 @@ export function OperationsMap({ operations, selectionId, onSelect }: OperationsM
           vide = false
         })
     }
-    if (!vide) map.fitBounds(bornes, { padding: { top: 60, bottom: 70, left: 250, right: 80 }, maxZoom: 7.5, duration: 600 })
+    if (vide) map.flyTo({ center: CENTRE_INITIAL, zoom: ZOOM_INITIAL })
+    else map.fitBounds(bornes, { padding: { top: 60, bottom: 70, left: 250, right: 80 }, maxZoom: 7.5, duration: 600 })
+  }
+
+  function basculerZoomSelection() {
+    const map = mapRef.current
+    if (!map || !conteneurRef.current) return
+    if (selectionActive) {
+      annulerSelectionRef.current?.()
+      return
+    }
+    setSelectionActive(true)
+    annulerSelectionRef.current = activerZoomSelection(map, conteneurRef.current, () => {
+      setSelectionActive(false)
+      annulerSelectionRef.current = null
+    })
+  }
+
+  useEffect(() => {
+    if (carteCreee) recentrer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionId, operations, carteCreee])
 
   return (
     <div className="relative h-full min-h-[420px] overflow-hidden rounded-lg border border-[#d8ded9] bg-white shadow-sm">
       <div ref={conteneurRef} className="h-full w-full" />
+
+      <div className="absolute right-14 top-3 flex gap-2">
+        <button
+          onClick={recentrer}
+          title={selectionId ? "Cadrer sur l'opération sélectionnée" : 'Cadrer sur toutes les opérations affichées'}
+          className="flex items-center gap-1.5 rounded-lg border border-[#d8ded9] bg-white/95 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#17201b] shadow-sm"
+        >
+          <Crosshair size={13} /> Recentrer
+        </button>
+        <button
+          onClick={basculerZoomSelection}
+          title="Cliquer-glisser sur la carte pour zoomer sur une zone"
+          className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold uppercase tracking-wide shadow-sm ${
+            selectionActive ? 'border-sky-600 bg-sky-600 text-white' : 'border-[#d8ded9] bg-white/95 text-[#17201b]'
+          }`}
+        >
+          <BoxSelect size={13} /> Zoom sélection
+        </button>
+      </div>
     </div>
   )
 }
