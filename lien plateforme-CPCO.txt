@@ -1,2 +1,4 @@
 lien plateforme-CPCO:
-https://tbcomd.netlify.app/
+https://medbembar95607-dev.github.io/plateforme-cpco-app/
+
+(ancien lien Netlify tbcomd.netlify.app hors service depuis octobre 2026)

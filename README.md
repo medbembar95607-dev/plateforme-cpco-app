@@ -6,9 +6,9 @@ Le cadrage complet (besoins, décisions d'architecture, modèle de données, maq
 
 ## Démo en ligne
 
-**https://tbcomd.netlify.app**
+**https://medbembar95607-dev.github.io/plateforme-cpco-app/**
 
-Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur Netlify (déploiement continu depuis la branche `main`). Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-commandement-api/README.md`).
+Dépôt : https://github.com/medbembar95607-dev/plateforme-cpco-app — hébergé sur GitHub Pages (déploiement automatique à chaque push sur `main`, workflow `.github/workflows/pages.yml`, sous-chemin fixé par `VITE_BASE`). L'ancien hébergement Netlify est hors service depuis octobre 2026. Backend : https://plateforme-cpco-api.onrender.com (voir `../plateforme-commandement-api/README.md`).
 
 Variable d'environnement de build (Netlify → Project configuration → Environment variables) : `VITE_API_URL=https://plateforme-cpco-api.onrender.com`. Elle est lue au moment du build (Vite), pas à l'exécution — toute modification impose un redéploiement (Deploys → Trigger deploy).
 
