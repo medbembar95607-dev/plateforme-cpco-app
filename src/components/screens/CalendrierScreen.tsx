@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { api } from '../../api/client'
+import { api, type RendezVousDTO } from '../../api/client'
 import { classeFocus, defilerVers, lireFocus } from '../../focusDemo'
 
 const typeRdvLabel: Record<string, string> = {
@@ -107,7 +107,12 @@ export function CalendrierScreen() {
     charger()
   }
 
-  const aVenir = rendezVous.filter((r) => r.statut !== 'annule')
+  // À venir : non annulés et pas encore terminés, du plus proche au plus lointain ; le premier est
+  // celui du compte à rebours (ou un rendez-vous en cours). Passés : à part, du plus récent au plus ancien.
+  const fin = (r: RendezVousDTO) => new Date(r.dateFin ?? r.dateDebut).getTime()
+  const debut = (r: RendezVousDTO) => new Date(r.dateDebut).getTime()
+  const aVenir = rendezVous.filter((r) => r.statut !== 'annule' && fin(r) > maintenant).sort((a, b) => debut(a) - debut(b))
+  const passes = rendezVous.filter((r) => r.statut !== 'annule' && fin(r) <= maintenant).sort((a, b) => debut(b) - debut(a))
   const annules = rendezVous.filter((r) => r.statut === 'annule')
 
   return (
@@ -135,7 +140,9 @@ export function CalendrierScreen() {
           <div
             key={r.id}
             ref={r.id === focusId ? defilerVers : undefined}
-            className={`grid gap-2 rounded-lg border border-[#d8ded9] bg-white p-3.5 shadow-sm ${r.id === focusId ? classeFocus : ''}`}
+            className={`grid gap-2 rounded-lg border bg-white p-3.5 shadow-sm ${
+              r.id === prochainRdv?.id ? 'border-sky-300' : 'border-[#d8ded9]'
+            } ${r.id === focusId ? classeFocus : ''}`}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -143,6 +150,9 @@ export function CalendrierScreen() {
                 <span className="inline-flex min-h-[24px] items-center rounded-full bg-blue-50 px-2 text-xs font-bold text-blue-700">
                   {typeRdvLabel[r.typeRdv] ?? r.typeRdv}
                 </span>
+                {debut(r) <= maintenant && (
+                  <span className="inline-flex min-h-[24px] items-center rounded-full bg-sky-600 px-2 text-xs font-bold text-white">En cours</span>
+                )}
               </div>
               <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${statutStyle[r.statut]?.badge ?? 'bg-gray-100 text-gray-700'}`}>
                 {statutStyle[r.statut]?.label ?? r.statut}
@@ -168,6 +178,18 @@ export function CalendrierScreen() {
           </div>
         ))}
         {aVenir.length === 0 && <p className="text-sm text-[#65706a]">Aucun rendez-vous à venir.</p>}
+
+        {passes.length > 0 && (
+          <div className="grid gap-2 opacity-60">
+            <span className="text-xs font-bold uppercase tracking-wide text-[#65706a]">Passés</span>
+            {passes.map((r) => (
+              <div key={r.id} className="rounded-lg border border-[#d8ded9] bg-white p-3 text-sm text-[#65706a]">
+                <span className="capitalize">{formaterDate(r.dateDebut)}</span> · {formaterHeure(r.dateDebut)} : {r.titre}
+                {r.statut !== 'confirme' ? ' (non confirmé)' : ''}
+              </div>
+            ))}
+          </div>
+        )}
 
         {annules.length > 0 && (
           <div className="grid gap-2 opacity-60">
