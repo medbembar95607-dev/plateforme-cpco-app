@@ -105,18 +105,22 @@ export function AlertesScreen() {
             ) : (
               <>
                 <div className="border-b border-[#d8ded9] px-3.5 py-3">
-                  <h3 className="m-0 text-[15px] text-[#17201b]">Alertes actives · {actives.length}</h3>
+                  <h3 className="m-0 text-[15px] text-[#17201b]">
+                    Alertes · {triees.length} <span className="text-xs font-normal text-[#65706a]">({actives.length} active(s))</span>
+                  </h3>
                   <p className="m-0 mt-1 text-xs text-[#65706a]">
                     {nbCritiques > 0 ? `${nbCritiques} critique(s). ` : ''}Cliquez une alerte sur la carte ou dans cette liste pour afficher son détail.
                   </p>
                 </div>
                 <div className="min-h-0 flex-1 overflow-auto">
-                  {actives.length === 0 && <p className="m-0 px-3.5 py-3 text-sm text-[#65706a]">Aucune alerte active.</p>}
-                  {actives.map((a) => (
+                  {triees.length === 0 && <p className="m-0 px-3.5 py-3 text-sm text-[#65706a]">Aucune alerte ne correspond aux filtres.</p>}
+                  {triees.map((a) => (
                     <div
                       key={a.id}
                       onClick={() => setSelectionId(a.id)}
-                      className={`cursor-pointer border-b border-l-4 border-b-[#eef1ee] px-3.5 py-3 hover:bg-[#f8faf7] ${niveauStyle[a.niveau].bordure}`}
+                      className={`cursor-pointer border-b border-l-4 border-b-[#eef1ee] px-3.5 py-3 hover:bg-[#f8faf7] ${niveauStyle[a.niveau].bordure} ${
+                        a.statut === 'active' ? '' : 'opacity-60'
+                      }`}
                     >
                       <div className="flex items-center gap-2">
                         {a.niveau === 'critique' && <AlertTriangle size={15} className="text-[#b9332c]" />}
@@ -129,16 +133,21 @@ export function AlertesScreen() {
                       </div>
                       <div className="mt-1 text-sm text-[#17201b]">{a.message}</div>
                       <div className="mt-1.5 flex items-center justify-between">
-                        <span className="text-xs text-[#65706a]">{a.lon === null ? 'Non localisée' : ''}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            acquitter(a.id)
-                          }}
-                          className="rounded-md border border-[#d8ded9] bg-white px-2 py-1 text-xs text-[#17201b] hover:bg-[#f3f5f2]"
-                        >
-                          Acquitter
-                        </button>
+                        <span className="text-xs text-[#65706a]">
+                          {statutLabel[a.statut]}
+                          {a.lon === null ? ' · Non localisée' : ''}
+                        </span>
+                        {a.statut === 'active' && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              acquitter(a.id)
+                            }}
+                            className="rounded-md border border-[#d8ded9] bg-white px-2 py-1 text-xs text-[#17201b] hover:bg-[#f3f5f2]"
+                          >
+                            Acquitter
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -146,43 +155,6 @@ export function AlertesScreen() {
               </>
             )}
           </aside>
-        </div>
-
-        <div className="grid gap-2.5">
-          {triees.length === 0 && <p className="m-0 text-sm text-[#65706a]">Aucune alerte ne correspond aux filtres.</p>}
-          {triees.map((alerte) => (
-            <div
-              key={alerte.id}
-              onClick={() => setSelectionId(alerte.id)}
-              title="Afficher sur la carte et voir le détail"
-              className={`flex cursor-pointer items-center justify-between gap-3.5 rounded-lg border border-l-4 border-[#d8ded9] bg-white p-3.5 shadow-sm hover:bg-[#f8faf7] ${niveauStyle[alerte.niveau].bordure} ${
-                alerte.id === selectionId ? 'ring-1 ring-[#17201b]' : ''
-              }`}
-            >
-              <div className="grid gap-1">
-                <div className="flex items-center gap-2">
-                  <span className={`inline-flex min-h-[24px] items-center rounded-full px-2 text-xs font-bold ${niveauStyle[alerte.niveau].badge}`}>
-                    {niveauStyle[alerte.niveau].label}
-                  </span>
-                  <span className="text-xs text-[#65706a]">{typeLabel[alerte.type_alerte]}</span>
-                  <span className="text-xs text-[#65706a]">{heure(alerte.date_creation)}</span>
-                </div>
-                <p className="m-0 text-sm text-[#17201b]">{alerte.message}</p>
-                <span className="text-xs text-[#65706a]">Statut : {statutLabel[alerte.statut]}</span>
-              </div>
-              {alerte.statut === 'active' && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    acquitter(alerte.id)
-                  }}
-                  className="h-9 shrink-0 rounded-lg border border-[#d8ded9] bg-white px-3 text-sm text-[#17201b]"
-                >
-                  Acquitter
-                </button>
-              )}
-            </div>
-          ))}
         </div>
       </div>
     </section>
