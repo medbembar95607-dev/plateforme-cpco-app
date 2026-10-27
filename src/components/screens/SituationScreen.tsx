@@ -46,12 +46,25 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
     return <p className="text-sm text-[#65706a]">Chargement de la situation opérationnelle…</p>
   }
 
+  const niveaux = situation.kpis.niveauxLogistiques
   const kpis = [
     { label: 'Opérations actives', valeur: String(situation.kpis.operationsActives), note: 'en cours ou sous tension' },
     { label: 'Unités engagées', valeur: String(situation.kpis.unitesEngagees), note: 'toutes unités suivies' },
     { label: 'Effectifs engagés', valeur: situation.kpis.effectifsEngages.toLocaleString('fr-FR'), note: 'territoire national' },
     { label: 'Menaces détectées', valeur: String(situation.kpis.menacesDetectees), note: `${situation.kpis.menacesConfirmees} confirmées` },
-    { label: 'Niveau logistique', valeur: `${situation.kpis.niveauLogistiquePct}%`, note: 'moyenne carburant' },
+    {
+      label: 'Niveau logistique',
+      valeur: `${situation.kpis.niveauLogistiquePct}%`,
+      note: niveaux ? 'moyenne des six domaines' : 'moyenne carburant',
+      detail: niveaux && [
+        { label: 'Personnel', pct: niveaux.personnel },
+        { label: 'Armement', pct: niveaux.armement },
+        { label: 'Munitions', pct: niveaux.munitions },
+        { label: 'Vivres', pct: niveaux.vivres },
+        { label: 'Carburant', pct: niveaux.carburant },
+        { label: 'Auto', pct: niveaux.auto },
+      ],
+    },
   ]
 
   return (
@@ -60,7 +73,7 @@ export function SituationScreen({ evenements }: SituationScreenProps) {
 
       {/* Hauteur calée sur l'écran : sans elle, un flux opérationnel long étirait la rangée et la
           carte avec, et son centre (la Mauritanie) sortait du champ visible. */}
-      <div className="grid h-[calc(100vh-300px)] min-h-[480px] grid-cols-[minmax(440px,1fr)_360px] gap-4">
+      <div className="grid h-[calc(100vh-370px)] min-h-[480px] grid-cols-[minmax(440px,1fr)_360px] gap-4">
         <section className="grid min-h-0 grid-rows-[auto_1fr] overflow-hidden rounded-lg border border-[#d8ded9] bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-[#d8ded9] px-3.5 py-3">
             <h2 className="m-0 text-base text-[#17201b]">Vue COP</h2>

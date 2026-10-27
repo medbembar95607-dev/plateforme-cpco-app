@@ -64,6 +64,8 @@ export interface SituationDTO {
     menacesDetectees: number
     menacesConfirmees: number
     niveauLogistiquePct: number
+    // Absent sur une API antérieure au 2026-10-27.
+    niveauxLogistiques?: { personnel: number; armement: number; munitions: number; vivres: number; carburant: number; auto: number }
   }
 }
 

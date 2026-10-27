@@ -5,6 +5,15 @@ interface Kpi {
   valeur: string
   note: string
   tonalite?: ToniteKpi
+  // Détail affiché sous la valeur : une ligne par domaine, avec jauge.
+  detail?: Array<{ label: string; pct: number }>
+}
+
+// Mêmes seuils que le déficit de capacité des unités : rouge à 30 % ou moins, orange à 50 % ou moins.
+function couleurNiveau(pct: number) {
+  if (pct <= 30) return { barre: 'bg-red-600', texte: 'text-red-700' }
+  if (pct <= 50) return { barre: 'bg-orange-500', texte: 'text-orange-700' }
+  return { barre: 'bg-emerald-600', texte: 'text-[#17201b]' }
 }
 
 const tonaliteStyle: Record<ToniteKpi, { carte: string; label: string; valeur: string; note: string }> = {
@@ -18,7 +27,7 @@ const tonaliteStyle: Record<ToniteKpi, { carte: string; label: string; valeur: s
 
 export function KpiRow({ kpis }: { kpis: Kpi[] }) {
   return (
-    <div className="grid grid-cols-5 gap-3 rounded-lg bg-amber-100 p-3">
+    <div className="grid grid-cols-5 items-start gap-3 rounded-lg bg-amber-100 p-3">
       {kpis.map((kpi) => {
         const style = tonaliteStyle[kpi.tonalite ?? 'neutre']
         return (
@@ -26,6 +35,24 @@ export function KpiRow({ kpis }: { kpis: Kpi[] }) {
             <span className={`text-xs ${style.label}`}>{kpi.label}</span>
             <strong className={`text-[28px] leading-none ${style.valeur}`}>{kpi.valeur}</strong>
             <small className={`text-xs ${style.note}`}>{kpi.note}</small>
+            {kpi.detail && (
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-[#eef1ee] pt-2">
+                {kpi.detail.map((d) => {
+                  const c = couleurNiveau(d.pct)
+                  return (
+                    <div key={d.label} className="grid gap-0.5 text-[11px] leading-none">
+                      <div className="flex justify-between">
+                        <span className="text-[#65706a]">{d.label}</span>
+                        <span className={`font-bold ${c.texte}`}>{d.pct}%</span>
+                      </div>
+                      <span className="h-1 overflow-hidden rounded-full bg-[#eef1ee]">
+                        <span className={`block h-full rounded-full ${c.barre}`} style={{ width: `${Math.min(100, d.pct)}%` }} />
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )
       })}
