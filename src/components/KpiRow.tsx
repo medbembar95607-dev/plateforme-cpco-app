@@ -25,23 +25,39 @@ const tonaliteStyle: Record<ToniteKpi, { carte: string; label: string; valeur: s
   info: { carte: 'border-blue-300 bg-blue-50', label: 'text-blue-700', valeur: 'text-blue-800', note: 'text-blue-700' },
 }
 
-export function KpiRow({ kpis }: { kpis: Kpi[] }) {
+// compact : cartes basses (Point de Situation), pour laisser la hauteur à la carte. Une carte avec
+// détail y occupe deux colonnes, le détail à droite de la valeur, sans rehausser la rangée.
+export function KpiRow({ kpis, compact = false }: { kpis: Kpi[]; compact?: boolean }) {
+  const colonnes = kpis.reduce((n, k) => n + (compact && k.detail ? 2 : 1), 0)
   return (
-    <div className="grid grid-cols-5 items-start gap-3 rounded-lg bg-amber-100 p-3">
+    <div
+      className={`grid items-stretch rounded-lg bg-amber-100 ${compact ? 'gap-2 p-2' : 'gap-3 p-3'}`}
+      style={{ gridTemplateColumns: `repeat(${colonnes}, minmax(0, 1fr))` }}
+    >
       {kpis.map((kpi) => {
         const style = tonaliteStyle[kpi.tonalite ?? 'neutre']
+        const enLigne = compact && kpi.detail
         return (
-          <div key={kpi.label} className={`grid gap-2 rounded-lg border p-3.5 shadow-sm ${style.carte}`}>
-            <span className={`text-xs ${style.label}`}>{kpi.label}</span>
-            <strong className={`text-[28px] leading-none ${style.valeur}`}>{kpi.valeur}</strong>
-            <small className={`text-xs ${style.note}`}>{kpi.note}</small>
+          <div
+            key={kpi.label}
+            className={`rounded-lg border shadow-sm ${style.carte} ${compact ? 'px-3 py-2' : 'p-3.5'} ${
+              enLigne ? 'col-span-2 grid grid-cols-[auto_1fr] items-center gap-4' : `grid ${compact ? 'gap-1' : 'gap-2'}`
+            }`}
+          >
+            <div className={`grid ${compact ? 'gap-1' : 'gap-2'}`}>
+              <span className={`text-xs ${style.label}`}>{kpi.label}</span>
+              <strong className={`${compact ? 'text-[22px]' : 'text-[28px]'} leading-none ${style.valeur}`}>{kpi.valeur}</strong>
+              <small className={`text-xs ${style.note}`}>{kpi.note}</small>
+            </div>
             {kpi.detail && (
-              <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-[#eef1ee] pt-2">
+              <div
+                className={`grid gap-x-3 gap-y-1.5 ${enLigne ? 'grid-cols-2 gap-y-1 border-l border-[#eef1ee] pl-4' : 'grid-cols-2 border-t border-[#eef1ee] pt-2'}`}
+              >
                 {kpi.detail.map((d) => {
                   const c = couleurNiveau(d.pct)
                   return (
                     <div key={d.label} className="grid gap-0.5 text-[11px] leading-none">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between gap-1">
                         <span className="text-[#65706a]">{d.label}</span>
                         <span className={`font-bold ${c.texte}`}>{d.pct}%</span>
                       </div>
