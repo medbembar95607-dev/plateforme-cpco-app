@@ -11,11 +11,12 @@ import { RessourcesHumainesScreen } from './components/screens/RessourcesHumaine
 import { VeilleStrategiqueScreen } from './components/screens/VeilleStrategiqueScreen'
 import { SuiviExecutionScreen } from './components/screens/SuiviExecutionScreen'
 import { CommunicationScreen } from './components/screens/CommunicationScreen'
+import { AdministrationScreen } from './components/screens/AdministrationScreen'
 import { api } from './api/client'
 import type { EvenementFlux } from './types'
 
 const titres: Record<Vue, [string, string]> = {
-  ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents, alertes et administration'],
+  ops: ['Situation Opérationnelle', 'Situation, unités, renseignement, logistique, opérations, ordres, incidents et alertes'],
   courrier: ['Courrier du Chef', 'Triage, annotation et orientation de la correspondance entrante'],
   calendrier: ['Agenda du Chef', 'Gestion des rendez-vous et engagements du chef'],
   communication: ['Communication', 'Chat écrit/vocal/documents et réunions en ligne avec les unités subordonnées'],
@@ -24,6 +25,7 @@ const titres: Record<Vue, [string, string]> = {
   rh: ['Ressources Humaines', 'Effectifs par catégorie, propositions, départs à la retraite et besoins en recrutement'],
   veille: ['Veille Stratégique', "Indicateurs géopolitiques et sécuritaires régionaux, priorisés par probabilité de crise"],
   suivi_execution: ['Suivi Exécution Ordres', "Suivi de l'exécution des ordres et instructions émis aux unités subordonnées"],
+  administration: ['Administration', 'Utilisateurs, rôles et permissions, journal des actions et paramètres système'],
   demo: ['Démonstration', "Saisie d'une note d'information, d'un message ou d'une note de service et mise à jour des écrans"],
 }
 
@@ -90,6 +92,7 @@ function App() {
           {vue === 'rh' && <RessourcesHumainesScreen />}
           {vue === 'veille' && <VeilleStrategiqueScreen />}
           {vue === 'suivi_execution' && <SuiviExecutionScreen />}
+          {vue === 'administration' && <AdministrationScreen />}
           {vue === 'demo' && (
             <DemoScreen
               onVoir={voirDepuisDemo}

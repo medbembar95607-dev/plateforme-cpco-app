@@ -6,7 +6,6 @@ import {
   FileText,
   Flag,
   Home,
-  Settings,
   Siren,
   Square,
   Video,
@@ -21,7 +20,6 @@ import { OperationsScreen } from './OperationsScreen'
 import { OrdresScreen } from './OrdresScreen'
 import { IncidentsScreen } from './IncidentsScreen'
 import { AlertesScreen } from './AlertesScreen'
-import { AdministrationScreen } from './AdministrationScreen'
 import type { EvenementFlux } from '../../types'
 
 export type OngletOps =
@@ -35,7 +33,6 @@ export type OngletOps =
   | 'ordres'
   | 'incidents'
   | 'alertes'
-  | 'administration'
 
 const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> = [
   { id: 'deploiement', label: 'Déploiement Armée', icone: <Flag size={16} /> },
@@ -48,7 +45,6 @@ const onglets: Array<{ id: OngletOps; label: string; icone: React.ReactNode }> =
   { id: 'logistique', label: 'Logistique', icone: <Square size={16} /> },
   { id: 'incidents', label: 'Incidents', icone: <Siren size={16} /> },
   { id: 'alertes', label: 'Alertes', icone: <AlertTriangle size={16} /> },
-  { id: 'administration', label: 'Administration', icone: <Settings size={16} /> },
 ]
 
 interface OpsScreenProps {
@@ -88,7 +84,6 @@ export function OpsScreen({ evenements, onglet, onChangerOnglet: setOnglet }: Op
         {onglet === 'ordres' && <OrdresScreen />}
         {onglet === 'incidents' && <IncidentsScreen />}
         {onglet === 'alertes' && <AlertesScreen />}
-        {onglet === 'administration' && <AdministrationScreen />}
       </div>
     </div>
   )
